@@ -1,0 +1,63 @@
+/* Màu sắc từ bảng màu của bạn */
+:root {
+    --color-light: #CDF1FF;     /* Rất nhạt, nền */
+    --color-primary: #00ABFD;   /* Xanh dương chính */
+    --color-accent: #71D9FF;    /* Xanh dương phụ/hover */
+    --color-dark: #003140;      /* Xanh Navy, chữ/footer */
+    --color-text: #333333;
+    --color-text-light: #F9F9F9;
+    --color-shadow: rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--color-light);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+h2 {
+    color: var(--color-dark);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2em;
+    padding-top: 20px;
+}
+
+/* Các nút chung */
+.btn {
+    display: inline-block;
+    background: var(--color-primary);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: var(--color-accent);
+}
+
+/* Ẩn main ban đầu */
+main {
+    min-height: calc(100vh - 120px); /* Đảm bảo main chiếm hết không gian */
+}

@@ -1,0 +1,43 @@
+header {
+    background-color: var(--color-dark); /* Nền xanh Navy đậm */
+    color: var(--color-text-light);
+    padding: 15px 0;
+    border-bottom: 3px solid var(--color-primary);
+    box-shadow: 0 4px 6px var(--color-shadow);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+}
+
+#branding h1 a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 1.8em;
+    font-weight: 800;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+}
+
+header nav ul li {
+    margin-left: 25px;
+}
+
+header nav ul li a {
+    color: var(--color-text-light);
+    text-decoration: none;
+    font-weight: bold;
+    padding-bottom: 5px;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+header nav ul li a:hover {
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+}
