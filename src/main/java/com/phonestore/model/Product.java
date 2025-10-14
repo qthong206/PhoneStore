@@ -4,51 +4,27 @@ public class Product {
     private int id;
     private String name;
     private double price;
-    private String image; // Đường dẫn đến file ảnh
+    private double salePrice; // Thêm giá khuyến mãi
+    private String thumbnailUrl; // Sửa tên trường ảnh cho khớp DB
+    private String description;
+    private Brand brand; // Chứa thông tin thương hiệu
 
-    // 1. Constructor mặc định (cần thiết cho một số frameworks)
-    public Product() {
-    }
+    // Constructors...
+    public Product() {}
 
-    // 2. Constructor với tất cả các tham số (dùng để khởi tạo dữ liệu trong HomeServlet)
-    public Product(int id, String name, double price, String image) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.image = image;
-    }
-
-    // 3. Getters
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    // 4. Setters (để thay đổi giá trị nếu cần)
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
+    // Getters and Setters...
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+    public double getSalePrice() { return salePrice; }
+    public void setSalePrice(double salePrice) { this.salePrice = salePrice; }
+    public String getThumbnailUrl() { return thumbnailUrl; }
+    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public Brand getBrand() { return brand; }
+    public void setBrand(Brand brand) { this.brand = brand; }
 }

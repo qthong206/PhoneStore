@@ -1,5 +1,7 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.ProductDAO;
+import com.phonestore.model.Brand;
 import com.phonestore.model.Product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,26 +10,33 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-@WebServlet(name = "HomeServlet", urlPatterns = {"/home"})
+// Đặt servlet làm trang mặc định của web
+@WebServlet(name = "HomeServlet", urlPatterns = {"/home", ""})
 public class HomeServlet extends HttpServlet {
+
+    private ProductDAO productDAO;
+
+    // Phương thức init() được gọi một lần khi servlet khởi tạo
+    // Dùng để khởi tạo DAO, tránh tạo lại mỗi lần có request
+    @Override
+    public void init() {
+        productDAO = new ProductDAO();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Danh sách sản phẩm giả lập (sau này có thể lấy từ DB)
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product(1, "iPhone 15 Pro Max", 29990000.0, "images/iphone15.jpg"));
-        productList.add(new Product(2, "Samsung Galaxy S24", 20990000.0, "images/samsung24.jpg"));
-        productList.add(new Product(3, "Google Pixel 8", 15490000.0, "images/pixel8.jpg"));
+        // 1. Gọi ProductDAO để lấy dữ liệu đã được nhóm theo thương hiệu
+        Map<Brand, List<Product>> productMap = productDAO.getProductsGroupedByBrand();
 
-        // Gửi sang JSP
-        request.setAttribute("productList", productList);
+        // 2. Gửi Map này sang JSP
+        request.setAttribute("productMap", productMap);
 
-        // Forward đến trang home.jsp trong thư mục views
+        // 3. Forward đến trang view để hiển thị
         request.getRequestDispatcher("/WEB-INF/views/home.jsp").forward(request, response);
     }
 }
