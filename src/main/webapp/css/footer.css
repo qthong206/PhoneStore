@@ -1,8 +1,92 @@
+/* Bỏ màu nền chung cho thẻ footer */
 footer {
-    background-color: var(--color-dark);
     color: var(--color-text-light);
+}
+
+/* --- PHẦN CHÍNH CỦA FOOTER --- */
+.footer-main {
+    background-color: var(--color-dark); /* Nền chính, màu gốc #003140 */
+    padding: 40px 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.footer-column h4 {
+    font-size: 1.1em;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column a {
+    text-decoration: none;
+    color: var(--color-text-light);
+    transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+    color: var(--color-accent);
+}
+
+.footer-column p {
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.social-icons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.social-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    background-color: #00455a; /* Màu tối hơn một chút */
+}
+
+/* --- THANH NAV SẢN PHẨM --- */
+.footer-nav {
+    background-color: #003a4d; /* Nền sáng hơn một chút so với nền chính */
+    padding: 15px 0;
     text-align: center;
+}
+
+.footer-nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: var(--color-text-light);
+}
+
+.footer-nav a:hover {
+    color: var(--color-accent);
+}
+
+/* --- PHẦN BẢN QUYỀN --- */
+.footer-copyright {
+    background-color: var(--color-dark); /* Nền tối hơn một chút so với nền chính */
     padding: 20px 0;
-    margin-top: 30px;
-    border-top: 3px solid var(--color-primary);
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--color-accent);
 }

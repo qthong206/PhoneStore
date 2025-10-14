@@ -1,43 +1,127 @@
 header {
-    background-color: var(--color-dark); /* Nền xanh Navy đậm */
-    color: var(--color-text-light);
+    background-color: var(--color-dark);
     padding: 15px 0;
-    border-bottom: 3px solid var(--color-primary);
     box-shadow: 0 4px 6px var(--color-shadow);
 }
 
-header .container {
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
     padding: 0;
 }
 
-#branding h1 a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-size: 1.8em;
-    font-weight: 800;
-}
-
-header nav ul {
-    list-style: none;
+/* --- KHỐI BÊN TRÁI: LOGO VÀ DANH MỤC --- */
+.header-left {
     display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-header nav ul li {
-    margin-left: 25px;
+#branding .header-logo {
+    height: 40px;
+    width: auto;
+    display: block;
 }
 
-header nav ul li a {
+.category-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-primary-dark);
     color: var(--color-text-light);
+    padding: 10px 15px;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: bold;
-    padding-bottom: 5px;
-    transition: color 0.3s ease, border-bottom 0.3s ease;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
 }
 
-header nav ul li a:hover {
+.category-button:hover {
+    background-color: var(--color-primary);
+}
+
+.category-icon {
+    font-size: 1.1em; /* Điều chỉnh kích thước icon Danh mục */
+}
+
+/* --- KHỐI Ở GIỮA: THANH TÌM KIẾM --- */
+.search-bar {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Căn giữa input và button theo chiều dọc */
+    background-color: var(--color-white);
+    border-radius: 25px;
+    padding: 4px 5px 4px 0; /* Thêm padding để tạo khoảng trống cho nút */
+    max-width: 650px;
+}
+
+.search-bar input {
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    outline: none;
+    background-color: transparent; /* Quan trọng: làm nền input trong suốt */
+    color: var(--color-text); /* Đảm bảo chữ nhập có màu */
+}
+
+.search-bar button {
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    /* Style mới cho nút tròn */
+    background-color: var(--color-primary-ultralight); /* Màu nền xanh siêu nhạt */
+    color: var(--color-primary-dark); /* Màu icon xanh đậm để nổi bật */
+    height: 38px;
+    width: 38px;
+    border-radius: 50%; /* Bo tròn thành hình tròn */
+
+    /* Căn giữa icon kính lúp */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Ngăn nút bị co lại */
+    font-size: 1.1em;
+}
+
+.search-bar button:hover {
+    background-color: var(--color-light); /* Đổi màu nền khi di chuột */
+}
+
+/* --- KHỐI BÊN PHẢI: CÁC MỤC ĐIỀU HƯỚNG --- */
+.header-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-text-light);
+    transition: color 0.3s ease;
+    width: 80px;
+    text-align: center;
+}
+
+.nav-item:hover {
     color: var(--color-accent);
-    border-bottom: 2px solid var(--color-accent);
+}
+
+.nav-icon {
+    font-size: 1.4em; /* Điều chỉnh kích thước chung cho các icon điều hướng */
+    margin-bottom: 5px;
+    width: 32px; /* Đảm bảo icon chiếm không gian cố định */
+    text-align: center;
+}
+
+.nav-item span {
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap;
 }
