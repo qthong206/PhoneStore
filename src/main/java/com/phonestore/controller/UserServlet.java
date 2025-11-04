@@ -20,6 +20,7 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
+        request.setAttribute("currentView", "overview");
         request.getRequestDispatcher("/WEB-INF/views/user.jsp").forward(request, response);
     }
 }
