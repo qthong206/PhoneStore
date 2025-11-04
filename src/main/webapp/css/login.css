@@ -1,23 +1,31 @@
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 50px 0;
+body {
+    background-color: var(--color-neutral-light);
 }
 
-.login-form {
-    width: 100%;
-    max-width: 400px;
+.login-container {
+    max-width: 450px;
+    margin: 40px auto;
+    background: var(--color-white);
     padding: 40px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px var(--color-shadow);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .login-form h2 {
     text-align: center;
-    margin-bottom: 30px;
     color: var(--color-dark);
+    margin-bottom: 30px;
+    padding-top: 0;
+}
+
+.error-message {
+    color: var(--color-danger);
+    background-color: #fbecec;
+    border: 1px solid var(--color-danger);
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .form-group {
@@ -26,39 +34,135 @@
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
     font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--color-text);
 }
 
-.form-group input {
+.form-group input[type="text"],
+.form-group input[type="password"] {
     width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+/* Định vị cho icon con mắt */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-neutral-medium);
+    cursor: pointer;
+}
+
+.btn-login {
+    width: 100%;
+    background-color: var(--color-primary); /* Đổi sang màu xanh */
+    font-size: 1.1em;
+    padding: 12px;
+}
+.btn-login:hover {
+    background-color: var(--color-primary-dark); /* Đổi sang màu xanh đậm */
+}
+/* Link quên mật khẩu */
+.forgot-password {
+    text-align: center;
+    margin-top: 15px;
+}
+.forgot-password a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+/* Dấu gạch ngang "Hoặc" */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--color-neutral-medium);
+    margin: 25px 0;
+    font-size: 0.9em;
+}
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-neutral-light);
+}
+.divider span {
+    padding: 0 10px;
+}
+
+/* Các nút đăng nhập mạng xã hội */
+.social-login {
+    display: flex;
+    gap: 15px;
+}
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 12px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+.social-btn:hover {
+    background-color: var(--color-neutral-light);
+}
+.social-btn i {
+    margin-right: 10px;
+    font-size: 1.2em;
 }
 
-.login-form .btn {
-    width: 100%;
+.social-login {
+    display: flex;
+    gap: 15px;
+}
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 12px;
-    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+.social-btn:hover {
+    background-color: var(--color-neutral-light);
 }
 
-.error-message {
-    color: #e74c3c;
-    background: #fbe2e2;
-    padding: 10px;
-    border-radius: 5px;
+.social-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+/* Link đăng ký */
+.register-link {
     text-align: center;
-    margin-bottom: 20px;
+    margin-top: 25px;
+    font-size: 0.9em;
 }
-
-.form-footer {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.form-footer a {
+.register-link a {
     color: var(--color-primary);
+    font-weight: bold;
     text-decoration: none;
 }

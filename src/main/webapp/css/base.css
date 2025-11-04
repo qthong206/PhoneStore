@@ -60,8 +60,8 @@ h2 {
     border-radius: 5px;
     transition: background 0.3s ease;
     text-decoration: none;
-    text-transform: uppercase;
     font-weight: bold;
+    font-size: 0.9em;
 }
 
 .btn:hover {
