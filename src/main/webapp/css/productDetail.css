@@ -1,58 +1,276 @@
-.product-detail-container {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 50px;
-    align-items: center;
-    padding: 40px 0;
-}
-
-.product-image img {
-    width: 100%;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px var(--color-shadow);
-}
-
-.product-info h1 {
-    font-size: 2.5em;
-    color: var(--color-dark);
-    margin-bottom: 20px;
-}
-
-.product-info .price {
-    font-size: 2em;
-    font-weight: bold;
-    color: var(--color-primary);
-    margin-bottom: 20px;
-}
-
-.product-info .description {
-    font-size: 1.1em;
-    line-height: 1.8;
-    margin-bottom: 30px;
-}
-
-.add-to-cart-form {
+/* --- BREADCRUMBS --- */
+.breadcrumb-nav {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 8px;
+    padding: 20px 0;
+    font-size: 0.9em;
+    color: var(--color-neutral-medium);
+}
+.breadcrumb-nav a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+.breadcrumb-nav span {
+    color: var(--color-text);
 }
 
-.quantity-selector {
+/* --- BỐ CỤC 2 CỘT CHÍNH --- */
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia 2 cột 50/50 */
+    gap: 40px;
+}
+
+/* --- CỘT BÊN TRÁI (ẢNH & INFO) --- */
+.product-col-left h1 {
+    font-size: 2.2em;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+}
+
+.rating-summary {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-bottom: 15px;
+}
+.rating-stars {
+    color: #fadb14; /* Màu vàng */
+}
+.rating-text {
+    font-size: 0.9em;
+    color: var(--color-neutral-medium);
 }
 
-.quantity-selector label {
-    font-size: 1em;
+.action-links {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.action-links .action-link {
+    text-decoration: none;
+    color: var(--color-primary);
+    font-size: 0.9em;
+    font-weight: 500;
+}
+.action-links .action-link:hover {
+    text-decoration: underline;
+}
+.action-links .action-link i {
+    margin-right: 5px;
+}
+
+.product-gallery .gallery-main-image img {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--color-neutral-light);
+}
+.gallery-thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.gallery-thumbnails img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--color-neutral-light);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.gallery-thumbnails img.active,
+.gallery-thumbnails img:hover {
+    border-color: var(--color-primary);
+}
+
+
+/* --- CỘT BÊN PHẢI (GIÁ & MUA) --- */
+.price-box {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-neutral-light);
+    border-radius: 12px;
+    padding: 25px;
+}
+/* Làm cho sidebar dính lại khi cuộn */
+.sticky-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.price-box .price-container {
+    margin-bottom: 20px;
+}
+.price-box .sale-price {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--color-danger); /* Màu đỏ như trang home */
+}
+.price-box .original-price {
+    font-size: 1.1em;
+    color: var(--color-neutral-medium);
+    text-decoration: line-through;
+}
+
+.variant-picker {
+    margin-bottom: 20px;
+}
+.variant-picker label {
+    font-weight: 600;
+    color: var(--color-dark);
+    display: block;
+    margin-bottom: 10px;
+}
+.options-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.option-item {
+    text-decoration: none;
+    color: var(--color-text);
+    padding: 10px 15px;
+    border: 1px solid var(--color-neutral-medium);
+    border-radius: 8px;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+.option-item:hover {
+    border-color: var(--color-primary);
+}
+.option-item.active {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary);
     font-weight: 500;
 }
 
+.add-to-cart-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.quantity-selector {
+    grid-column: 1 / -1; /* Kéo dài hết 2 cột */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
 .quantity-selector input {
     width: 60px;
     padding: 10px;
     text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid var(--color-neutral-light);
+    border-radius: 8px;
     font-size: 1.1em;
+}
+
+/* Nút (sử dụng lại class .btn từ base.css) */
+.btn.btn-full {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.btn.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+.btn.btn-secondary {
+    background-color: var(--color-accent); /* Hoặc màu khác */
+    color: white;
+}
+
+/* --- NỘI DUNG FULL-WIDTH BÊN DƯỚI --- */
+.product-content-fullwidth {
+    margin-top: 50px;
+}
+.content-section {
+    background-color: var(--color-white);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+}
+.content-section h2 {
+    font-size: 1.6em;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+}
+
+.article-content {
+    line-height: 1.7;
+}
+.article-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+/* Thông số */
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.specs-table tr {
+    border-bottom: 1px solid var(--color-neutral-light);
+}
+.specs-table td {
+    padding: 15px 10px;
+}
+.specs-table tr td:first-child {
+    font-weight: 500;
+    color: var(--color-text);
+    width: 30%;
+}
+.specs-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Đánh giá */
+.reviews-summary-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+.reviews-score {
+    text-align: center;
+}
+.reviews-score .score-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--color-danger);
+}
+.reviews-score .score-stars {
+    color: #fadb14;
+    margin: 5px 0;
+}
+.reviews-score .score-count {
+    font-size: 0.9em;
+    color: var(--color-neutral-medium);
+}
+
+/* --- BỔ SUNG CHO CÁC Ô MÀU --- */
+
+.option-item {
+    display: flex; /* Dùng flex để căn chỉnh ô màu và chữ */
+    align-items: center;
+    gap: 8px;
+}
+
+.color-swatch {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; /* Bo tròn */
+    border: 1px solid var(--color-neutral-medium);
 }

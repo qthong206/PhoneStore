@@ -1,12 +1,14 @@
 package com.phonestore.dao;
 
+import com.phonestore.context.DBContext;
 import com.phonestore.model.Brand;
+import com.phonestore.model.Color;
 import com.phonestore.model.Product;
+import com.phonestore.model.ProductSeries;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,77 +16,245 @@ import java.util.Map;
 
 public class ProductDAO {
 
-    public Map<Brand, List<Product>> getProductsGroupedByBrand() {
-        Map<Brand, List<Product>> productMap = new LinkedHashMap<>();
-        String sql = "SELECT p.*, b.name as brand_name " +
-                "FROM Product p JOIN Brand b ON p.brand_id = b.id " +
-                "ORDER BY b.id, p.id";
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+    // Tiện ích đóng kết nối
+    private void closeConnections() {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            while (rs.next()) {
-                // Tạo đối tượng Brand
-                int brandId = rs.getInt("brand_id");
-                String brandName = rs.getString("brand_name");
-                Brand brand = new Brand(brandId, brandName);
+    /**
+     * Lấy 1 "biến thể" (Product) bằng ID của nó (Đã cập nhật)
+     */
+    public Product getProductById(int productId) {
+        String query = "SELECT p.*, b.name as brand_name, b.logo_url " +
+                "FROM Product p " + // Dùng tên bảng "Product" (viết hoa)
+                "JOIN Brand b ON p.brand_id = b.id " + // Dùng tên bảng "Brand"
+                "WHERE p.id = ?";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return null;
 
-                // Tạo đối tượng Product
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Brand brand = new Brand();
+                brand.setId(rs.getInt("brand_id"));
+                brand.setName(rs.getString("brand_name"));
+                brand.setLogoUrl(rs.getString("logo_url"));
+
                 Product product = new Product();
                 product.setId(rs.getInt("id"));
                 product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getDouble("price"));
                 product.setSalePrice(rs.getDouble("sale_price"));
                 product.setThumbnailUrl(rs.getString("thumbnail_url"));
-                product.setDescription(rs.getString("description"));
                 product.setBrand(brand);
+                product.setSeriesId(rs.getInt("series_id"));
+                product.setModel(rs.getString("model")); // Lấy model
+                product.setStorage(rs.getString("storage")); // Lấy storage
 
-                // Thêm product vào Map, nhóm theo brand
-                // Dùng computeIfAbsent để tự động tạo list mới nếu brand chưa có trong map
-                productMap.computeIfAbsent(brand, k -> new ArrayList<>()).add(product);
+                return product;
             }
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("LỖI TRONG ProductDAO.getProductById:");
             e.printStackTrace();
+        } finally {
+            closeConnections();
         }
-        return productMap;
+        return null;
     }
 
-    // Thêm phương thức này vào bên trong lớp ProductDAO.java
+    /**
+     * Lấy thông tin "sản phẩm gốc" (Series) bằng ID của nó
+     */
+    public ProductSeries getProductSeriesById(int seriesId) {
+        // Dùng tên bảng "ProductSeries" (viết hoa)
+        String query = "SELECT * FROM ProductSeries WHERE id = ?";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return null;
 
-    public Product getProductById(int productId) {
-        Product product = null;
-        String sql = "SELECT p.*, b.name as brand_name " +
-                "FROM Product p JOIN Brand b ON p.brand_id = b.id " +
-                "WHERE p.id = ?";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, seriesId);
+            rs = ps.executeQuery();
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, productId); // Gán id vào dấu ? trong câu lệnh SQL
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // Tạo đối tượng Brand
-                    Brand brand = new Brand();
-                    brand.setId(rs.getInt("brand_id"));
-                    brand.setName(rs.getString("brand_name"));
-
-                    // Tạo đối tượng Product từ dữ liệu lấy được
-                    product = new Product();
-                    product.setId(rs.getInt("id"));
-                    product.setName(rs.getString("name"));
-                    product.setPrice(rs.getDouble("price"));
-                    product.setSalePrice(rs.getDouble("sale_price"));
-                    product.setThumbnailUrl(rs.getString("thumbnail_url"));
-                    product.setDescription(rs.getString("description"));
-                    product.setBrand(brand);
-                }
+            if (rs.next()) {
+                ProductSeries series = new ProductSeries();
+                series.setId(rs.getInt("id"));
+                series.setName(rs.getString("name"));
+                // Đã xóa cột description khỏi model này
+                return series;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("LỖI TRONG ProductDAO.getProductSeriesById:");
             e.printStackTrace();
+        } finally {
+            closeConnections();
         }
-        return product; // Trả về sản phẩm tìm được, hoặc null nếu không có
+        return null;
+    }
+
+    /**
+     * Lấy các "dung lượng" (storage) cho CÙNG MỘT MODEL
+     */
+    public List<Product> getVariantsBySeriesAndModel(int seriesId, String model) {
+        List<Product> variants = new ArrayList<>();
+        // Lấy các cột tối giản (id, storage) từ bảng "Product"
+        String query = "SELECT id, storage, price, sale_price FROM Product " +
+                "WHERE series_id = ? AND model = ? " +
+                "ORDER BY id";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return variants;
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, seriesId);
+            ps.setString(2, model); // Lọc theo "Pro Max"
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Product variant = new Product();
+                variant.setId(rs.getInt("id"));
+                variant.setStorage(rs.getString("storage")); // Chỉ cần dung lượng
+                variant.setPrice(rs.getDouble("price"));
+                variant.setSalePrice(rs.getDouble("sale_price"));
+                variants.add(variant);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return variants;
+    }
+
+    /**
+     * Lấy TẤT CẢ các "màu sắc" (Colors) có sẵn cho "sản phẩm gốc" (Series)
+     */
+    public List<Color> getColorsBySeriesId(int seriesId) {
+        List<Color> colors = new ArrayList<>();
+        String query = "SELECT DISTINCT c.id, c.name, c.hex_code " +
+                "FROM Color c " + // Dùng tên bảng "Color"
+                "JOIN ProductColor pc ON c.id = pc.color_id " + // Dùng "ProductColor"
+                "JOIN Product p ON pc.product_id = p.id " + // Dùng "Product"
+                "WHERE p.series_id = ?";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return colors;
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, seriesId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Color color = new Color();
+                color.setId(rs.getInt("id"));
+                color.setName(rs.getString("name"));
+                color.setHexCode(rs.getString("hex_code"));
+                colors.add(color);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return colors;
+    }
+
+    /**
+     * HÀM MỚI: Lấy danh sách ảnh trong album của 1 sản phẩm
+     */
+    public List<String> getGalleryImagesByProductId(int productId) {
+        List<String> galleryImages = new ArrayList<>();
+
+        // Dùng tên bảng "ProductGallery" (viết hoa)
+        String query = "SELECT image_url FROM ProductGallery " +
+                "WHERE product_id = ? " +
+                "ORDER BY sort_order ASC";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return galleryImages;
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                galleryImages.add(rs.getString("image_url"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return galleryImages;
+    }
+
+
+    /**
+     * Lấy sản phẩm cho Trang chủ (Đã cập nhật)
+     */
+    public Map<Brand, List<Product>> getProductsGroupedByBrand() {
+        Map<Brand, List<Product>> productMap = new LinkedHashMap<>();
+
+        String query = "SELECT p.*, b.name as brand_name, b.logo_url " +
+                "FROM Product p " + // Dùng tên bảng "Product"
+                "JOIN Brand b ON p.brand_id = b.id " + // Dùng "Brand"
+                "ORDER BY b.id, p.id";
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return productMap;
+
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            Brand currentBrand = null;
+            List<Product> currentProductList = null;
+
+            while (rs.next()) {
+                int brandId = rs.getInt("brand_id");
+
+                if (currentBrand == null || brandId != currentBrand.getId()) {
+                    currentBrand = new Brand();
+                    currentBrand.setId(brandId);
+                    currentBrand.setName(rs.getString("brand_name"));
+                    currentBrand.setLogoUrl(rs.getString("logo_url"));
+                    currentProductList = new ArrayList<>();
+                    productMap.put(currentBrand, currentProductList);
+                }
+
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setSalePrice(rs.getDouble("sale_price"));
+                product.setThumbnailUrl(rs.getString("thumbnail_url"));
+                product.setBrand(currentBrand);
+                product.setSeriesId(rs.getInt("series_id"));
+                product.setModel(rs.getString("model"));
+                product.setStorage(rs.getString("storage"));
+
+                currentProductList.add(product);
+            }
+        } catch (Exception e) {
+            System.err.println("LỖI TRONG ProductDAO.getProductsGroupedByBrand:");
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return productMap;
     }
 }
