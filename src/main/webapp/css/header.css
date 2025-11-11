@@ -2,6 +2,8 @@ header {
     background-color: var(--color-dark);
     padding: 15px 0;
     box-shadow: 0 4px 6px var(--color-shadow);
+    position: relative;
+    z-index: 2000;
 }
 
 .header-container {
@@ -10,6 +12,7 @@ header {
     align-items: center;
     gap: 20px;
     padding: 0;
+    overflow: visible;
 }
 
 /* --- KHỐI BÊN TRÁI: LOGO VÀ DANH MỤC --- */
@@ -37,10 +40,6 @@ header {
     font-weight: 500;
     transition: background-color 0.3s ease;
     white-space: nowrap;
-}
-
-.category-button:hover {
-    background-color: var(--color-primary);
 }
 
 .category-icon {
@@ -124,4 +123,118 @@ header {
     font-size: 0.9em;
     font-weight: 500;
     white-space: nowrap;
+}
+
+/* --- BỔ SUNG CSS CHO MEGA MENU --- */
+
+/* 1. Container của nút Danh mục */
+.category-dropdown {
+    position: relative; /* Rất quan trọng: làm mốc cho menu con */
+}
+
+/* 2. Hộp chứa menu dropdown (mặc định bị ẩn) */
+.category-menu-container {
+    display: none; /* Ẩn menu đi */
+    position: absolute;
+    top: 110%; /* Hiển thị ngay dưới nút "Danh mục" */
+    left: 0;
+    width: 280px; /* Chiều rộng của menu danh mục */
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px var(--color-shadow);
+    padding: 10px;
+    z-index: 1001; /* Đảm bảo nó nổi lên trên */
+}
+
+/* 3. Hiển thị menu khi di chuột vào nút "Danh mục" */
+.category-dropdown.menu-open .category-menu-container {
+    display: block;
+}
+
+/* 4. Danh sách các mục trong menu (iPhone, iPad...) */
+.category-menu-list {
+    list-style: none;
+}
+
+.category-menu-list li {
+    position: relative; /* Làm mốc cho menu con cấp 2 */
+}
+
+.category-menu-list li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: var(--color-text);
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+.category-menu-list li a i {
+    color: var(--color-primary);
+    margin-right: 10px;
+}
+.category-menu-list li a .fa-chevron-right {
+    font-size: 0.8em;
+    color: var(--color-neutral-medium);
+}
+
+.category-menu-list li a:hover {
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary);
+}
+
+/* 5. Hộp chứa sản phẩm (mặc định bị ẩn) */
+.mega-menu-content {
+    display: none; /* Ẩn menu con cấp 2 */
+    position: absolute;
+    top: -10px; /* Căn chỉnh vị trí (cách lề trên 10px) */
+    left: 100%; /* Hiển thị ngay bên phải menu cấp 1 */
+    width: 400px; /* Chiều rộng của hộp sản phẩm */
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px var(--color-shadow);
+    padding: 20px;
+    margin-left: 10px;
+}
+
+/* 6. Hiển thị hộp sản phẩm khi di chuột vào mục (iPhone, iPad...) */
+.category-menu-list li:hover > .mega-menu-content {
+    display: block;
+}
+
+.mega-menu-content h4 {
+    color: var(--color-dark);
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-neutral-light);
+}
+
+.mega-product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.mega-product-card {
+    text-decoration: none;
+    color: var(--color-text);
+    font-size: 0.9em;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.mega-product-card:hover {
+    background-color: var(--color-neutral-light);
+}
+
+.mega-product-card img {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 10px;
 }

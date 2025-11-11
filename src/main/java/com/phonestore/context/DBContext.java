@@ -1,4 +1,4 @@
-package com.phonestore.dao;
+package com.phonestore.context;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,23 +1,27 @@
-/* Màu sắc từ bảng màu của bạn */
+/* --- BIẾN MÀU (ĐÃ CẬP NHẬT) --- */
 :root {
-    --color-primary-ultralight: #EAF8FF; /* Xanh siêu nhạt cho nền */
-    --color-light: #CDF1FF;              /* Xanh nhạt */
-    --color-accent: #71D9FF;             /* Xanh nhấn, sáng hơn */
-    --color-primary: #00ABFD;            /* Xanh chủ đạo */
-    --color-primary-dark: #0082C5;       /* Xanh chủ đạo (đậm hơn khi hover) */
-    --color-dark: #003140;               /* Xanh đen (cho footer, text) */
+    /* Màu sắc chính (Giữ nguyên) */
+    --color-primary: #00ABFD;
+    --color-primary-dark: #0082C5;
+    --color-accent: #71D9FF;
+    --color-primary-ultralight: #EAF8FF;
+    --color-dark: #003140; /* Giữ cho header/footer */
 
-    --color-white: #FFFFFF;
-    --color-neutral-light: #F0F2F5;      /* Xám rất nhạt cho nền section */
-    --color-neutral-medium: #A9B4B8;     /* Xám cho text phụ, đường kẻ */
-    --color-text: #333333;               /* Màu text chính */
-    --color-text-light: #F9F9F9;         /* Màu text trên nền tối */
+    /* Màu nền & Chữ (Theo theme mới: Nền trắng) */
+    --color-background: #F0F2F5;     /* Nền body (trắng xám) */
+    --color-white: #FFFFFF;         /* Nền card (trắng tinh) */
+    --color-text: #333333;           /* Chữ chính */
+    --color-text-light: #F9F9F9;     /* Chữ trên nền tối */
 
-    --color-success: #20c997;            /* Xanh lá cho thành công */
-    --color-warning: #ffc107;            /* Vàng cho cảnh báo */
-    --color-danger: #dc3545;             /* Đỏ cho lỗi, xóa */
+    /* Biến cũ (Giữ nguyên tên cho tương thích) */
+    --color-light: #CDF1FF;
+    --color-neutral-light: #F0F2F5;
+    --color-neutral-medium: #A9B4B8;
 
-    /* --- Hiệu ứng --- */
+    /* Màu phụ trợ (Giữ nguyên) */
+    --color-success: #20c997;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
     --color-shadow: rgba(0, 49, 64, 0.1);
 }
 
@@ -29,7 +33,7 @@
 }
 
 body {
-    background-color: var(--color-light);
+    background-color: var(--color-background);
     color: var(--color-text);
     line-height: 1.6;
 }
@@ -38,10 +42,10 @@ body {
     width: 90%;
     max-width: 1200px;
     margin: auto;
-    overflow: hidden;
     padding: 20px 0;
 }
 
+/* --- CÁC THÀNH PHẦN CHUNG --- */
 h2 {
     color: var(--color-dark);
     text-align: center;

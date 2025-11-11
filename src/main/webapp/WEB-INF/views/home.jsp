@@ -2,8 +2,8 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
+<c:set var="pageCss" value="home.css" scope="request" />
 <jsp:include page="/WEB-INF/layout/header.jsp" />
-<link rel="stylesheet" href="<c:url value='/css/home.css'/>">
 
 <main class="container">
     <%-- Lặp qua từng thương hiệu trong Map --%>
