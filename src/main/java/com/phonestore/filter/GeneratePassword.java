@@ -4,7 +4,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class GeneratePassword {
     public static void main(String[] args) {
-        String passwordToHash = "12345";
+        String passwordToHash = "123";
         String hashedPassword = BCrypt.hashpw(passwordToHash, BCrypt.gensalt(12));
 
         System.out.println("Mật khẩu gốc: " + passwordToHash);
