@@ -1,4 +1,3 @@
-/* --- BIẾN MÀU (ĐÃ CẬP NHẬT) --- */
 :root {
     /* Màu sắc chính (Giữ nguyên) */
     --color-primary: #00ABFD;
@@ -17,6 +16,7 @@
     --color-light: #CDF1FF;
     --color-neutral-light: #F0F2F5;
     --color-neutral-medium: #A9B4B8;
+    --color-neutral-dark: #6c757d;
 
     /* Màu phụ trợ (Giữ nguyên) */
     --color-success: #20c997;
