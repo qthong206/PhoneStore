@@ -31,12 +31,24 @@
                 </thead>
                 <tbody>
                 <c:forEach var="item" items="${sessionScope.cart.items}">
+
+                    <%-- SỬA LỖI 2: Logic lấy giá đúng --%>
+                    <c:set var="priceToUse" value="${item.product.price}" />
+                    <c:if test="${item.product.salePrice > 0}">
+                        <c:set var="priceToUse" value="${item.product.salePrice}" />
+                    </c:if>
+
                     <tr>
-                        <td><img src="<c:url value='/${item.product.image}'/>" alt="${item.product.name}"></td>
+                        <td><img src="<c:url value='${item.product.thumbnailUrl}'/>" alt="${item.product.name}"></td>
+
                         <td>${item.product.name}</td>
-                        <td><fmt:formatNumber value="${item.product.price}" type="number" pattern="#,##0"/> ₫</td>
+
+                        <td><fmt:formatNumber value="${priceToUse}" type="number" pattern="#,##0"/> ₫</td>
+
                         <td>${item.quantity}</td>
-                        <td><fmt:formatNumber value="${item.product.price * item.quantity}" type="number" pattern="#,##0"/> ₫</td>
+
+                        <td><fmt:formatNumber value="${priceToUse * item.quantity}" type="number" pattern="#,##0"/> ₫</td>
+
                         <td><a href="<c:url value='/cart?action=remove&id=${item.product.id}'/>" class="remove-btn">×</a></td>
                     </tr>
                 </c:forEach>
@@ -53,7 +65,8 @@
                     <span>Thanh toán</span>
                     <span><fmt:formatNumber value="${sessionScope.cart.total}" type="number" pattern="#,##0"/> ₫</span>
                 </div>
-                <a href="#" class="btn checkout-btn">Tiến hành thanh toán</a>
+
+                <a href="<c:url value='/checkout'/>" class="btn checkout-btn">Tiến hành thanh toán</a>
             </div>
         </div>
     </c:if>

@@ -18,14 +18,10 @@ public class Cart {
      */
     public void addItem(Product product, int quantity) {
         int productId = product.getId();
-
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
         if (items.containsKey(productId)) {
-            // Nếu có, cập nhật lại số lượng
             CartItem existingItem = items.get(productId);
             existingItem.setQuantity(existingItem.getQuantity() + quantity);
         } else {
-            // Nếu chưa, tạo một CartItem mới và thêm vào giỏ
             CartItem newItem = new CartItem(product, quantity);
             items.put(productId, newItem);
         }
@@ -54,8 +50,26 @@ public class Cart {
     public double getTotal() {
         double total = 0;
         for (CartItem item : items.values()) {
-            total += item.getProduct().getPrice() * item.getQuantity();
+            double price;
+            if (item.getProduct().getSalePrice() > 0) {
+                price = item.getProduct().getSalePrice();
+            } else {
+                price = item.getProduct().getPrice();
+            }
+            total += price * item.getQuantity();
         }
         return total;
+    }
+
+    /**
+     * Lấy tổng số lượng của tất cả các sản phẩm (để hiển thị ở Bước 2)
+     * @return Tổng số lượng.
+     */
+    public int getTotalQuantity() {
+        int totalQuantity = 0;
+        for (CartItem item : items.values()) {
+            totalQuantity += item.getQuantity();
+        }
+        return totalQuantity;
     }
 }

@@ -1,5 +1,6 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.ProductDAO;
 import com.phonestore.model.Cart;
 import com.phonestore.model.Product;
 import jakarta.servlet.ServletException;
@@ -14,23 +15,37 @@ import java.io.IOException;
 @WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
 public class CartServlet extends HttpServlet {
 
-    // --- "Cơ sở dữ liệu" giả lập để tìm sản phẩm ---
+    private ProductDAO productDAO;
+
+    @Override
+    public void init() {
+        productDAO = new ProductDAO();
+    }
+
+    /**
+     * HÀM NÀY ĐÃ ĐƯỢC SỬA
+     * Nó sẽ gọi ProductDAO để lấy sản phẩm thật từ DB.
+     */
     private Product findProductById(int id) {
-        // Trong dự án thật, bạn sẽ gọi ProductDAO.getProductById(id)
-        return null;
+        try {
+            // 4. GỌI DAO THẬT
+            return productDAO.getProductById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Trả về null nếu DAO có lỗi
+        }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action != null && action.equals("remove")) {
+
+        if ("remove".equals(action)) {
             removeItemFromCart(request);
-            response.sendRedirect("cart"); // Tải lại trang giỏ hàng
+            response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
-
-        // Mặc định là hiển thị trang giỏ hàng
         request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
     }
 
@@ -39,19 +54,17 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action != null && action.equals("add")) {
+        if ("add".equals(action)) {
             addItemToCart(request);
         }
-
-        // Sau khi thêm, chuyển hướng đến trang giỏ hàng để xem kết quả
-        response.sendRedirect("cart");
+        response.sendRedirect(request.getContextPath() + "/cart");
     }
 
     private void addItemToCart(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
 
-        // Nếu giỏ hàng chưa tồn tại trong session, tạo mới
+        // Lấy giỏ hàng từ session, hoặc tạo mới nếu chưa có
+        Cart cart = (Cart) session.getAttribute("cart");
         if (cart == null) {
             cart = new Cart();
         }
@@ -61,11 +74,14 @@ public class CartServlet extends HttpServlet {
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
             Product product = findProductById(productId);
+
             if (product != null) {
                 cart.addItem(product, quantity);
+            } else {
+                // Ghi log lỗi nếu không tìm thấy sản phẩm
+                System.err.println("CartServlet: Không tìm thấy Product với ID=" + productId);
             }
         } catch (NumberFormatException e) {
-            // Xử lý lỗi nếu id hoặc quantity không phải là số
             e.printStackTrace();
         }
 
@@ -79,6 +95,7 @@ public class CartServlet extends HttpServlet {
 
         if (cart != null) {
             try {
+                // file cart.jsp của bạn dùng ?id=... nên đây là 'id'
                 int productId = Integer.parseInt(request.getParameter("id"));
                 cart.removeItem(productId);
                 session.setAttribute("cart", cart);

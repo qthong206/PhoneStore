@@ -9,20 +9,16 @@ public class CartItem {
         this.quantity = quantity;
     }
 
+    public double getTotalPrice() {
+        double price = (product.getSalePrice() > 0) ?
+                product.getSalePrice() :
+                product.getPrice();
+        return price * quantity;
+    }
+
     // Getters and Setters
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 }
