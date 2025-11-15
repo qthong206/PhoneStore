@@ -1,0 +1,338 @@
+/* Container hẹp hơn cho checkout */
+.container-narrow {
+    max-width: 800px;
+    width: 90%;
+}
+
+/* =================================== */
+/* 1. HEADER (MỚI - ĐÃ THÊM) */
+/* =================================== */
+.checkout-header {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa nút back và H2 */
+    margin-bottom: 20px;
+
+    /* Căn lề: Nút back bên trái, H2 ở giữa */
+    position: relative; /* Bắt buộc */
+    justify-content: center; /* Đẩy H2 ra giữa */
+}
+.checkout-header h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 1.8rem;
+    text-align: center;
+}
+.checkout-back-btn {
+    position: absolute; /* Đặt nút back bên trái */
+    left: 0;
+    font-size: 1.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 5px; /* Tăng vùng bấm */
+}
+.checkout-back-btn:hover {
+    color: var(--color-primary);
+}
+
+
+/* 2. THANH TIẾN TRÌNH (HEADER 2 BƯỚC) */
+.checkout-steps {
+    display: flex;
+    margin-bottom: 20px;
+    background-color: var(--color-neutral-light);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.step-item {
+    flex: 1; /* Chia 50/50 */
+    text-align: center;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-neutral-medium);
+    border-bottom: 3px solid transparent;
+}
+.step-item.active {
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-primary);
+}
+.step-item span {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 50%;
+    background-color: var(--color-neutral-medium);
+    color: var(--color-white);
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-right: 8px;
+}
+.step-item.active span {
+    background-color: var(--color-primary);
+}
+
+
+/* 3. CÁC KHỐI CHUNG */
+.checkout-section {
+    background-color: var(--color-white);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+.checkout-section h3 {
+    font-size: 1.3rem;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+/* Tái sử dụng .form-group và .form-control */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--color-neutral-medium);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+.form-control[readonly] {
+    background-color: var(--color-neutral-light);
+    cursor: not-allowed;
+}
+textarea.form-control {
+    resize: vertical;
+}
+
+/* 4. NỘI DUNG BƯỚC 1 */
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Thêm border-bottom cho mỗi sản phẩm */
+    border-bottom: 1px solid var(--color-neutral-light);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+.summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.summary-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--color-neutral-light);
+}
+.summary-item .item-info {
+    flex-grow: 1;
+}
+.summary-item .item-info p {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.item-price-step1 {
+    color: var(--color-danger);
+    font-weight: bold !important;
+}
+.item-quantity {
+    font-size: 0.9rem;
+    color: var(--color-neutral-dark);
+}
+.user-info-box {
+    background-color: var(--color-primary-ultralight);
+    border: 1px solid var(--color-accent);
+    color: var(--color-dark);
+    padding: 15px;
+    border-radius: 4px;
+}
+.address-toggle-group {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.radio-group input[type="radio"] { cursor: pointer; }
+.radio-group label { cursor: pointer; font-weight: 500; }
+
+/* 5. NỘI DUNG BƯỚC 2 */
+.voucher-box {
+    display: flex;
+    gap: 10px;
+}
+.voucher-box .form-control {
+    flex-grow: 1;
+}
+.btn-apply-voucher {
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    padding: 0 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.voucher-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-primary-ultralight);
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    color: var(--color-primary);
+    cursor: pointer;
+}
+.voucher-select .fa-chevron-right {
+    margin-left: auto;
+}
+
+.summary-totals-step2 {
+    padding: 10px 0;
+}
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+.summary-row.total {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--color-danger);
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--color-neutral-medium);
+}
+.payment-method {
+    margin-bottom: 10px; /* Khoảng cách giữa 2 nút */
+}
+.payment-method label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid var(--color-neutral-medium);
+    border-radius: 4px;
+}
+.payment-method input[type="radio"]:checked + label {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-ultralight);
+}
+.payment-method label i {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    width: 30px; /* Căn lề icon */
+    text-align: center;
+}
+.shipping-info-summary {
+    background-color: var(--color-neutral-light);
+    padding: 15px;
+    border-radius: 4px;
+    line-height: 1.7;
+}
+
+/* 6. FOOTER (CHUNG) */
+.checkout-footer {
+    background-color: var(--color-white);
+    padding: 20px;
+    border-top: 1px solid var(--color-neutral-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0 -2px 10px var(--color-shadow);
+}
+.footer-total {
+    display: flex;
+    flex-direction: column;
+}
+.footer-total span {
+    font-size: 0.9rem;
+    color: var(--color-neutral-dark);
+}
+.footer-total strong {
+    font-size: 1.3rem;
+    color: var(--color-danger);
+}
+.checkout-footer .btn-primary {
+    padding: 12px 30px;
+    font-size: 1rem;
+}
+
+/* Nút kiểm tra (Bước 2) */
+.check-items-link {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    margin-top: 20px;
+}
+.check-items-link:hover {
+    text-decoration: underline;
+}
+
+/* =================================== */
+/* CSS CHO MODAL (MỚI - ĐÃ THÊM) */
+/* =Access-Control-Allow-Origin: *
+================================= */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 2rem;
+    color: var(--color-neutral-medium);
+    background: none; border: none;
+    cursor: pointer;
+}
+.modal-content.form-modal {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    text-align: left;
+}
+.modal-content.form-modal h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.checkout-error-box {
+    background-color: #fff0f1; /* Màu đỏ nhạt */
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.checkout-error-box i {
+    font-size: 1.2rem;
+}
