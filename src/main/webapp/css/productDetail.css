@@ -18,7 +18,7 @@
     color: var(--color-text);
 }
 
-/* --- BỐ CỤC 2 CỘT CHÍNH --- */
+/* --- BỐ CỤC 2 CỘT CHÍNH (ĐÃ KHÔI PHỤC) --- */
 .product-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Chia 2 cột 50/50 */
@@ -31,6 +31,7 @@
     font-weight: 600;
     color: var(--color-dark);
     margin-bottom: 10px;
+    line-height: 1.3;
 }
 
 .rating-summary {
@@ -149,28 +150,25 @@
     color: var(--color-primary);
     font-weight: 500;
 }
+.option-item {
+    display: flex; /* Dùng flex để căn chỉnh ô màu và chữ */
+    align-items: center;
+    gap: 8px;
+}
+.color-swatch {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; /* Bo tròn */
+    border: 1px solid var(--color-neutral-medium);
+}
+
 
 .add-to-cart-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
-.quantity-selector {
-    grid-column: 1 / -1; /* Kéo dài hết 2 cột */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-.quantity-selector input {
-    width: 60px;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid var(--color-neutral-light);
-    border-radius: 8px;
-    font-size: 1.1em;
-}
-
 /* Nút (sử dụng lại class .btn từ base.css) */
 .btn.btn-full {
     width: 100%;
@@ -190,7 +188,9 @@
 /* --- NỘI DUNG FULL-WIDTH BÊN DƯỚI --- */
 .product-content-fullwidth {
     margin-top: 50px;
+    grid-column: 1 / -1; /* Kéo dài full 2 cột */
 }
+
 .content-section {
     background-color: var(--color-white);
     border-radius: 12px;
@@ -205,11 +205,6 @@
 
 .article-content {
     line-height: 1.7;
-}
-.article-content img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 15px;
 }
 
 /* Thông số */
@@ -232,45 +227,280 @@
     background-color: #f9f9f9;
 }
 
-/* Đánh giá */
-.reviews-summary-box {
-    display: flex;
+
+/* =================================== */
+/* STYLING MỚI CHO KHU VỰC ĐÁNH GIÁ (V2) */
+/* =================================== */
+
+.reviews-summary-box-v2 {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Cột điểm | Cột thanh % */
+    gap: 40px;
     align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-    background-color: #f9f9f9;
-    padding: 20px;
+    padding: 16px;
+    background-color: var(--color-neutral-light);
     border-radius: 8px;
+    margin-bottom: 20px;
 }
-.reviews-score {
+
+.summary-score-v2 {
     text-align: center;
 }
-.reviews-score .score-number {
-    font-size: 2em;
+.summary-score-v2 .score-number-v2 {
+    font-size: 2.5rem;
     font-weight: bold;
-    color: var(--color-danger);
+    color: var(--color-primary);
 }
-.reviews-score .score-stars {
-    color: #fadb14;
+.summary-score-v2 .score-number-v2 span {
+    font-size: 1.5rem;
+    color: var(--color-neutral-dark);
+    font-weight: normal;
+}
+.summary-score-v2 .score-stars-v2 {
+    font-size: 1rem;
+    color: #ffc107;
     margin: 5px 0;
 }
-.reviews-score .score-count {
-    font-size: 0.9em;
-    color: var(--color-neutral-medium);
+.summary-score-v2 .score-count-v2 {
+    font-size: 0.9rem;
+    color: var(--color-neutral-dark);
+    margin-bottom: 15px;
+}
+/* Nút "Viết đánh giá" */
+.summary-score-v2 .btn-primary {
+    width: 100%;
 }
 
-/* --- BỔ SUNG CHO CÁC Ô MÀU --- */
-
-.option-item {
-    display: flex; /* Dùng flex để căn chỉnh ô màu và chữ */
-    align-items: center;
+.summary-bars-v2 {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
 }
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+.bar-item span:first-child {
+    width: 50px; /* Cố định 5 sao, 4 sao... */
+    color: #ffc107;
+}
+.bar-item span:last-child {
+    color: var(--color-neutral-dark);
+}
+.progress-bar {
+    flex-grow: 1;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.progress {
+    height: 100%;
+    background-color: var(--color-primary); /* Dùng màu chủ đạo */
+    border-radius: 5px;
+}
 
-.color-swatch {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%; /* Bo tròn */
+/* --- Form Viết Đánh Giá (NẰM TRONG MODAL) --- */
+/* (Xóa CSS .review-form-container cũ) */
+.review-login-prompt {
+    padding: 16px;
+    background-color: var(--color-neutral-light);
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
     border: 1px solid var(--color-neutral-medium);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* Input 5 sao */
+.rating-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+.rating-input input[type="radio"] { display: none; }
+.rating-input label { font-size: 1.5rem; color: #ccc; cursor: pointer; transition: color 0.2s; margin-bottom: 0; }
+.rating-input:hover label { color: var(--color-primary); }
+.rating-input label:hover ~ label { color: var(--color-primary); }
+.rating-input input[type="radio"]:checked ~ label { color: var(--color-primary); }
+
+/* --- Danh Sách Đánh Giá (Giữ CSS cũ) --- */
+.review-list { display: flex; flex-direction: column; gap: 20px; }
+.review-item { display: flex; gap: 16px; border-top: 1px solid var(--color-neutral-light); padding-top: 20px; }
+.review-author { flex-shrink: 0; width: 150px; text-align: left; }
+.review-author .avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 8px;
+}
+.review-author .author-name { display: block; font-weight: 500; }
+.review-content .review-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+/* (Xóa .review-title vì đã bỏ title) */
+.review-content .review-body { margin: 0 0 10px 0; line-height: 1.6; }
+.review-content .review-date { font-size: 0.85rem; color: var(--color-neutral-dark); }
+
+/* =================================== */
+/* CSS CHO MODAL ĐĂNG NHẬP (THIẾT KẾ RIÊNG) */
+/* =================================== */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-content.custom-modal {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    border-top: 4px solid var(--color-primary);
+}
+.modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 2rem;
+    color: var(--color-neutral-medium);
+    background: none; border: none;
+    cursor: pointer;
+}
+.modal-icon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+}
+.custom-modal h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+}
+.custom-modal p {
+    color: var(--color-text);
+    margin-bottom: 25px;
+}
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.modal-buttons .btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.btn-modal-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+.btn-modal-primary:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+}
+.btn-modal-secondary {
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.btn-modal-secondary:hover {
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary);
+}
+
+/* =================================== */
+/* CSS CHO MODAL FORM ĐÁNH GIÁ (MỚI) */
+/* =================================== */
+
+.modal-content.form-modal {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    width: 90%;
+    max-width: 600px; /* Rộng hơn modal login */
+    position: relative;
+    text-align: left; /* Căn lề trái cho form */
+}
+
+.modal-content.form-modal h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 25px;
+    text-align: center; /* Tiêu đề thì căn giữa */
+}
+
+/* Tái sử dụng .review-form-container
+   nhưng xóa bớt border/padding vì modal đã có
+*/
+.form-modal .review-form-container {
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+/* =================================== */
+/* CSS CHO NÚT YÊU THÍCH (ĐÃ SỬA MÀU + BỎ CHỮ) */
+/* =================================== */
+.action-link-btn {
+    background: none;
+    border: none;
+    padding: 0 5px; /* Thêm padding nhỏ 2 bên */
+    font: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-primary); /* <-- MÀU XANH (Viền xanh) */
+
+    /* Cho icon to hơn khi không có chữ */
+    font-size: 1.2em;
+    line-height: 1; /* Căn chỉnh lại */
+    transition: color 0.2s, opacity 0.2s;
+}
+.action-link-btn:hover {
+    text-decoration: none; /* Bỏ gạch chân */
+    opacity: 0.8; /* Làm mờ đi khi hover */
+}
+.action-link-btn i {
+    margin-right: 0; /* Xóa margin vì không còn chữ */
+}
+
+/* Logic Ẩn/Hiện Icon (Đã xóa CSS cho chữ) */
+.action-link-btn .icon-heart-filled {
+    display: none; /* Mặc định ẩn icon (Đã thích) */
+}
+.action-link-btn .icon-heart-empty {
+    display: inline-block; /* Mặc định hiện icon (Yêu thích) */
+}
+
+/* Khi nút có class 'active' (đã thích) */
+.action-link-btn.active {
+    color: var(--color-primary); /* <-- ĐỔI THÀNH MÀU XANH (Tim xanh đặc) */
+}
+.action-link-btn.active .icon-heart-filled {
+    display: inline-block; /* Hiện icon (Đã thích) */
+}
+.action-link-btn.active .icon-heart-empty {
+    display: none; /* Ẩn icon (Yêu thích) */
 }

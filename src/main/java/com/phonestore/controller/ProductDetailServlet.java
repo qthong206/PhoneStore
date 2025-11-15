@@ -1,14 +1,15 @@
 package com.phonestore.controller;
 
 import com.phonestore.dao.ProductDAO;
-import com.phonestore.model.Color;
-import com.phonestore.model.Product;
-import com.phonestore.model.ProductSeries;
+import com.phonestore.dao.ReviewDAO;
+import com.phonestore.dao.WishlistDAO; // 1. Import WishlistDAO
+import com.phonestore.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,10 +18,14 @@ import java.util.List;
 public class ProductDetailServlet extends HttpServlet {
 
     private ProductDAO productDAO;
+    private ReviewDAO reviewDAO;
+    private WishlistDAO wishlistDAO; // 2. Khai báo
 
     @Override
     public void init() {
-        productDAO = new ProductDAO(); // Khởi tạo DAO 1 LẦN
+        productDAO = new ProductDAO();
+        reviewDAO = new ReviewDAO();
+        wishlistDAO = new WishlistDAO(); // 3. Khởi tạo
     }
 
     @Override
@@ -28,50 +33,55 @@ public class ProductDetailServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // 1. Lấy ID của "biến thể" (Product) mà người dùng click
             int productId = Integer.parseInt(request.getParameter("id"));
-
-            // 2. Tải "biến thể" (Product) đó
             Product currentProduct = productDAO.getProductById(productId);
 
             if (currentProduct != null) {
-                // 3. Lấy Series ID và Model từ biến thể đó
+                // ... (code cũ lấy 5 đối tượng)
                 int seriesId = currentProduct.getSeriesId();
-                String model = currentProduct.getModel(); // VD: "Pro Max"
-
-                // 4. Tải TẤT CẢ các đối tượng liên quan
+                String model = currentProduct.getModel();
                 ProductSeries series = productDAO.getProductSeriesById(seriesId);
                 List<Product> allVariants = productDAO.getVariantsBySeriesAndModel(seriesId, model);
                 List<Color> allColors = productDAO.getColorsBySeriesId(seriesId);
-                List<String> galleryImages = productDAO.getGalleryImagesByProductId(productId); // <-- Lấy album ảnh
+                List<String> galleryImages = productDAO.getGalleryImagesByProductId(productId);
 
-                // 5. Gửi TẤT CẢ (5) dữ liệu sang JSP
+                // ... (code cũ lấy 2 đối tượng review)
+                List<ReviewDetailDTO> reviews = reviewDAO.getReviewsByProductId(productId);
+                ReviewSummaryDTO reviewSummary = reviewDAO.getReviewSummary(productId);
+
+                // 4. KIỂM TRA WISHLSIT (MỚI)
+                HttpSession session = request.getSession(false);
+                User user = (session != null) ? (User) session.getAttribute("user") : null;
+                boolean isFavorited = false;
+                if (user != null) {
+                    isFavorited = wishlistDAO.isProductInWishlist(user.getId(), productId);
+                }
+
+                // 5. Gửi TẤT CẢ (5 + 2 + 1 MỚI) sang JSP
                 request.setAttribute("product", currentProduct);
                 request.setAttribute("series", series);
                 request.setAttribute("variants", allVariants);
                 request.setAttribute("colors", allColors);
-                request.setAttribute("galleryImages", galleryImages); // <-- Gửi album ảnh
+                request.setAttribute("galleryImages", galleryImages);
+                request.setAttribute("reviews", reviews);
+                request.setAttribute("reviewSummary", reviewSummary);
+                request.setAttribute("isFavorited", isFavorited); // 6. Gửi biến "đã thích"
 
-                // 6. Gửi thông tin cho <head>
-                // (Giả sử 'series' không null, nếu có thể null, cần thêm 1 bước kiểm tra)
+                // ... (code cũ gửi pageTitle, pageCss, và forward)
                 if (series != null) {
                     request.setAttribute("pageTitle", series.getName() + " " + model);
                 } else {
-                    request.setAttribute("pageTitle", currentProduct.getName()); // Tạm thời
+                    request.setAttribute("pageTitle", currentProduct.getName());
                 }
                 request.setAttribute("pageCss", "productDetail.css");
 
-                // 7. Chuyển hướng
                 request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp").forward(request, response);
 
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy sản phẩm");
             }
-
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID sản phẩm không hợp lệ");
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi ra console
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Có lỗi xảy ra");
         }
     }
