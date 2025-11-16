@@ -4,9 +4,9 @@
 <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
 
 <footer>
+    <%-- (Toàn bộ code footer-main, footer-nav, footer-copyright của bạn giữ nguyên) --%>
     <div class="footer-main">
         <div class="container footer-grid">
-            <%-- Cột 1: Về chúng tôi --%>
             <div class="footer-column">
                 <h4>Về chúng tôi</h4>
                 <ul>
@@ -18,8 +18,6 @@
                     <li><a href="#">Hướng dẫn mua hàng trả góp</a></li>
                 </ul>
             </div>
-
-            <%-- Cột 2: Chính sách --%>
             <div class="footer-column">
                 <h4>Chính sách</h4>
                 <ul>
@@ -30,16 +28,12 @@
                     <li><a href="#">Chính sách khiếu nại</a></li>
                 </ul>
             </div>
-
-            <%-- Cột 3: Hỗ trợ --%>
             <div class="footer-column">
                 <h4>Tổng đài hỗ trợ (Miễn phí)</h4>
                 <p>Mua ngay: <strong>1800.6018</strong> (07:30 – 21:30)</p>
                 <p>Bảo hành tại: <strong>1800.6729</strong> (08:30 – 21:30)</p>
                 <p>Góp ý: <strong>1800.6306</strong> (08:30 – 21:30)</p>
             </div>
-
-            <%-- Cột 4: Kết nối --%>
             <div class="footer-column">
                 <h4>Kết nối với PhoneStore</h4>
                 <div class="social-icons">
@@ -51,8 +45,6 @@
             </div>
         </div>
     </div>
-
-    <%-- Thanh điều hướng sản phẩm ở dưới --%>
     <div class="footer-nav">
         <div class="container">
             <a href="#">Điện thoại iPhone</a> |
@@ -62,8 +54,6 @@
             <a href="#">Tai nghe Airpods</a>
         </div>
     </div>
-
-    <%-- Phần bản quyền cuối cùng --%>
     <div class="footer-copyright">
         <div class="container">
             <p>Công Ty Cổ Phần Công Nghệ PhoneStore Việt. MST: 0311937144. GPĐKKD: 8371937144 do sở KH & ĐT TP.HCM cấp.</p>
@@ -71,6 +61,23 @@
         </div>
     </div>
 </footer>
+
+<%-- ============================================= --%>
+<%-- MODAL "CẦN ĐĂNG NHẬP" (ĐÃ DI DỜI TỪ productDetail.jsp SANG ĐÂY) --%>
+<%-- ============================================= --%>
+<div id="review-login-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal-content custom-modal">
+        <button class="modal-close" id="modal-close-login-btn">&times;</button>
+        <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+        <h3>Cần Đăng Nhập</h3>
+        <%-- Sửa lại text cho chung chung (vì cả Review và Wishlist đều dùng) --%>
+        <p>Vui lòng đăng nhập hoặc đăng ký tài khoản để thực hiện chức năng này.</p>
+        <div class="modal-buttons">
+            <a href="<c:url value='/register'/>" class="btn btn-modal-secondary">Đăng Ký</a>
+            <a href="<c:url value='/login'/>" class="btn btn-modal-primary">Đăng Nhập</a>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

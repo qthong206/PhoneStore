@@ -303,7 +303,6 @@
 }
 
 /* --- Form Viết Đánh Giá (NẰM TRONG MODAL) --- */
-/* (Xóa CSS .review-form-container cũ) */
 .review-login-prompt {
     padding: 16px;
     background-color: var(--color-neutral-light);
@@ -349,120 +348,11 @@
 }
 .review-author .author-name { display: block; font-weight: 500; }
 .review-content .review-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-/* (Xóa .review-title vì đã bỏ title) */
 .review-content .review-body { margin: 0 0 10px 0; line-height: 1.6; }
 .review-content .review-date { font-size: 0.85rem; color: var(--color-neutral-dark); }
 
 /* =================================== */
-/* CSS CHO MODAL ĐĂNG NHẬP (THIẾT KẾ RIÊNG) */
-/* =================================== */
-.modal-backdrop {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-.modal-content.custom-modal {
-    background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px var(--color-shadow);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    position: relative;
-    border-top: 4px solid var(--color-primary);
-}
-.modal-close {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 2rem;
-    color: var(--color-neutral-medium);
-    background: none; border: none;
-    cursor: pointer;
-}
-.modal-icon {
-    font-size: 2.5rem;
-    color: var(--color-primary);
-    margin-bottom: 15px;
-}
-.custom-modal h3 {
-    font-size: 1.5rem;
-    color: var(--color-dark);
-    margin-bottom: 10px;
-}
-.custom-modal p {
-    color: var(--color-text);
-    margin-bottom: 25px;
-}
-.modal-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-.modal-buttons .btn {
-    width: 100%;
-    padding: 12px;
-    font-weight: 600;
-    text-align: center;
-    border: 1px solid transparent;
-}
-.btn-modal-primary {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border-color: var(--color-primary);
-}
-.btn-modal-primary:hover {
-    background-color: var(--color-primary-dark);
-    color: var(--color-white);
-}
-.btn-modal-secondary {
-    background-color: var(--color-white);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-.btn-modal-secondary:hover {
-    background-color: var(--color-primary-ultralight);
-    color: var(--color-primary);
-}
-
-/* =================================== */
-/* CSS CHO MODAL FORM ĐÁNH GIÁ (MỚI) */
-/* =================================== */
-
-.modal-content.form-modal {
-    background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px var(--color-shadow);
-    width: 90%;
-    max-width: 600px; /* Rộng hơn modal login */
-    position: relative;
-    text-align: left; /* Căn lề trái cho form */
-}
-
-.modal-content.form-modal h3 {
-    font-size: 1.5rem;
-    color: var(--color-dark);
-    margin-bottom: 25px;
-    text-align: center; /* Tiêu đề thì căn giữa */
-}
-
-/* Tái sử dụng .review-form-container
-   nhưng xóa bớt border/padding vì modal đã có
-*/
-.form-modal .review-form-container {
-    border: none;
-    padding: 0;
-    margin-bottom: 0;
-}
-
-/* =================================== */
-/* CSS CHO NÚT YÊU THÍCH (ĐÃ SỬA MÀU + BỎ CHỮ) */
+/* CSS CHO NÚT YÊU THÍCH (CỦA TRANG NÀY) */
 /* =================================== */
 .action-link-btn {
     background: none;

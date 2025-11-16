@@ -7,7 +7,7 @@
 <main class="container">
     <c:if test="${not empty product && not empty series}">
 
-        <%-- 1. THANH ĐIỀU HƯỚNG (BREADCRUMBS) --%>
+        <%-- (Toàn bộ code từ Breadcrumbs đến Khung 2 cột... giữ nguyên) --%>
         <nav class="breadcrumb-nav">
             <a href="<c:url value='/home'/>">Trang chủ</a>
             <i class="fa-solid fa-chevron-right"></i>
@@ -17,11 +17,7 @@
             <i class="fa-solid fa-chevron-right"></i>
             <span>${series.name} ${product.model}</span>
         </nav>
-
-        <%-- 2. KHUNG CHÍNH (2 CỘT) --%>
         <div class="product-detail-grid">
-
-                <%-- CỘT BÊN TRÁI (ĐÃ TRẢ LẠI H1 VÀ RATING) --%>
             <div class="product-col-left">
                 <h1>${product.name}</h1>
                 <div class="rating-summary">
@@ -51,8 +47,6 @@
                         <i class="icon-heart-filled fa-solid fa-heart"></i>
                     </button>
                 </div>
-
-                    <%-- Gallery (vẫn ở cột trái) --%>
                 <div class="product-gallery">
                     <div class="gallery-main-image">
                         <img src="<c:url value='${product.thumbnailUrl}'/>" alt="${product.name}">
@@ -67,8 +61,6 @@
                     </div>
                 </div>
             </div>
-
-                <%-- CỘT BÊN PHẢI (CHỈ CÓ KHUNG GIÁ) --%>
             <div class="product-col-right">
                 <div class="price-box sticky-sidebar">
                     <div class="price-container">
@@ -82,7 +74,6 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-
                     <div class="variant-picker">
                         <label>Dung lượng</label>
                         <div class="options-list">
@@ -94,7 +85,6 @@
                             </c:forEach>
                         </div>
                     </div>
-
                     <div class="variant-picker">
                         <label>Màu sắc</label>
                         <div class="options-list" id="color-options-list">
@@ -106,7 +96,6 @@
                             </c:forEach>
                         </div>
                     </div>
-
                     <form action="<c:url value='/cart'/>" method="post" class="add-to-cart-form">
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="productId" value="${product.id}">
@@ -122,7 +111,7 @@
             </div>
         </div>
 
-        <%-- 3. KHUNG NỘI DUNG (FULL-WIDTH) --%>
+        <%-- (Khung nội dung full-width và phần đánh giá... giữ nguyên) --%>
         <div class="product-content-fullwidth">
             <section id="article-section" class="content-section">
                 <h2>Bài viết đánh giá sản phẩm</h2>
@@ -130,21 +119,16 @@
                     <p>${product.description}</p>
                 </div>
             </section>
-
             <section id="specs-section" class="content-section">
                 <h2>Thông số kỹ thuật</h2>
                 <table class="specs-table">(Placeholder)</table>
             </section>
-
             <section id="related-section" class="content-section">
                 <h2>Sản phẩm tương tự</h2>
                 <div class="product-grid" style="grid-template-columns: repeat(4, 1fr);">(Placeholder)</div>
             </section>
-
-                <%-- BẮT ĐẦU KHỐI ĐÁNH GIÁ (GIỮ NGUYÊN BẢN V2 MỚI) --%>
             <section id="reviews-section" class="content-section">
                 <h2>Đánh giá & Nhận xét</h2>
-
                 <div class="reviews-summary-box-v2">
                     <div class="summary-score-v2">
                         <c:choose>
@@ -168,7 +152,6 @@
                         <button class="btn btn-primary" id="btn-write-review">Viết đánh giá</button>
                     </div>
                     <div class="summary-bars-v2">
-                            <%-- TODO: Nâng cấp DTO và DAO để lấy data cho các thanh % này --%>
                         <div class="bar-item"><span>5 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 80%;"></div></div><span>(2)</span></div>
                         <div class="bar-item"><span>4 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 20%;"></div></div><span>(1)</span></div>
                         <div class="bar-item"><span>3 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 0%;"></div></div><span>(0)</span></div>
@@ -176,13 +159,6 @@
                         <div class="bar-item"><span>1 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 0%;"></div></div><span>(0)</span></div>
                     </div>
                 </div>
-
-                    <%--
-                       LƯU Ý: KHỐI FORM VIẾT ĐÁNH GIÁ ĐÃ BỊ XÓA KHỎI ĐÂY
-                       Nó đã được di dời vào một MODAL ở cuối file.
-                    --%>
-
-                    <%-- DANH SÁCH ĐÁNH GIÁ (Giữ nguyên) --%>
                 <div class="review-list">
                     <c:forEach var="review" items="${reviews}">
                         <div class="review-item">
@@ -211,38 +187,16 @@
         </div>
     </c:if>
 
-    <%-- Xử lý nếu Servlet không tìm thấy sản phẩm --%>
     <c:if test="${empty product}">
         <div class="empty-state">(Placeholder Lỗi)</div>
     </c:if>
 
-    <%-- ============================================= --%>
-    <%-- KHU VỰC CÁC MODAL (Nằm ngoài <c:if>) --%>
-    <%-- ============================================= --%>
-
-    <%-- MODAL 1: DÀNH CHO KHÁCH (YÊU CẦU ĐĂNG NHẬP) --%>
-    <div id="review-login-modal" class="modal-backdrop" style="display:none;">
-        <div class="modal-content custom-modal">
-            <button class="modal-close" id="modal-close-login-btn">&times;</button>
-            <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
-            <h3>Cần Đăng Nhập</h3>
-            <p>Vui lòng đăng nhập hoặc đăng ký tài khoản để gửi đánh giá của bạn.</p>
-            <div class="modal-buttons">
-                <a href="<c:url value='/register'/>" class="btn btn-modal-secondary">Đăng Ký</a>
-                <a href="<c:url value='/login'/>" class="btn btn-modal-primary">Đăng Nhập</a>
-            </div>
-        </div>
-    </div>
-
-    <%-- MODAL 2: DÀNH CHO USER ĐÃ ĐĂNG NHẬP (FORM VIẾT ĐÁNH GIÁ) --%>
-    <%-- Chỉ render khối này nếu user đã đăng nhập --%>
+    <%-- KHU VỰC MODAL --%>
     <c:if test="${not empty sessionScope.user}">
         <div id="review-form-modal" class="modal-backdrop" style="display:none;">
             <div class="modal-content form-modal">
                 <button class="modal-close" id="modal-close-form-btn">&times;</button>
                 <h3>Viết đánh giá của bạn</h3>
-
-                    <%-- Đây chính là cái form "chìm" cũ, giờ đã ở trong modal --%>
                 <form action="<c:url value='/review'/>" method="post" class="review-form-container">
                     <input type="hidden" name="action" value="add">
                     <input type="hidden" name="productId" value="${product.id}">
@@ -265,7 +219,6 @@
             </div>
         </div>
     </c:if>
-
 </main>
 
 <script src="<c:url value='/js/productDetail.js'/>"></script>

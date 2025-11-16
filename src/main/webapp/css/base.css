@@ -75,3 +75,115 @@ h2 {
 main {
     min-height: calc(100vh - 120px);
 }
+
+/* ============================================= */
+/* CSS CHO MODAL "DÙNG CHUNG" (ĐÃ DI DỜI SANG ĐÂY) */
+/* ============================================= */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; /* (Bị ẩn/hiện bằng JS) */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 2rem;
+    color: var(--color-neutral-medium);
+    background: none; border: none;
+    cursor: pointer;
+}
+.modal-close:hover {
+    color: var(--color-dark);
+}
+
+/* =================================== */
+/* CSS CHO MODAL ĐĂNG NHẬP */
+/* =================================== */
+.modal-content.custom-modal {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    border-top: 4px solid var(--color-primary);
+}
+.modal-icon {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 15px;
+}
+.custom-modal h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+}
+.custom-modal p {
+    color: var(--color-text);
+    margin-bottom: 25px;
+}
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.modal-buttons .btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.btn-modal-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+.btn-modal-primary:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+}
+.btn-modal-secondary {
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.btn-modal-secondary:hover {
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary);
+}
+
+/* =================================== */
+/* CSS CHO MODAL FORM ĐÁNH GIÁ (CŨNG DÙNG CHUNG) */
+/* =================================== */
+.modal-content.form-modal {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--color-shadow);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    text-align: left;
+}
+.modal-content.form-modal h3 {
+    font-size: 1.5rem;
+    color: var(--color-dark);
+    margin-bottom: 25px;
+    text-align: center;
+}
+.form-modal .review-form-container {
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
+}
+/* (Các style cho form-group, rating-input... 
+   cũng nên ở đây nếu chúng được dùng chung)
+*/

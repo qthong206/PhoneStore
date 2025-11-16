@@ -9,14 +9,13 @@ public class Product {
     private String description;
     private Brand brand;
     private int seriesId;
+    private String model;
+    private String storage;
+    private double avgRating;
+    private int reviewCount;
 
-    private String model; // <-- THÊM DÒNG NÀY
-    private String storage; // <-- THÊM DÒNG NÀY
-
-    // Constructors...
     public Product() {}
 
-    // Getters and Setters...
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getName() { return name; }
@@ -33,10 +32,12 @@ public class Product {
     public void setBrand(Brand brand) { this.brand = brand; }
     public int getSeriesId() { return seriesId; }
     public void setSeriesId(int seriesId) { this.seriesId = seriesId; }
-
-    // THÊM GETTER/SETTER CHO 2 TRƯỜNG MỚI
     public String getModel() { return model; }
     public void setModel(String model) { this.model = model; }
     public String getStorage() { return storage; }
     public void setStorage(String storage) { this.storage = storage; }
+    public double getAvgRating() {return avgRating;}
+    public void setAvgRating(double avgRating) {this.avgRating = avgRating;}
+    public int getReviewCount() {return reviewCount;}
+    public void setReviewCount(int reviewCount) {this.reviewCount = reviewCount;}
 }

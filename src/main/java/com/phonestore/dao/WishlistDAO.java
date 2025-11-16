@@ -4,6 +4,8 @@ import com.phonestore.context.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashSet; // 1. IMPORT HASHSET
+import java.util.Set;
 
 public class WishlistDAO {
 
@@ -53,7 +55,6 @@ public class WishlistDAO {
             ps.setInt(2, productId);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            // Lỗi có thể xảy ra nếu "thích" trùng (unique_user_product)
             System.err.println("Lỗi khi thêm vào Wishlist: " + e.getMessage());
         } finally {
             closeConnections();
@@ -78,5 +79,29 @@ public class WishlistDAO {
             closeConnections();
         }
         return false;
+    }
+
+    /**
+     * Lấy tất cả ID sản phẩm mà 1 user đã thích (để HomeServlet dùng)
+     */
+    public Set<Integer> getWishlistProductIds(int userId) {
+        Set<Integer> productIds = new HashSet<>();
+        String query = "SELECT product_id FROM Wishlist WHERE user_id = ?";
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                productIds.add(rs.getInt("product_id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return productIds;
     }
 }

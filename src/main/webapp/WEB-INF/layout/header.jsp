@@ -22,8 +22,7 @@
     <%-- JAVASCRIPT --%>
     <script src="<c:url value='/js/header.js'/>" defer></script>
 </head>
-<body>
-
+<body data-context-path="${pageContext.request.contextPath}">
 <header>
     <div class="container header-container">
         <%-- KHỐI BÊN TRÁI: LOGO VÀ DANH MỤC --%>
