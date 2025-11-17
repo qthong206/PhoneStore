@@ -246,4 +246,95 @@ public class ProductDAO {
         }
         return productMap;
     }
+
+    /**
+     * HÀM MỚI: Lấy các sản phẩm tương tự (cùng thương hiệu)
+     */
+    public List<Product> getRelatedProductsByBrand(int brandId, int currentProductId, int limit) {
+        List<Product> relatedProducts = new ArrayList<>();
+        String query = "SELECT " +
+                "    p.*, b.name as brand_name, b.logo_url, " +
+                "    AVG(pr.rating) as avgRating, " +
+                "    COUNT(pr.id) as reviewCount " +
+                "FROM Product p " +
+                "JOIN Brand b ON p.brand_id = b.id " +
+                "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
+                "WHERE p.brand_id = ? AND p.id != ? " +
+                "GROUP BY p.id " +
+                "LIMIT ?"; // Giới hạn số lượng
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, brandId);
+            ps.setInt(2, currentProductId);
+            ps.setInt(3, limit);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                product.setPrice(rs.getDouble("price"));
+                product.setSalePrice(rs.getDouble("sale_price"));
+                product.setThumbnailUrl(rs.getString("thumbnail_url"));
+
+                // Lấy thông tin Rating
+                product.setAvgRating(rs.getDouble("avgRating"));
+                product.setReviewCount(rs.getInt("reviewCount"));
+
+                relatedProducts.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return relatedProducts;
+    }
+
+    /**
+     * HÀM MỚI: Lấy tất cả sản phẩm theo Category ID
+     */
+    public List<Product> getProductsByCategoryId(int categoryId) {
+        List<Product> products = new ArrayList<>();
+
+        // Query này join qua Brand để tìm Category
+        String query = "SELECT " +
+                "    p.*, b.name as brand_name, b.logo_url, " +
+                "    AVG(pr.rating) as avgRating, " +
+                "    COUNT(pr.id) as reviewCount " +
+                "FROM Product p " +
+                "JOIN Brand b ON p.brand_id = b.id " +
+                "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
+                "WHERE b.category_id = ? " + // Lọc theo category_id của Brand
+                "GROUP BY p.id";
+
+        try {
+            conn = DBContext.getConnection(); // Dùng biến instance
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, categoryId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                product.setPrice(rs.getDouble("price"));
+                product.setSalePrice(rs.getDouble("sale_price"));
+                product.setThumbnailUrl(rs.getString("thumbnail_url"));
+
+                // Lấy thông tin Rating (giống trang chủ)
+                product.setAvgRating(rs.getDouble("avgRating"));
+                product.setReviewCount(rs.getInt("reviewCount"));
+
+                products.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections(); // Dùng hàm đóng
+        }
+        return products;
+    }
 }

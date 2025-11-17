@@ -18,7 +18,7 @@
     color: var(--color-text);
 }
 
-/* --- BỐ CỤC 2 CỘT CHÍNH (ĐÃ KHÔI PHỤC) --- */
+/* --- BỐ CỤC 2 CỘT CHÍNH --- */
 .product-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Chia 2 cột 50/50 */
@@ -98,7 +98,6 @@
     border-radius: 12px;
     padding: 25px;
 }
-/* Làm cho sidebar dính lại khi cuộn */
 .sticky-sidebar {
     position: sticky;
     top: 20px;
@@ -110,7 +109,7 @@
 .price-box .sale-price {
     font-size: 2em;
     font-weight: bold;
-    color: var(--color-danger); /* Màu đỏ như trang home */
+    color: var(--color-danger);
 }
 .price-box .original-price {
     font-size: 1.1em;
@@ -151,7 +150,7 @@
     font-weight: 500;
 }
 .option-item {
-    display: flex; /* Dùng flex để căn chỉnh ô màu và chữ */
+    display: flex;
     align-items: center;
     gap: 8px;
 }
@@ -159,7 +158,7 @@
     display: inline-block;
     width: 20px;
     height: 20px;
-    border-radius: 50%; /* Bo tròn */
+    border-radius: 50%;
     border: 1px solid var(--color-neutral-medium);
 }
 
@@ -169,7 +168,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
-/* Nút (sử dụng lại class .btn từ base.css) */
 .btn.btn-full {
     width: 100%;
     padding: 15px;
@@ -181,14 +179,14 @@
     color: white;
 }
 .btn.btn-secondary {
-    background-color: var(--color-accent); /* Hoặc màu khác */
+    background-color: var(--color-accent);
     color: white;
 }
 
 /* --- NỘI DUNG FULL-WIDTH BÊN DƯỚI --- */
 .product-content-fullwidth {
     margin-top: 50px;
-    grid-column: 1 / -1; /* Kéo dài full 2 cột */
+    grid-column: 1 / -1;
 }
 
 .content-section {
@@ -207,34 +205,49 @@
     line-height: 1.7;
 }
 
-/* Thông số */
+/* =================================== */
+/* CSS CHO BẢNG THÔNG SỐ (ĐÃ SỬA) */
+/* =================================== */
+
 .specs-table {
     width: 100%;
     border-collapse: collapse;
+    border: 1px solid var(--color-neutral-light);
+    border-radius: 8px;
+    overflow: hidden;
 }
-.specs-table tr {
-    border-bottom: 1px solid var(--color-neutral-light);
+.specs-table tr:last-child {
+    border-bottom: none;
 }
 .specs-table td {
-    padding: 15px 10px;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--color-neutral-light);
 }
+
+/* Dòng thông số (Tên | Giá trị) */
 .specs-table tr td:first-child {
+    width: 30%;
     font-weight: 500;
     color: var(--color-text);
-    width: 30%;
 }
+.specs-table tr td:last-child {
+    width: 70%;
+    color: var(--color-neutral-dark);
+}
+
+/* Thêm hiệu ứng "vằn" */
 .specs-table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
 
 /* =================================== */
-/* STYLING MỚI CHO KHU VỰC ĐÁNH GIÁ (V2) */
+/* STYLING KHU VỰC ĐÁNH GIÁ (V2) */
 /* =================================== */
 
 .reviews-summary-box-v2 {
     display: grid;
-    grid-template-columns: 250px 1fr; /* Cột điểm | Cột thanh % */
+    grid-template-columns: 250px 1fr;
     gap: 40px;
     align-items: center;
     padding: 16px;
@@ -266,7 +279,6 @@
     color: var(--color-neutral-dark);
     margin-bottom: 15px;
 }
-/* Nút "Viết đánh giá" */
 .summary-score-v2 .btn-primary {
     width: 100%;
 }
@@ -283,7 +295,7 @@
     font-size: 0.9rem;
 }
 .bar-item span:first-child {
-    width: 50px; /* Cố định 5 sao, 4 sao... */
+    width: 50px;
     color: #ffc107;
 }
 .bar-item span:last-child {
@@ -298,11 +310,12 @@
 }
 .progress {
     height: 100%;
-    background-color: var(--color-primary); /* Dùng màu chủ đạo */
+    background-color: var(--color-primary);
     border-radius: 5px;
 }
 
 /* --- Form Viết Đánh Giá (NẰM TRONG MODAL) --- */
+/* (Style cho form này giờ đã nằm trong base.css) */
 .review-login-prompt {
     padding: 16px;
     background-color: var(--color-neutral-light);
@@ -329,7 +342,7 @@
 .rating-input label:hover ~ label { color: var(--color-primary); }
 .rating-input input[type="radio"]:checked ~ label { color: var(--color-primary); }
 
-/* --- Danh Sách Đánh Giá (Giữ CSS cũ) --- */
+/* --- Danh Sách Đánh Giá --- */
 .review-list { display: flex; flex-direction: column; gap: 20px; }
 .review-item { display: flex; gap: 16px; border-top: 1px solid var(--color-neutral-light); padding-top: 20px; }
 .review-author { flex-shrink: 0; width: 150px; text-align: left; }
@@ -351,46 +364,163 @@
 .review-content .review-body { margin: 0 0 10px 0; line-height: 1.6; }
 .review-content .review-date { font-size: 0.85rem; color: var(--color-neutral-dark); }
 
-/* =================================== */
-/* CSS CHO NÚT YÊU THÍCH (CỦA TRANG NÀY) */
-/* =================================== */
+/* --- Nút Yêu Thích --- */
 .action-link-btn {
     background: none;
     border: none;
-    padding: 0 5px; /* Thêm padding nhỏ 2 bên */
+    padding: 0 5px;
     font: inherit;
     cursor: pointer;
     text-decoration: none;
-    color: var(--color-primary); /* <-- MÀU XANH (Viền xanh) */
-
-    /* Cho icon to hơn khi không có chữ */
+    color: var(--color-primary);
     font-size: 1.2em;
-    line-height: 1; /* Căn chỉnh lại */
+    line-height: 1;
     transition: color 0.2s, opacity 0.2s;
 }
 .action-link-btn:hover {
-    text-decoration: none; /* Bỏ gạch chân */
-    opacity: 0.8; /* Làm mờ đi khi hover */
+    text-decoration: none;
+    opacity: 0.8;
 }
 .action-link-btn i {
-    margin-right: 0; /* Xóa margin vì không còn chữ */
+    margin-right: 0;
 }
-
-/* Logic Ẩn/Hiện Icon (Đã xóa CSS cho chữ) */
 .action-link-btn .icon-heart-filled {
-    display: none; /* Mặc định ẩn icon (Đã thích) */
+    display: none;
 }
 .action-link-btn .icon-heart-empty {
-    display: inline-block; /* Mặc định hiện icon (Yêu thích) */
+    display: inline-block;
 }
-
-/* Khi nút có class 'active' (đã thích) */
 .action-link-btn.active {
-    color: var(--color-primary); /* <-- ĐỔI THÀNH MÀU XANH (Tim xanh đặc) */
+    color: var(--color-primary);
 }
 .action-link-btn.active .icon-heart-filled {
-    display: inline-block; /* Hiện icon (Đã thích) */
+    display: inline-block;
 }
 .action-link-btn.active .icon-heart-empty {
-    display: none; /* Ẩn icon (Yêu thích) */
+    display: none;
+}
+
+/* =================================== */
+/* CSS CHO SẢN PHẨM TƯƠNG TỰ (COPY TỪ HOME.CSS) */
+/* =================================== */
+
+.product-grid {
+    display: grid;
+    gap: 20px;
+    /* (grid-template-columns được set inline trong JSP) */
+}
+
+.product-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    /* Thêm background để đảm bảo nó luôn là nền trắng */
+    background-color: var(--color-white);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--color-shadow);
+}
+
+.product-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    padding: 15px;
+    padding-bottom: 5px; /* Giảm padding để nhường chỗ */
+}
+
+.product-tags {
+    margin-bottom: 10px;
+    height: 22px;
+}
+.tag {
+    font-size: 0.75em;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.tag-discount {
+    background-color: #f8d7da;
+    color: var(--color-danger);
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px; /* Chiều cao ảnh (có thể cần điều chỉnh) */
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.product-card h3 {
+    font-size: 1em;
+    font-weight: 500;
+    height: 45px; /* 2 dòng chữ */
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.price-container {
+    text-align: left;
+}
+.sale-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--color-danger);
+}
+.original-price {
+    font-size: 0.9em;
+    color: var(--color-neutral-medium);
+    text-decoration: line-through;
+}
+
+/* Khung Rating & Wishlist (cho SP tương tự) */
+.rating-wishlist-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-top: 1px solid var(--color-neutral-light);
+}
+.rating {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #ffc107; /* Màu vàng */
+}
+.rating span {
+    color: var(--color-text);
+    margin-left: 3px;
+}
+
+/* Nút Tim (cho SP tương tự) */
+.btn-wishlist {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    transition: color 0.2s;
+}
+.btn-wishlist:hover {
+    opacity: 0.7;
+}
+.btn-wishlist i {
+    margin-right: 4px;
+    font-size: 1.1rem;
+}
+.btn-wishlist .icon-heart-filled {
+    display: none;
+}
+.btn-wishlist.active {
+    color: var(--color-primary);
+}
+.btn-wishlist.active .icon-heart-filled {
+    display: inline-block;
+}
+.btn-wishlist.active .icon-heart-empty {
+    display: none;
 }

@@ -7,7 +7,7 @@
 <main class="container">
     <c:if test="${not empty product && not empty series}">
 
-        <%-- (Toàn bộ code từ Breadcrumbs đến Khung 2 cột... giữ nguyên) --%>
+        <%-- (Breadcrumbs, Grid, 2 Cột... giữ nguyên) --%>
         <nav class="breadcrumb-nav">
             <a href="<c:url value='/home'/>">Trang chủ</a>
             <i class="fa-solid fa-chevron-right"></i>
@@ -47,20 +47,23 @@
                         <i class="icon-heart-filled fa-solid fa-heart"></i>
                     </button>
                 </div>
+
                 <div class="product-gallery">
                     <div class="gallery-main-image">
-                        <img src="<c:url value='${product.thumbnailUrl}'/>" alt="${product.name}">
+                        <img src="<c:url value='/${product.thumbnailUrl}'/>" alt="${product.name}">
                     </div>
                     <div class="gallery-thumbnails">
-                        <img src="<c:url value='${product.thumbnailUrl}'/>" alt="Thumbnail 1" class="active">
+                        <img src="<c:url value='/${product.thumbnailUrl}'/>" alt="Thumbnail 1" class="active">
                         <c:forEach var="imgUrl" items="${galleryImages}">
                             <c:if test="${imgUrl != product.thumbnailUrl}">
-                                <img src="<c:url value='${imgUrl}'/>" alt="Thumbnail">
+                                <img src="<c:url value='/${imgUrl}'/>" alt="Thumbnail">
                             </c:if>
                         </c:forEach>
                     </div>
                 </div>
             </div>
+
+                <%-- (Cột bên phải giữ nguyên) --%>
             <div class="product-col-right">
                 <div class="price-box sticky-sidebar">
                     <div class="price-container">
@@ -111,26 +114,86 @@
             </div>
         </div>
 
-        <%-- (Khung nội dung full-width và phần đánh giá... giữ nguyên) --%>
         <div class="product-content-fullwidth">
+                <%-- (Section Bài viết và Thông số giữ nguyên) --%>
             <section id="article-section" class="content-section">
                 <h2>Bài viết đánh giá sản phẩm</h2>
                 <div class="article-content">
-                    <p>${product.description}</p>
+                    <p style="white-space: pre-line;">${product.description}</p>
                 </div>
             </section>
+
             <section id="specs-section" class="content-section">
                 <h2>Thông số kỹ thuật</h2>
-                <table class="specs-table">(Placeholder)</table>
+                <c:if test="${not empty specsList}">
+                    <table class="specs-table">
+                        <c:forEach var="spec" items="${specsList}">
+                            <tr>
+                                <td>${spec.specKey}</td>
+                                <td>${spec.specValue}</td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </c:if>
+                <c:if test="${empty specsList}">
+                    <p>(Chưa có thông số kỹ thuật cho sản phẩm này)</p>
+                </c:if>
             </section>
+
+                <%-- (Section Sản phẩm tương tự (5 cột) giữ nguyên) --%>
             <section id="related-section" class="content-section">
                 <h2>Sản phẩm tương tự</h2>
-                <div class="product-grid" style="grid-template-columns: repeat(4, 1fr);">(Placeholder)</div>
+                <div class="product-grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <c:forEach var="p" items="${relatedProducts}">
+                        <div class="product-card">
+                            <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
+                                <div class="product-tags">
+                                    <c:if test="${p.salePrice > 0}">
+                                        <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
+                                        <span class="tag tag-discount">
+                                            Giảm <fmt:formatNumber value="${discountPercent}" type="percent" maxFractionDigits="0" />
+                                        </span>
+                                    </c:if>
+                                </div>
+                                <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}">
+                                <h3>${p.name}</h3>
+                                <div class="price-container">
+                                    <c:choose>
+                                        <c:when test="${p.salePrice > 0}">
+                                            <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
+                                            <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                            <p class="original-price">&nbsp;</p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </a>
+                            <div class="rating-wishlist-box">
+                                <div class="rating">
+                                    <c:if test="${p.reviewCount > 0}">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
+                                    </c:if>
+                                </div>
+                                <button class="btn-wishlist ${wishlistIds.contains(p.id) ? 'active' : ''}"
+                                        data-product-id="${p.id}">
+                                    <i class="icon-heart-empty fa-regular fa-heart"></i>
+                                    <i class="icon-heart-filled fa-solid fa-heart"></i>
+                                    <span>Yêu thích</span>
+                                </button>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
             </section>
+
             <section id="reviews-section" class="content-section">
                 <h2>Đánh giá & Nhận xét</h2>
                 <div class="reviews-summary-box-v2">
                     <div class="summary-score-v2">
+                            <%-- (Khối điểm trung bình giữ nguyên) --%>
                         <c:choose>
                             <c:when test="${reviewSummary.totalReviews > 0}">
                                 <div class="score-number-v2"><fmt:formatNumber value="${reviewSummary.avgRating}" maxFractionDigits="1" /><span>/5</span></div>
@@ -151,14 +214,43 @@
                         </c:choose>
                         <button class="btn btn-primary" id="btn-write-review">Viết đánh giá</button>
                     </div>
+
+                        <%-- =================================== --%>
+                        <%-- SỬA KHỐI THANH THỐNG KÊ (ĐÃ HẾT CỨNG) --%>
+                        <%-- =================================== --%>
                     <div class="summary-bars-v2">
-                        <div class="bar-item"><span>5 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 80%;"></div></div><span>(2)</span></div>
-                        <div class="bar-item"><span>4 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 20%;"></div></div><span>(1)</span></div>
-                        <div class="bar-item"><span>3 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 0%;"></div></div><span>(0)</span></div>
-                        <div class="bar-item"><span>2 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 0%;"></div></div><span>(0)</span></div>
-                        <div class="bar-item"><span>1 <i class="fa-solid fa-star"></i></span><div class="progress-bar"><div class="progress" style="width: 0%;"></div></div><span>(0)</span></div>
+                            <%-- Kiểm tra để tránh lỗi chia cho 0 --%>
+                        <c:set var="total" value="${reviewSummary.totalReviews > 0 ? reviewSummary.totalReviews : 1}" />
+
+                        <div class="bar-item">
+                            <span>5 <i class="fa-solid fa-star"></i></span>
+                            <div class="progress-bar"><div class="progress" style="width: ${reviewSummary.count5 * 100 / total}%;"></div></div>
+                            <span>(${reviewSummary.count5})</span>
+                        </div>
+                        <div class="bar-item">
+                            <span>4 <i class="fa-solid fa-star"></i></span>
+                            <div class="progress-bar"><div class="progress" style="width: ${reviewSummary.count4 * 100 / total}%;"></div></div>
+                            <span>(${reviewSummary.count4})</span>
+                        </div>
+                        <div class="bar-item">
+                            <span>3 <i class="fa-solid fa-star"></i></span>
+                            <div class="progress-bar"><div class="progress" style="width: ${reviewSummary.count3 * 100 / total}%;"></div></div>
+                            <span>(${reviewSummary.count3})</span>
+                        </div>
+                        <div class="bar-item">
+                            <span>2 <i class="fa-solid fa-star"></i></span>
+                            <div class="progress-bar"><div class="progress" style="width: ${reviewSummary.count2 * 100 / total}%;"></div></div>
+                            <span>(${reviewSummary.count2})</span>
+                        </div>
+                        <div class="bar-item">
+                            <span>1 <i class="fa-solid fa-star"></i></span>
+                            <div class="progress-bar"><div class="progress" style="width: ${reviewSummary.count1 * 100 / total}%;"></div></div>
+                            <span>(${reviewSummary.count1})</span>
+                        </div>
                     </div>
                 </div>
+
+                    <%-- (Danh sách review giữ nguyên) --%>
                 <div class="review-list">
                     <c:forEach var="review" items="${reviews}">
                         <div class="review-item">
@@ -191,7 +283,7 @@
         <div class="empty-state">(Placeholder Lỗi)</div>
     </c:if>
 
-    <%-- KHU VỰC MODAL --%>
+    <%-- (Modal giữ nguyên) --%>
     <c:if test="${not empty sessionScope.user}">
         <div id="review-form-modal" class="modal-backdrop" style="display:none;">
             <div class="modal-content form-modal">
