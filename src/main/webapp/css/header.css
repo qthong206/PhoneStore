@@ -43,17 +43,17 @@ header {
 }
 
 .category-icon {
-    font-size: 1.1em; /* Điều chỉnh kích thước icon Danh mục */
+    font-size: 1.1em;
 }
 
 /* --- KHỐI Ở GIỮA: THANH TÌM KIẾM --- */
 .search-bar {
     flex-grow: 1;
     display: flex;
-    align-items: center; /* Căn giữa input và button theo chiều dọc */
+    align-items: center;
     background-color: var(--color-white);
     border-radius: 25px;
-    padding: 4px 5px 4px 0; /* Thêm padding để tạo khoảng trống cho nút */
+    padding: 4px 5px 4px 0;
     max-width: 650px;
 }
 
@@ -63,32 +63,28 @@ header {
     padding: 10px 20px;
     font-size: 1em;
     outline: none;
-    background-color: transparent; /* Quan trọng: làm nền input trong suốt */
-    color: var(--color-text); /* Đảm bảo chữ nhập có màu */
+    background-color: transparent;
+    color: var(--color-text);
 }
 
 .search-bar button {
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
-
-    /* Style mới cho nút tròn */
-    background-color: var(--color-primary-ultralight); /* Màu nền xanh siêu nhạt */
-    color: var(--color-primary-dark); /* Màu icon xanh đậm để nổi bật */
+    background-color: var(--color-primary-ultralight);
+    color: var(--color-primary-dark);
     height: 38px;
     width: 38px;
-    border-radius: 50%; /* Bo tròn thành hình tròn */
-
-    /* Căn giữa icon kính lúp */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; /* Ngăn nút bị co lại */
+    flex-shrink: 0;
     font-size: 1.1em;
 }
 
 .search-bar button:hover {
-    background-color: var(--color-light); /* Đổi màu nền khi di chuột */
+    background-color: var(--color-light);
 }
 
 /* --- KHỐI BÊN PHẢI: CÁC MỤC ĐIỀU HƯỚNG --- */
@@ -113,9 +109,9 @@ header {
 }
 
 .nav-icon {
-    font-size: 1.4em; /* Điều chỉnh kích thước chung cho các icon điều hướng */
+    font-size: 1.4em;
     margin-bottom: 5px;
-    width: 32px; /* Đảm bảo icon chiếm không gian cố định */
+    width: 32px;
     text-align: center;
 }
 
@@ -127,37 +123,33 @@ header {
 
 /* --- BỔ SUNG CSS CHO MEGA MENU --- */
 
-/* 1. Container của nút Danh mục */
 .category-dropdown {
-    position: relative; /* Rất quan trọng: làm mốc cho menu con */
+    position: relative;
 }
 
-/* 2. Hộp chứa menu dropdown (mặc định bị ẩn) */
 .category-menu-container {
-    display: none; /* Ẩn menu đi */
+    display: none;
     position: absolute;
-    top: 110%; /* Hiển thị ngay dưới nút "Danh mục" */
+    top: 110%;
     left: 0;
-    width: 280px; /* Chiều rộng của menu danh mục */
+    width: 280px;
     background-color: var(--color-white);
     border-radius: 8px;
     box-shadow: 0 8px 20px var(--color-shadow);
     padding: 10px;
-    z-index: 1001; /* Đảm bảo nó nổi lên trên */
+    z-index: 1001;
 }
 
-/* 3. Hiển thị menu khi di chuột vào nút "Danh mục" */
 .category-dropdown.menu-open .category-menu-container {
     display: block;
 }
 
-/* 4. Danh sách các mục trong menu (iPhone, iPad...) */
 .category-menu-list {
     list-style: none;
 }
 
 .category-menu-list li {
-    position: relative; /* Làm mốc cho menu con cấp 2 */
+    position: relative;
 }
 
 .category-menu-list li a {
@@ -185,56 +177,50 @@ header {
     color: var(--color-primary);
 }
 
-/* 5. Hộp chứa sản phẩm (mặc định bị ẩn) */
+/* Hộp chứa menu con (mega menu) */
 .mega-menu-content {
-    display: none; /* Ẩn menu con cấp 2 */
+    display: none;
     position: absolute;
-    top: -10px; /* Căn chỉnh vị trí (cách lề trên 10px) */
-    left: 100%; /* Hiển thị ngay bên phải menu cấp 1 */
-    width: 400px; /* Chiều rộng của hộp sản phẩm */
+    top: -10px;
+    left: 100%;
+    width: 250px; /* Chiều rộng 1 cột */
     background-color: var(--color-white);
     border-radius: 8px;
     box-shadow: 0 8px 20px var(--color-shadow);
     padding: 20px;
-    margin-left: 10px;
+
+    /* === SỬA LỖI (XÓA DÒNG NÀY) === */
+    /* margin-left: 10px; */
+    /* Dòng này tạo ra "khoảng hở" 10px, làm mất hover */
 }
 
-/* 6. Hiển thị hộp sản phẩm khi di chuột vào mục (iPhone, iPad...) */
 .category-menu-list li:hover > .mega-menu-content {
     display: block;
 }
 
+/* =================================== */
+/* CSS CHO MEGA MENU (DANH SÁCH TÊN) */
+/* =================================== */
+
 .mega-menu-content h4 {
+    font-size: 1.1rem;
     color: var(--color-dark);
-    font-size: 1.1em;
     margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--color-neutral-light);
 }
 
-.mega-product-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+.mega-brand-list {
+    display: block;
 }
 
-.mega-product-card {
+.mega-brand-item {
+    display: block;
+    padding: 8px 10px;
     text-decoration: none;
     color: var(--color-text);
-    font-size: 0.9em;
-    text-align: center;
-    padding: 10px;
     border-radius: 6px;
-    transition: background-color 0.2s ease;
+    font-weight: 500;
 }
-
-.mega-product-card:hover {
+.mega-brand-item:hover {
     background-color: var(--color-neutral-light);
-}
-
-.mega-product-card img {
-    width: 100%;
-    max-width: 120px;
-    height: auto;
-    margin-bottom: 10px;
+    color: var(--color-primary);
 }

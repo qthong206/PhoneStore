@@ -1,25 +1,18 @@
 package com.phonestore.model;
 
-public class Brand {
+public class Category {
     private int id;
     private String name;
     private String slug;
-    private String logoUrl;
-    private int categoryId;
+    private String iconClass;
 
     // Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
     public String getSlug() { return slug; }
     public void setSlug(String slug) { this.slug = slug; }
-
-    public String getLogoUrl() { return logoUrl; }
-    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
-
-    public int getCategoryId() { return categoryId; }
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+    public String getIconClass() { return iconClass; }
+    public void setIconClass(String iconClass) { this.iconClass = iconClass; }
 }
