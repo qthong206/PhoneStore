@@ -29,8 +29,7 @@
                                         </span>
                                     </c:if>
                                 </div>
-                                <img src="${p.thumbnailUrl}" alt="${p.name}">
-                                <h3>${p.name}</h3>
+                                <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}">                                <h3>${p.name}</h3>
                                 <div class="price-container">
                                     <c:choose>
                                         <c:when test="${p.salePrice > 0}">
