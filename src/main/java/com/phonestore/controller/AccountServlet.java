@@ -1,34 +1,55 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.ProductOrderDAO;
+import com.phonestore.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/account"}) // 1. Đặt URL là /account
+@WebServlet(urlPatterns = {"/account"})
 public class AccountServlet extends HttpServlet {
+
+    private ProductOrderDAO productOrderDAO;
+
+    @Override
+    public void init() {
+        productOrderDAO = new ProductOrderDAO();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 2. Kiểm tra đăng nhập
-        if (request.getSession().getAttribute("user") == null) {
+        // 1. Kiểm tra đăng nhập
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
 
-        // 3. (Giai đoạn sau) Gọi DAO để lấy thông tin chi tiết tài khoản,
-        //    danh sách địa chỉ, tài khoản liên kết...
-        // AddressBook addressList = addressDAO.getAddresses(user.getId());
+        // 2. Lấy dữ liệu thống kê (Để thanh Info Bar phía trên không bị số 0)
+        int totalOrders = productOrderDAO.countOrdersByUserId(user.getId());
+        double totalSpent = productOrderDAO.sumTotalSpentByUserId(user.getId());
+
+        // 3. (Giai đoạn sau) Gọi AddressDAO lấy danh sách địa chỉ...
+        // List<Address> addressList = addressDAO.getAll(user.getId());
         // request.setAttribute("addressList", addressList);
 
-        // 4. Gửi "tín hiệu" cho menu bên trái
-        request.setAttribute("currentView", "account"); // Tín hiệu cho menu chính
+        // 4. Gửi dữ liệu sang JSP
+        request.setAttribute("totalOrders", totalOrders);
+        request.setAttribute("totalSpent", totalSpent);
 
-        // 5. Chuyển đến file account.jsp
-        request.getRequestDispatcher("/WEB-INF/views/account.jsp").forward(request, response);
+        // 5. Highlight Menu bên trái
+        request.setAttribute("currentView", "account");
+
+        // 6. Chuyển đến file JSP (Lưu ý đường dẫn trong thư mục /user/)
+        request.getRequestDispatcher("/WEB-INF/views/user/account.jsp").forward(request, response);
     }
 }

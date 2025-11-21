@@ -1,0 +1,89 @@
+/* ========================================= */
+/* CSS RIÊNG CHO TRANG BẢO HÀNH              */
+/* ========================================= */
+
+/* --- 1. THANH TAB ĐIỀU HƯỚNG --- */
+.tab-nav {
+    border-bottom: 1px solid var(--color-neutral-light);
+    margin-bottom: 25px;
+}
+.tab-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+.tab-nav ul li a {
+    text-decoration: none;
+    color: var(--color-neutral-medium);
+    font-weight: 500;
+    display: block;
+    padding: 10px 0;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.tab-nav ul li a:hover { color: var(--color-primary); }
+.tab-nav ul li a.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* --- 2. TRẠNG THÁI TRỐNG (EMPTY STATE) --- */
+.empty-state {
+    text-align: center;
+    padding: 60px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state i {
+    color: #d1d5db; /* Màu xám nhạt cho icon to */
+    margin-bottom: 20px;
+}
+
+.empty-state p {
+    color: var(--color-text);
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+/* --- 3. NÚT YÊU CẦU HỖ TRỢ (BTN LINK) --- */
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Khoảng cách giữa chữ và mũi tên */
+
+    /* Style nút bấm dạng outline (viền) */
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    background-color: transparent;
+
+    padding: 10px 25px;
+    border-radius: 30px; /* Bo tròn nút */
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-link i {
+    color: var(--color-primary);
+    font-size: 1em !important;
+    margin: 0 !important;
+}
+
+/* Hiệu ứng Hover */
+.btn-link:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-link:hover i {
+    color: #fff;
+}

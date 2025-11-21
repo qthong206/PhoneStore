@@ -1,34 +1,51 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.ProductOrderDAO;
+import com.phonestore.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/rank"}) // 1. Đặt URL là /rank
+@WebServlet(urlPatterns = {"/rank"})
 public class RankServlet extends HttpServlet {
+
+    private ProductOrderDAO productOrderDAO;
+
+    @Override
+    public void init() {
+        productOrderDAO = new ProductOrderDAO();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 2. Kiểm tra đăng nhập
-        if (request.getSession().getAttribute("user") == null) {
+        // 1. Kiểm tra đăng nhập
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
 
-        // 3. (Giai đoạn sau) Gọi DAO để lấy thông tin hạng thành viên,
-        //    số tiền đã chi, v.v.
-        // RankInfo info = rankDAO.getRankInfo(user.getId());
-        // request.setAttribute("rankInfo", info);
+        // 2. Lấy dữ liệu thống kê (Để thanh Info Bar hiển thị đúng)
+        int totalOrders = productOrderDAO.countOrdersByUserId(user.getId());
+        double totalSpent = productOrderDAO.sumTotalSpentByUserId(user.getId());
 
-        // 4. Gửi "tín hiệu" cho menu bên trái
-        request.setAttribute("currentView", "rank"); // Tín hiệu cho menu chính
+        // 3. Gửi dữ liệu sang JSP
+        request.setAttribute("totalOrders", totalOrders);
+        request.setAttribute("totalSpent", totalSpent);
 
-        // 5. Chuyển đến file rank.jsp
-        request.getRequestDispatcher("/WEB-INF/views/rank.jsp").forward(request, response);
+        // 4. Highlight Menu
+        request.setAttribute("currentView", "rank");
+
+        // 5. Forward về đúng thư mục /user/
+        request.getRequestDispatcher("/WEB-INF/views/user/rank.jsp").forward(request, response);
     }
 }
