@@ -70,3 +70,28 @@ h1 {
 .btn-wishlist.active { color: var(--color-primary); }
 .btn-wishlist.active .icon-heart-filled { display: inline-block; }
 .btn-wishlist.active .icon-heart-empty { display: none; }
+
+/* =================================== */
+/* CSS THÊM CHO BREADCRUMBS */
+/* =================================== */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0 20px 0;
+    font-size: 0.9em;
+    color: var(--color-neutral-medium);
+}
+.breadcrumb-nav a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.breadcrumb-nav a:hover {
+    text-decoration: underline;
+}
+.breadcrumb-nav span {
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+/* (Giữ nguyên code .product-list-grid, .product-card... cũ của bạn ở dưới) */

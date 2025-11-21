@@ -5,18 +5,27 @@
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
 <main class="container">
-    <c:if test="${not empty product && not empty series}">
+    <c:if test="${not empty product && not empty series && not empty category}">
 
-        <%-- (Breadcrumbs, Grid, 2 Cột... giữ nguyên) --%>
+        <%-- =================================== --%>
+        <%-- SỬA BREADCRUMBS (ĐÃ HẾT CỨNG) --%>
+        <%-- =================================== --%>
         <nav class="breadcrumb-nav">
             <a href="<c:url value='/home'/>">Trang chủ</a>
             <i class="fa-solid fa-chevron-right"></i>
-            <a href="#">Điện thoại</a>
+
+                <%-- Link 1: Trỏ về trang Category (VD: /products?category=dien-thoai) --%>
+            <a href="<c:url value='/products?category=${category.slug}'/>">${category.name}</a>
             <i class="fa-solid fa-chevron-right"></i>
-            <a href="#">${product.brand.name}</a>
+
+                <%-- Link 2: Trỏ về trang Brand (VD: /products?brand=apple) --%>
+            <a href="<c:url value='/products?brand=${product.brand.slug}'/>">${product.brand.name}</a>
             <i class="fa-solid fa-chevron-right"></i>
+
             <span>${series.name} ${product.model}</span>
         </nav>
+
+        <%-- (Toàn bộ code còn lại của trang giữ nguyên) --%>
         <div class="product-detail-grid">
             <div class="product-col-left">
                 <h1>${product.name}</h1>
@@ -63,7 +72,6 @@
                 </div>
             </div>
 
-                <%-- (Cột bên phải giữ nguyên) --%>
             <div class="product-col-right">
                 <div class="price-box sticky-sidebar">
                     <div class="price-container">
@@ -115,7 +123,6 @@
         </div>
 
         <div class="product-content-fullwidth">
-                <%-- (Section Bài viết và Thông số giữ nguyên) --%>
             <section id="article-section" class="content-section">
                 <h2>Bài viết đánh giá sản phẩm</h2>
                 <div class="article-content">
@@ -140,7 +147,6 @@
                 </c:if>
             </section>
 
-                <%-- (Section Sản phẩm tương tự (5 cột) giữ nguyên) --%>
             <section id="related-section" class="content-section">
                 <h2>Sản phẩm tương tự</h2>
                 <div class="product-grid" style="grid-template-columns: repeat(5, 1fr);">
@@ -161,7 +167,7 @@
                                     <c:choose>
                                         <c:when test="${p.salePrice > 0}">
                                             <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
-                                            <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                            <p class="original-price"><fmt:formatNumber value="${product.price}" type="number" pattern="#,##0"/> ₫</p>
                                         </c:when>
                                         <c:otherwise>
                                             <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
@@ -193,7 +199,6 @@
                 <h2>Đánh giá & Nhận xét</h2>
                 <div class="reviews-summary-box-v2">
                     <div class="summary-score-v2">
-                            <%-- (Khối điểm trung bình giữ nguyên) --%>
                         <c:choose>
                             <c:when test="${reviewSummary.totalReviews > 0}">
                                 <div class="score-number-v2"><fmt:formatNumber value="${reviewSummary.avgRating}" maxFractionDigits="1" /><span>/5</span></div>
@@ -215,11 +220,7 @@
                         <button class="btn btn-primary" id="btn-write-review">Viết đánh giá</button>
                     </div>
 
-                        <%-- =================================== --%>
-                        <%-- SỬA KHỐI THANH THỐNG KÊ (ĐÃ HẾT CỨNG) --%>
-                        <%-- =================================== --%>
                     <div class="summary-bars-v2">
-                            <%-- Kiểm tra để tránh lỗi chia cho 0 --%>
                         <c:set var="total" value="${reviewSummary.totalReviews > 0 ? reviewSummary.totalReviews : 1}" />
 
                         <div class="bar-item">
@@ -250,7 +251,6 @@
                     </div>
                 </div>
 
-                    <%-- (Danh sách review giữ nguyên) --%>
                 <div class="review-list">
                     <c:forEach var="review" items="${reviews}">
                         <div class="review-item">
@@ -279,8 +279,12 @@
         </div>
     </c:if>
 
-    <c:if test="${empty product}">
-        <div class="empty-state">(Placeholder Lỗi)</div>
+    <c:if test="${(empty product || empty series || empty category) && empty errorMessage}">
+        <div class="empty-state">
+            <h2>404 - Không tìm thấy</h2>
+            <p>Xin lỗi, sản phẩm hoặc danh mục bạn tìm kiếm không tồn tại.</p>
+            <a href="<c:url value='/home'/>" class="btn btn-primary">Về Trang chủ</a>
+        </div>
     </c:if>
 
     <%-- (Modal giữ nguyên) --%>

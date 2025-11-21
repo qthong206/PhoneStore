@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.HashSet; // 1. IMPORT HASHSET
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set; // 2. IMPORT SET
+import java.util.Set;
 
 @WebServlet(urlPatterns = {"/product-detail"})
 public class ProductDetailServlet extends HttpServlet {
@@ -44,7 +44,7 @@ public class ProductDetailServlet extends HttpServlet {
             Product product = productDAO.getProductById(productId);
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy sản phẩm");
-                return;
+                return; // <-- Dòng này đã đúng
             }
 
             // --- 2. LẤY THÔNG TIN LIÊN QUAN (Variants, Colors...) ---
@@ -58,24 +58,34 @@ public class ProductDetailServlet extends HttpServlet {
             ReviewSummaryDTO reviewSummary = reviewDAO.getReviewSummary(productId);
             List<Specification> specsList = specificationDAO.getSpecificationsByProductId(productId);
 
-            // --- 4. LẤY THÔNG TIN WISHLIST (CHO CẢ SẢN PHẨM CHÍNH VÀ SP TƯƠNG TỰ) ---
+            // --- 4. LẤY THÔNG TIN WISHLIST ---
             HttpSession session = request.getSession(false);
             User user = (session != null) ? (User) session.getAttribute("user") : null;
-
-            boolean isFavorited = false; // Chỉ cho sản phẩm chính
-            Set<Integer> wishlistIds = new HashSet<>(); // Cho sản phẩm tương tự
-
+            boolean isFavorited = false;
+            Set<Integer> wishlistIds = new HashSet<>();
             if (user != null) {
                 isFavorited = wishlistDAO.isProductInWishlist(user.getId(), productId);
-                wishlistIds = wishlistDAO.getWishlistProductIds(user.getId()); // Lấy toàn bộ
+                wishlistIds = wishlistDAO.getWishlistProductIds(user.getId());
             }
 
-            // --- 5. LOGIC MỚI: LẤY 5 SẢN PHẨM TƯƠNG TỰ ---
+            // --- 5. LẤY SẢN PHẨM TƯƠNG TỰ (5 SẢN PHẨM) ---
             int brandId = product.getBrand().getId();
-            List<Product> relatedProducts = productDAO.getRelatedProductsByBrand(brandId, productId, 5); // ĐÃ SỬA THÀNH 5
+            List<Product> relatedProducts = productDAO.getRelatedProductsByBrand(brandId, productId, 5);
 
+            // --- 6. TÌM CATEGORY CHA (CHO BREADCRUMBS) ---
+            int categoryId = product.getBrand().getCategoryId();
+            List<Category> allCategories = (List<Category>) getServletContext().getAttribute("allCategories");
+            Category currentCategory = null;
+            if (allCategories != null) {
+                for (Category cat : allCategories) {
+                    if (cat.getId() == categoryId) {
+                        currentCategory = cat;
+                        break;
+                    }
+                }
+            }
 
-            // --- 6. GỬI TẤT CẢ DỮ LIỆU SANG JSP ---
+            // --- 7. GỬI TẤT CẢ DỮ LIỆU SANG JSP ---
             request.setAttribute("product", product);
             request.setAttribute("series", series);
             request.setAttribute("variants", variants);
@@ -84,20 +94,24 @@ public class ProductDetailServlet extends HttpServlet {
             request.setAttribute("reviews", reviews);
             request.setAttribute("reviewSummary", reviewSummary);
             request.setAttribute("specsList", specsList);
-            request.setAttribute("isFavorited", isFavorited); // Dùng cho nút tim chính
-            request.setAttribute("wishlistIds", wishlistIds); // Dùng cho các nút tim SP tương tự
-            request.setAttribute("relatedProducts", relatedProducts); // DANH SÁCH MỚI
+            request.setAttribute("isFavorited", isFavorited);
+            request.setAttribute("wishlistIds", wishlistIds);
+            request.setAttribute("relatedProducts", relatedProducts);
+            request.setAttribute("category", currentCategory);
 
-            // --- 7. FORWARD ---
+            // --- 8. FORWARD (Dòng 99 của bạn) ---
             request.setAttribute("pageTitle", product.getName());
             request.setAttribute("pageCss", "productDetail.css");
             request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID sản phẩm không hợp lệ");
+            return;
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Có lỗi xảy ra");
+            return;
         }
     }
 }

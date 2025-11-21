@@ -5,8 +5,36 @@
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
 <main class="container">
-    <h1>${pageTitle}</h1>
 
+    <%-- =================================== --%>
+    <%-- BREADCRUMBS MỚI (THAY THẾ H1) --%>
+    <%-- =================================== --%>
+    <nav class="breadcrumb-nav">
+        <a href="<c:url value='/home'/>">Trang chủ</a>
+        <i class="fa-solid fa-chevron-right"></i>
+
+        <c:if test="${not empty currentCategory}">
+            <%--
+               Trường hợp 1: Chỉ lọc Category (brand=null)
+               Link "Điện thoại" không click được (vì đang ở trang đó).
+            --%>
+            <c:if test="${empty currentBrand}">
+                <span>${currentCategory.name}</span>
+            </c:if>
+
+            <%--
+               Trường hợp 2: Lọc cả Brand (brand!=null)
+               Link "Điện thoại" CÓ click được, trỏ về trang category cha.
+            --%>
+            <c:if test="${not empty currentBrand}">
+                <a href="<c:url value='/products?category=${currentCategory.slug}'/>">${currentCategory.name}</a>
+                <i class="fa-solid fa-chevron-right"></i>
+                <span>${currentBrand.name}</span>
+            </c:if>
+        </c:if>
+    </nav>
+
+    <%-- (Khối .product-list-grid giữ nguyên) --%>
     <div class="product-list-grid">
         <c:forEach var="p" items="${products}">
             <div class="product-card">
@@ -28,7 +56,7 @@
                                 <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
                             </c:when>
                             <c:otherwise>
-                                <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> D ₫</p>
                                 <p class="original-price">&nbsp;</p>
                             </c:otherwise>
                         </c:choose>
