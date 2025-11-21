@@ -51,4 +51,31 @@ public class BrandDAO {
         }
         return brands;
     }
+
+    /**
+     * HÀM MỚI: Lấy Brand bằng 'slug' (VD: "apple")
+     */
+    public Brand getBrandBySlug(String slug) {
+        String query = "SELECT * FROM Brand WHERE slug = ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, slug);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Brand b = new Brand();
+                b.setId(rs.getInt("id"));
+                b.setName(rs.getString("name"));
+                b.setSlug(rs.getString("slug"));
+                b.setCategoryId(rs.getInt("category_id"));
+                b.setLogoUrl(rs.getString("logo_url"));
+                return b;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return null;
+    }
 }

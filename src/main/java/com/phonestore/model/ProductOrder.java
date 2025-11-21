@@ -13,6 +13,8 @@ public class ProductOrder {
     private String status;
     private Timestamp createdAt;
     private String paymentMethod;
+    private String firstProductName;
+    private String firstProductImage;
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -34,4 +36,8 @@ public class ProductOrder {
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public void setPaymentMethod(String paymentMethod) {this.paymentMethod = paymentMethod;}
     public String getPaymentMethod() {return this.paymentMethod;}
+    public String getFirstProductName() { return firstProductName; }
+    public void setFirstProductName(String firstProductName) { this.firstProductName = firstProductName; }
+    public String getFirstProductImage() { return firstProductImage; }
+    public void setFirstProductImage(String firstProductImage) { this.firstProductImage = firstProductImage; }
 }

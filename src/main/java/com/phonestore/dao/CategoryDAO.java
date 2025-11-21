@@ -76,4 +76,31 @@ public class CategoryDAO {
         }
         return categories;
     }
+
+    /**
+     * HÀM MỚI: Lấy Category bằng ID
+     * (Dùng để tìm cha khi lọc theo Brand)
+     */
+    public Category getCategoryById(int id) {
+        String query = "SELECT * FROM Category WHERE id = ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Category c = new Category();
+                c.setId(rs.getInt("id"));
+                c.setName(rs.getString("name"));
+                c.setSlug(rs.getString("slug"));
+                c.setIconClass(rs.getString("icon_class"));
+                return c;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return null;
+    }
 }
