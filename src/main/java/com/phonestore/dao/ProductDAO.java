@@ -351,4 +351,91 @@ public class ProductDAO {
         }
         return products;
     }
+    // ADMIN CRUD   //
+
+    public void insertProduct(Product p) {
+        String sql = "INSERT INTO Product(name, description, price, sale_price, thumbnail_url, brand_id, series_id, model, storage, status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setDouble(3, p.getPrice());
+            ps.setDouble(4, p.getSalePrice());
+            ps.setString(5, p.getThumbnailUrl());
+            ps.setInt(6, p.getBrand().getId());
+            ps.setInt(7, p.getSeriesId());
+            ps.setString(8, p.getModel());
+            ps.setString(9, p.getStorage());
+            ps.setInt(10, p.getStatus());
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    public void updateProduct(Product p) {
+        String sql = "UPDATE Product SET name=?, description=?, price=?, sale_price=?, thumbnail_url=?, brand_id=?, series_id=?, model=?, storage=?, status=? WHERE id=?";
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, p.getName());
+            ps.setString(2, p.getDescription());
+            ps.setDouble(3, p.getPrice());
+            ps.setDouble(4, p.getSalePrice());
+            ps.setString(5, p.getThumbnailUrl());
+            ps.setInt(6, p.getBrand().getId());
+            ps.setInt(7, p.getSeriesId());
+            ps.setString(8, p.getModel());
+            ps.setString(9, p.getStorage());
+            ps.setInt(10, p.getStatus());
+            ps.setInt(11, p.getId());
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    public void deleteProduct(int id) {
+        String sql = "DELETE FROM Product WHERE id=?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    public void toggleStatus(int id) {
+        String sql = "UPDATE Product SET status = CASE WHEN status = 1 THEN 0 ELSE 1 END WHERE id=?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+
 }

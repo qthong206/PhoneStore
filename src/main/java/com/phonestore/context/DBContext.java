@@ -20,7 +20,9 @@ public class DBContext {
      */
     public static Connection getConnection() {
         // Tạo chuỗi kết nối (connection string)
-        String url = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME;
+        String url = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME
+                + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+
 
         try {
             // Nạp driver JDBC của MySQL
