@@ -27,7 +27,7 @@
 <a href="${pageContext.request.contextPath}/admin/product">&lt; Back</a>
 <br/><br/>
 
-<form method="post" action="${isEdit ? pageContext.request.contextPath+'/admin/product/update' : pageContext.request.contextPath+'/admin/product/insert'}">
+<form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/product/update' : '/admin/product/insert'}">
 
     <c:if test="${isEdit}">
         <input type="hidden" name="id" value="${product.id}" />
@@ -60,7 +60,7 @@
 
     <div class="form-row">
         <label>Brand ID</label>
-        <input type="number" name="brandId" value="${isEdit ? product.brand.id : ''}" required />
+        <input type="number" name="brandId" value="${isEdit && product.brand != null ? product.brand.id : ''}" required />
     </div>
 
     <div class="form-row">
