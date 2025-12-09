@@ -2,7 +2,6 @@ package com.phonestore.controller;
 
 import com.phonestore.dao.UserDAO;
 import com.phonestore.model.User;
-// 1. IMPORT THƯ VIỆN BCRYPT
 import org.mindrot.jbcrypt.BCrypt;
 
 import jakarta.servlet.ServletException;
@@ -26,7 +25,6 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setAttribute("pageTitle", "Đăng ký tài khoản");
         request.setAttribute("pageCss", "register.css");
         request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
@@ -47,25 +45,25 @@ public class RegisterServlet extends HttpServlet {
             sendError(request, response, "Mật khẩu nhập lại không khớp.", fullName, phone, email);
             return;
         }
+
         if (userDAO.checkPhoneExists(phone)) {
             sendError(request, response, "Số điện thoại này đã được sử dụng.", fullName, phone, email);
             return;
         }
+
         if (email != null && !email.isEmpty() && userDAO.checkEmailExists(email)) {
             sendError(request, response, "Email này đã được sử dụng.", fullName, phone, email);
             return;
         }
 
-        // 2. HASH MẬT KHẨU
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         User user = new User();
         user.setFullName(fullName);
         user.setPhoneNumber(phone);
         user.setUsername(phone);
-        user.setEmail(email);
-        user.setPasswordHash(hashedPassword); // <-- Lưu hash
-        user.setRole("user");
+        user.setPasswordHash(hashedPassword);
+        user.setRole("customer");
 
         boolean success = userDAO.createUser(user);
 
@@ -76,17 +74,13 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    // Hàm gửi lỗi (đã được thêm vào bản 08:44)
     private void sendError(HttpServletRequest request, HttpServletResponse response,
                            String message, String fullName, String phone, String email)
             throws ServletException, IOException {
-
         request.setAttribute("errorMessage", message);
         request.setAttribute("oldFullName", fullName);
         request.setAttribute("oldPhone", phone);
         request.setAttribute("oldEmail", email);
-
-        // Gọi doGet để tải lại trang với CSS (bản 08:44 đã sửa)
         doGet(request, response);
     }
 }

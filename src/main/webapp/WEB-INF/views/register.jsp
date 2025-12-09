@@ -15,17 +15,18 @@
         </div>
 
         <%-- (Mạng xã hội giữ nguyên) --%>
-        <p class="social-title">Đăng ký bằng tài khoản mạng xã hội</p>
-        <div class="social-login-group">
-            <a href="#" class="btn btn-social btn-google">
-                <i class="fa-brands fa-google"></i> Google
+        <div class="social-login">
+            <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:8080/PhoneStore_war_exploded/login-google&response_type=code&client_id=59981091402-upstrb9sq0tm8umk795aonl5ha1pivat.apps.googleusercontent.com&approval_prompt=force" class="social-btn google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo">
+                Google
             </a>
-            <a href="#" class="btn btn-social btn-facebook">
-                <i class="fa-brands fa-facebook-f"></i> Facebook
+            <a href="https://www.facebook.com/v19.0/dialog/oauth?client_id=844269028190324&redirect_uri=http://localhost:8080/PhoneStore_war_exploded/login-facebook&scope=email,public_profile" class="social-btn facebook">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook logo">
+                Facebook
             </a>
         </div>
-        <div class="form-separator"><span>Hoặc điền thông tin tin sau</span></div>
 
+        <div class="form-separator"><span>Hoặc điền thông tin sau</span></div>
         <%-- FORM ĐĂNG KÝ CHÍNH --%>
         <form action="<c:url value='/register'/>" method="post" id="register-form">
 

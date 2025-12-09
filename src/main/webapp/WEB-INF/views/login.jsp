@@ -41,11 +41,11 @@
             </div>
 
             <div class="social-login">
-                <a href="#" class="social-btn google">
+                <a href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:8080/PhoneStore_war_exploded/login-google&response_type=code&client_id=59981091402-upstrb9sq0tm8umk795aonl5ha1pivat.apps.googleusercontent.com&approval_prompt=force" class="social-btn google">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo">
                     Google
                 </a>
-                <a href="#" class="social-btn facebook">
+                <a href="https://www.facebook.com/v19.0/dialog/oauth?client_id=844269028190324&redirect_uri=http://localhost:8080/PhoneStore_war_exploded/login-facebook&scope=public_profile" class="social-btn facebook">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook logo">
                     Facebook
                 </a>

@@ -31,21 +31,17 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username"); // Lấy "username" từ form
+        String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        // Gọi DAO để lấy thông tin user bằng username
         User userFromDB = userDAO.getUserByUsername(username);
 
-        // Kiểm tra user có tồn tại VÀ mật khẩu có khớp không
         if (userFromDB != null && BCrypt.checkpw(password, userFromDB.getPasswordHash())) {
-            // Đăng nhập thành công
             HttpSession session = request.getSession();
             userFromDB.setPasswordHash(null);
             session.setAttribute("user", userFromDB);
             response.sendRedirect("home");
         } else {
-            // Đăng nhập thất bại
             request.setAttribute("errorMessage", "Sai tên đăng nhập hoặc mật khẩu!");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
         }
