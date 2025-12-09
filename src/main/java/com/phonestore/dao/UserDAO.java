@@ -2,94 +2,81 @@ package com.phonestore.dao;
 
 import com.phonestore.context.DBContext;
 import com.phonestore.model.User;
-// 1. IMPORT THƯ VIỆN BCRYPT
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UserDAO {
 
-    /**
-     * (Hàm cũ của bạn) Lấy thông tin người dùng (KHÔNG BAO GỒM KIỂM TRA MẬT KHẨU)
-     */
-    public User getUserByUsername(String username) {
-        User user = null;
-        String sql = "SELECT * FROM User WHERE username = ?";
-
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, username);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setUsername(rs.getString("username"));
-                    user.setFullName(rs.getString("full_name"));
-                    user.setEmail(rs.getString("email"));
-                    user.setPhoneNumber(rs.getString("phone_number"));
-                    user.setAddress(rs.getString("address"));
-                    user.setPasswordHash(rs.getString("password_hash")); // Lấy hash
-                    user.setRole(rs.getString("role"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    // Helper: Map ResultSet to User object
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setUsername(rs.getString("username"));
+        user.setFullName(rs.getString("full_name"));
+        user.setEmail(rs.getString("email"));
+        user.setPhoneNumber(rs.getString("phone_number"));
+        user.setAddress(rs.getString("address"));
+        user.setPasswordHash(rs.getString("password_hash"));
+        user.setRole(rs.getString("role"));
+        user.setAuthProvider(rs.getString("auth_provider"));
         return user;
     }
 
-    /**
-     * HÀM MỚI QUAN TRỌNG: Kiểm tra Đăng nhập
-     * So sánh mật khẩu plain-text với mật khẩu đã băm trong DB
-     */
-    public User checkLogin(String username, String plainTextPassword) {
-        // 1. Lấy user bằng username
-        User user = getUserByUsername(username);
-
-        if (user != null) {
-            // 2. Lấy mật khẩu đã băm (hash) từ DB
-            String hashedPasswordFromDB = user.getPasswordHash();
-
-            // 3. Dùng BCrypt để so sánh
-            if (BCrypt.checkpw(plainTextPassword, hashedPasswordFromDB)) {
-                // Nếu mật khẩu khớp -> trả về User
-                return user;
-            }
-        }
-
-        // Nếu user không tồn tại, hoặc mật khẩu sai -> trả về null
-        return null;
-    }
-
-
-    // --- (Các hàm đăng ký (08:44) giữ nguyên) ---
-
-    public boolean checkPhoneExists(String phone) {
-        String sql = "SELECT 1 FROM User WHERE phone_number = ?";
+    public User getUserByUsername(String username) {
+        String sql = "SELECT * FROM User WHERE username = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, phone);
+            ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // True nếu tìm thấy
+                if (rs.next()) return mapResultSetToUser(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
-    public boolean checkEmailExists(String email) {
-        String sql = "SELECT 1 FROM User WHERE email = ?";
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM User WHERE email = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // True nếu tìm thấy
+                if (rs.next()) return mapResultSetToUser(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public User checkLogin(String username, String plainTextPassword) {
+        User user = getUserByUsername(username);
+        if (user != null && BCrypt.checkpw(plainTextPassword, user.getPasswordHash())) {
+            return user;
+        }
+        return null;
+    }
+
+    // --- CÁC HÀM CHECK TỒN TẠI (ĐỂ SỬA LỖI RegisterServlet) ---
+
+    public boolean checkPhoneExists(String phone) {
+        return checkExists("phone_number", phone);
+    }
+
+    public boolean checkEmailExists(String email) {
+        return checkExists("email", email);
+    }
+
+    // Hàm phụ trợ dùng chung để check tồn tại
+    private boolean checkExists(String column, String value) {
+        String sql = "SELECT 1 FROM User WHERE " + column + " = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, value);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // Trả về true nếu tìm thấy
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,10 +84,12 @@ public class UserDAO {
         return false;
     }
 
-    public boolean createUser(User user) {
-        String sql = "INSERT INTO User (full_name, username, phone_number, email, password_hash, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+    // --- CÁC HÀM TẠO USER ---
 
+    // 1. Đăng ký thường (RegisterServlet dùng hàm này)
+    public boolean createUser(User user) {
+        String sql = "INSERT INTO User (full_name, username, phone_number, email, password_hash, role, auth_provider) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -108,18 +97,42 @@ public class UserDAO {
             ps.setString(2, user.getUsername());
             ps.setString(3, user.getPhoneNumber());
             ps.setString(4, user.getEmail());
-
-            // Dòng này giờ sẽ lưu MẬT KHẨU ĐÃ BĂM (hash)
             ps.setString(5, user.getPasswordHash());
-
             ps.setString(6, user.getRole());
+            ps.setString(7, "local"); // Mặc định là local
 
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
-
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // 2. Đăng ký Social (Google/Facebook dùng hàm này)
+    public void createGoogleUser(User user) {
+        String sql = "INSERT INTO User (username, full_name, email, password_hash, role, phone_number, auth_provider) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getFullName());
+
+            if (user.getEmail() != null) {
+                ps.setString(3, user.getEmail());
+            } else {
+                ps.setNull(3, Types.VARCHAR);
+            }
+
+            ps.setString(4, BCrypt.hashpw("SOCIAL_LOGIN_" + System.currentTimeMillis(), BCrypt.gensalt()));
+            ps.setString(5, "customer");
+            ps.setNull(6, Types.VARCHAR);
+
+            ps.setString(7, user.getAuthProvider()); // Lấy từ object
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

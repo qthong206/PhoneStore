@@ -1,4 +1,4 @@
-/* Tái sử dụng .form-group và .form-control từ CSS khác (nếu có) */
+/* Tái sử dụng .form-group và .form-control từ CSS khác */
 .form-group {
     margin-bottom: 16px;
 }
@@ -42,26 +42,30 @@
     font-size: 1.8rem;
 }
 
-/* --- MẠNG XÃ HỘI --- */
+/* --- MẠNG XÃ HỘI (Đã sửa tên class khớp với Login) --- */
 .social-title {
     text-align: center;
     font-size: 0.9rem;
     color: var(--color-neutral-dark);
     margin-bottom: 15px;
 }
-.social-login-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+
+/* Đổi từ .social-login-group thành .social-login */
+.social-login {
+    display: flex;
+    gap: 15px;
     margin-bottom: 25px;
 }
-.btn-social {
+
+/* Đổi từ .btn-social thành .social-btn */
+.social-btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 10px;
-    border: 1px solid var(--color-neutral-medium);
+    padding: 12px;
+    border: 1px solid #ccc;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 500;
@@ -69,14 +73,21 @@
     background-color: var(--color-white);
     transition: background-color 0.2s;
 }
-.btn-social:hover {
+
+.social-btn:hover {
     background-color: var(--color-neutral-light);
 }
-.btn-social i {
+
+/* Thêm CSS cho ảnh logo (Google/FB) để không bị vỡ */
+.social-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.social-btn i {
     font-size: 1.2rem;
 }
-.btn-social .fa-google { color: #DB4437; }
-.btn-social .fa-facebook-f { color: #1877F2; }
 
 /* --- DẤU NGĂN CÁCH --- */
 .form-separator {
@@ -124,8 +135,8 @@
 .btn-toggle-password {
     position: absolute;
     right: 1px;
-    top: 31px; /* Điều chỉnh dựa trên chiều cao label */
-    height: 38px; /* = 10px padding + 18px line-height */
+    top: 31px;
+    height: 38px;
     padding: 0 12px;
     background: none;
     border: none;
@@ -195,6 +206,11 @@
     border-color: var(--color-primary);
     padding: 12px 30px;
     font-size: 1.1rem;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    border-style: solid;
 }
 .btn-register:hover {
     background-color: var(--color-primary-dark);
@@ -206,17 +222,18 @@
         padding: 20px;
     }
     .form-grid {
-        grid-template-columns: 1fr; /* 1 cột trên di động */
+        grid-template-columns: 1fr;
         gap: 0;
     }
-    .social-login-group {
-        grid-template-columns: 1fr;
+    /* Đã cập nhật tên class trong Responsive */
+    .social-login {
+        flex-direction: column;
         gap: 10px;
     }
     .register-actions {
-        flex-direction: column-reverse; /* Đảo ngược thứ tự */
+        flex-direction: column-reverse;
         gap: 20px;
-        align-items: stretch; /* Kéo dài 2 nút */
+        align-items: stretch;
         text-align: center;
     }
     .btn-register {
@@ -224,14 +241,11 @@
     }
 }
 
-/* =================================== */
-/* CSS THÊM (CHO KHỐI LỖI) */
-/* =================================== */
-
+/* --- KHỐI HIỂN THỊ LỖI --- */
 .register-error-box {
-    background-color: #f8d7da; /* Nền đỏ nhạt */
+    background-color: #f8d7da;
     border: 1px solid #f5c6cb;
-    color: #721c24; /* Chữ đỏ đậm */
+    color: #721c24;
     padding: 12px 15px;
     border-radius: 8px;
     margin-bottom: 20px;

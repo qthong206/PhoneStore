@@ -9,6 +9,7 @@ public class User {
     private String address;
     private String passwordHash;
     private String role;
+    private String authProvider;
 
     // Constructors
     public User() {}
@@ -32,4 +33,6 @@ public class User {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public String getAuthProvider() { return authProvider; }
+    public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
 }
