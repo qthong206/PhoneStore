@@ -78,4 +78,79 @@ public class BrandDAO {
         }
         return null;
     }
+    // cas ham moi cho admin
+
+    public Brand getBrandById(int id) {
+        String sql = "SELECT * FROM Brand WHERE id = ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Brand b = new Brand();
+                b.setId(rs.getInt("id"));
+                b.setName(rs.getString("name"));
+                b.setSlug(rs.getString("slug"));
+                b.setLogoUrl(rs.getString("logo_url"));
+                b.setCategoryId(rs.getInt("category_id"));
+                return b;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return null;
+    }
+
+    public void insertBrand(Brand b) {
+        String sql = "INSERT INTO Brand(name, slug, logo_url, category_id) VALUES(?, ?, ?, ?)";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, b.getName());
+            ps.setString(2, b.getSlug());
+            ps.setString(3, b.getLogoUrl());
+            ps.setInt(4, b.getCategoryId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    public void updateBrand(Brand b) {
+        String sql = "UPDATE Brand SET name=?, slug=?, logo_url=?, category_id=? WHERE id=?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, b.getName());
+            ps.setString(2, b.getSlug());
+            ps.setString(3, b.getLogoUrl());
+            ps.setInt(4, b.getCategoryId());
+            ps.setInt(5, b.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    public void deleteBrand(int id) {
+        String sql = "DELETE FROM Brand WHERE id=?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
 }

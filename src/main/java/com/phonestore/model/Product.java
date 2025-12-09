@@ -13,6 +13,7 @@ public class Product {
     private String storage;
     private double avgRating;
     private int reviewCount;
+    private int status;
 
     public Product() {}
 
@@ -40,4 +41,7 @@ public class Product {
     public void setAvgRating(double avgRating) {this.avgRating = avgRating;}
     public int getReviewCount() {return reviewCount;}
     public void setReviewCount(int reviewCount) {this.reviewCount = reviewCount;}
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 }
