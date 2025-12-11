@@ -16,7 +16,6 @@ public class UserDAO {
         user.setFullName(rs.getString("full_name"));
         user.setEmail(rs.getString("email"));
         user.setPhoneNumber(rs.getString("phone_number"));
-        user.setAddress(rs.getString("address"));
         user.setPasswordHash(rs.getString("password_hash"));
         user.setRole(rs.getString("role"));
         user.setAuthProvider(rs.getString("auth_provider"));
@@ -51,32 +50,20 @@ public class UserDAO {
         return null;
     }
 
-    public User checkLogin(String username, String plainTextPassword) {
-        User user = getUserByUsername(username);
-        if (user != null && BCrypt.checkpw(plainTextPassword, user.getPasswordHash())) {
-            return user;
-        }
-        return null;
-    }
-
-    // --- CÁC HÀM CHECK TỒN TẠI (ĐỂ SỬA LỖI RegisterServlet) ---
-
+    // Các hàm check tồn tại
     public boolean checkPhoneExists(String phone) {
         return checkExists("phone_number", phone);
     }
-
     public boolean checkEmailExists(String email) {
         return checkExists("email", email);
     }
-
-    // Hàm phụ trợ dùng chung để check tồn tại
     private boolean checkExists(String column, String value) {
         String sql = "SELECT 1 FROM User WHERE " + column + " = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, value);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Trả về true nếu tìm thấy
+                return rs.next();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,23 +71,18 @@ public class UserDAO {
         return false;
     }
 
-    // --- CÁC HÀM TẠO USER ---
-
-    // 1. Đăng ký thường (RegisterServlet dùng hàm này)
+    // Đăng ký thường
     public boolean createUser(User user) {
-        String sql = "INSERT INTO User (full_name, username, phone_number, email, password_hash, role, auth_provider) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (full_name, username, phone_number, email, password_hash, role, auth_provider) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getUsername());
             ps.setString(3, user.getPhoneNumber());
             ps.setString(4, user.getEmail());
             ps.setString(5, user.getPasswordHash());
             ps.setString(6, user.getRole());
-            ps.setString(7, "local"); // Mặc định là local
-
+            ps.setString(7, "local");
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,31 +90,36 @@ public class UserDAO {
         return false;
     }
 
-    // 2. Đăng ký Social (Google/Facebook dùng hàm này)
+    // Đăng ký Social
     public void createGoogleUser(User user) {
-        String sql = "INSERT INTO User (username, full_name, email, password_hash, role, phone_number, auth_provider) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (username, full_name, email, password_hash, role, phone_number, auth_provider) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getFullName());
-
-            if (user.getEmail() != null) {
-                ps.setString(3, user.getEmail());
-            } else {
-                ps.setNull(3, Types.VARCHAR);
-            }
-
-            ps.setString(4, BCrypt.hashpw("SOCIAL_LOGIN_" + System.currentTimeMillis(), BCrypt.gensalt()));
+            if (user.getEmail() != null) ps.setString(3, user.getEmail());
+            else ps.setNull(3, Types.VARCHAR);
+            ps.setString(4, BCrypt.hashpw("SOCIAL_" + System.currentTimeMillis(), BCrypt.gensalt()));
             ps.setString(5, "customer");
             ps.setNull(6, Types.VARCHAR);
-
-            ps.setString(7, user.getAuthProvider()); // Lấy từ object
-
+            ps.setString(7, user.getAuthProvider());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // Hàm cập nhật thông tin cá nhân (Chỉ update tên, không update address nữa)
+    public boolean updateUserInfo(User user) {
+        String sql = "UPDATE User SET full_name = ? WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getFullName());
+            ps.setInt(2, user.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
