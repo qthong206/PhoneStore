@@ -1,59 +1,131 @@
 /* ========================================= */
-/* CSS RIÊNG CHO TRANG THÔNG TIN TÀI KHOẢN   */
+/* CSS CHO TRANG TÀI KHOẢN (ACCOUNT)         */
 /* ========================================= */
 
-/* --- TIÊU ĐỀ BLOCK (Có nút cập nhật) --- */
+/* --- CẤU TRÚC BLOCK CHÍNH --- */
+.content-block {
+    background: var(--color-white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px var(--color-shadow);
+    margin-bottom: 25px;
+}
+
 .content-block-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--color-neutral-light);
+    border-bottom: 1px solid #eee;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
-.content-block-header h3 { margin: 0; padding: 0; border-bottom: none; }
 
-.btn-link { color: var(--color-primary); text-decoration: none; font-weight: 500; }
-.btn-link-danger { color: var(--color-danger); text-decoration: none; font-weight: 500; }
-.btn-link i, .btn-link-danger i { margin-right: 5px; }
+.content-block-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--color-dark);
+}
 
-/* --- GRID THÔNG TIN --- */
+/* Link text (Cập nhật, Thêm địa chỉ...) */
+.btn-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+.btn-link:hover { color: var(--color-primary-dark); }
+.btn-link i { margin-right: 5px; }
+
+/* --- THÔNG TIN CÁ NHÂN (GRID) --- */
 .info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 30px;
 }
-.info-item span { color: var(--color-neutral-medium); font-size: 0.9em; display: block; }
-.info-item strong { color: var(--color-dark); font-size: 1em; }
 
-/* --- THẺ ĐỊA CHỈ --- */
+.info-item { margin-bottom: 12px; }
+.info-item span {
+    color: #777;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 4px;
+}
+.info-item strong {
+    color: #333;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* --- THẺ ĐỊA CHỈ (ADDRESS CARD) --- */
 .address-card {
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    border: 1px solid var(--color-neutral-light);
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 15px;
+    transition: box-shadow 0.2s ease;
 }
+.address-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+/* Card mặc định */
+.address-card.default-border {
+    border: 1px solid var(--color-primary);
+    background-color: var(--color-primary-ultralight);
+}
+
+.address-card-main { flex: 1; }
+
+.address-badges {
+    display: flex; gap: 10px; margin-bottom: 8px;
+}
+
 .address-type-badge {
-    background-color: var(--color-neutral-light);
-    color: var(--color-neutral-medium);
+    background-color: #f0f2f5;
+    color: #555;
     padding: 3px 8px;
     border-radius: 4px;
-    font-size: 0.8em;
-    font-weight: 500;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.address-type-badge.badge-default {
+    background-color: #fff;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+}
+
+.address-name {
+    font-size: 1.1rem;
+    color: #333;
     margin-right: 10px;
 }
-.address-card-main { flex-grow: 1; }
-.address-card-main span { margin-right: 10px; }
-.address-card-main p { margin: 5px 0 0 0; color: var(--color-neutral-medium); }
+.address-phone {
+    color: #777;
+    font-size: 0.95rem;
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+}
+.address-full { margin-top: 8px; color: #444; font-size: 0.95rem; line-height: 1.4; }
+
+/* Cột hành động (bên phải) */
 .address-card-actions {
-    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-left: 20px;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 120px;
 }
-.address-card-actions a { color: var(--color-primary); text-decoration: none; font-weight: 500; }
+.address-card-actions a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.btn-action-default { color: var(--color-success); }
+.btn-action-edit { color: var(--color-primary); }
+.btn-action-delete { color: var(--color-danger); }
 
 /* --- TÀI KHOẢN LIÊN KẾT --- */
 .linked-account-item {
@@ -61,98 +133,77 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid var(--color-neutral-light);
+    border-bottom: 1px solid #eee;
 }
 .linked-account-item:last-child { border-bottom: none; }
-.linked-info { display: flex; align-items: center; gap: 15px; }
-.linked-info i { font-size: 1.8em; }
-.fa-google { color: #DB4437; }
-.fa-facebook { color: #1877F2; }
-.linked-info strong { display: block; }
-.linked-info span { color: var(--color-success); font-size: 0.9em; }
 
-/* --- MODAL & FORM --- */
+.linked-info { display: flex; align-items: center; gap: 15px; }
+.linked-info i { font-size: 1.8rem; }
+.linked-info strong { display: block; color: #333; }
+.linked-info span { font-size: 0.85rem; color: #999; }
+.status-connected { color: var(--color-success); font-weight: 600; font-size: 0.9rem; }
+
+/* ========================================= */
+/* MODAL STYLES (ĐÃ CHUẨN HÓA)               */
+/* ========================================= */
 .modal-overlay {
-    display: none; /* Ẩn mặc định */
-    position: fixed;
-    z-index: 1000;
-    left: 0; top: 0; width: 100%; height: 100%;
+    display: none;
+    position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     justify-content: center; align-items: center;
 }
+
 .modal-content {
-    background-color: var(--color-white);
-    border-radius: 12px;
-    width: 100%; max-width: 500px; max-height: 80vh;
+    background-color: #fff;
+    width: 90%; max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     display: flex; flex-direction: column;
 }
+
 .modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 25px; border-bottom: 1px solid var(--color-neutral-light);
 }
-.modal-header h3 { margin: 0; padding: 0; border: none; color: var(--color-dark); }
-.close-modal-btn {
-    font-size: 2em; font-weight: 300; color: var(--color-neutral-medium);
-    background: none; border: none; cursor: pointer;
-}
-.modal-body { padding: 25px; overflow-y: auto; }
-.modal-body h4 { font-size: 1em; font-weight: bold; color: var(--color-dark); margin-bottom: 20px; }
-.modal-footer { padding: 20px 25px; border-top: 1px solid var(--color-neutral-light); }
-.modal-footer-split { display: flex; justify-content: space-between; gap: 15px; }
-.modal-footer-split .btn, .modal-footer-split .btn-outline-danger { flex: 1; }
+.modal-header h3 { margin: 0; font-size: 1.2rem; color: #333; }
+.close-modal-btn { background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer; }
+.close-modal-btn:hover { color: var(--color-danger); }
 
-/* Form Controls */
+.modal-body { padding: 20px; }
+
+/* Form Elements */
 .form-group { margin-bottom: 15px; }
-.form-group label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--color-dark); }
-.form-group input[type="text"], .form-control-select {
-    width: 100%; padding: 12px 15px;
-    border: 1px solid #ccc; border-radius: 8px;
-    font-size: 1em; font-family: inherit;
+.form-group label {
+    display: block; font-weight: 600; margin-bottom: 5px; color: #333; font-size: 0.95rem;
 }
-.form-radio-group { display: flex; gap: 10px; }
-.form-radio-btn {
-    padding: 10px 20px; border: 1px solid #ccc; border-radius: 8px;
-    background-color: var(--color-white); cursor: pointer; font-size: 0.9em;
+.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"] {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
 }
-.form-radio-btn.active {
-    border-color: var(--color-primary); background-color: var(--color-primary-ultralight);
-    color: var(--color-primary); font-weight: bold;
+.form-group input:focus { border-color: var(--color-primary); outline: none; }
+input.input-locked { background-color: #f9f9f9; color: #777; cursor: not-allowed; }
+
+.form-radio-group { display: flex; gap: 20px; }
+.radio-label { display: flex; align-items: center; cursor: pointer; font-size: 0.95rem; }
+.radio-label input { margin-right: 8px; }
+
+/* Footer & Buttons */
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    background-color: #fafafa;
+    border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+}
+.modal-footer-split { display: flex; gap: 15px; width: 100%; }
+.modal-footer button {
+    flex: 1; padding: 10px 0; border-radius: 6px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; border: 1px solid transparent; text-align: center;
 }
 
-/* Toggle Switch */
-.form-group-toggle { display: flex; justify-content: space-between; align-items: center; }
-.form-toggle { position: relative; display: inline-block; width: 50px; height: 28px; }
-.form-toggle input { opacity: 0; width: 0; height: 0; }
-.form-toggle .slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc; transition: .4s; border-radius: 28px;
-}
-.form-toggle .slider:before {
-    position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
-    background-color: white; transition: .4s; border-radius: 50%;
-}
-.form-toggle input:checked + .slider { background-color: var(--color-primary); }
-.form-toggle input:checked + .slider:before { transform: translateX(22px); }
+/* Nút HỦY */
+.btn-outline { background-color: #fff; color: #dc3545; border-color: #dc3545; }
+.btn-outline:hover { background-color: #dc3545; color: #fff; }
 
-.btn-full { width: 100%; }
-.btn-outline {
-    padding: 10px 20px; font-weight: bold; border: 1px solid #ccc;
-    color: var(--color-text); background-color: var(--color-white);
-    border-radius: 5px; cursor: pointer; transition: all 0.3s ease;
-}
-.btn-outline:hover { background-color: var(--color-neutral-light); }
-
-.btn-outline-danger {
-    padding: 10px 20px; font-weight: bold;
-    border: 1px solid var(--color-danger); color: var(--color-danger);
-    background-color: var(--color-white); border-radius: 5px;
-    cursor: pointer; transition: all 0.3s ease;
-}
-.btn-outline-danger:hover { background-color: var(--color-danger); color: var(--color-white); }
-
-.form-group input:disabled {
-    background-color: var(--color-neutral-light); color: var(--color-neutral-medium); cursor: not-allowed;
-}
-.form-group-icon { position: relative; }
-.form-group-icon input { padding-right: 40px; }
-.form-group-icon i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--color-neutral-medium); }
+/* Nút LƯU */
+.modal-footer .btn { background-color: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.modal-footer .btn:hover { background-color: var(--color-primary-dark); }

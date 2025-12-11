@@ -13,14 +13,17 @@
 <main class="container user-dashboard">
     <c:if test="${not empty sessionScope.user}">
 
-        <%-- 1. User Info Bar --%>
+        <%-- 1. USER INFO BAR (Chứa thống kê) --%>
+        <%-- File này sẽ nhận biến totalOrders và totalSpent từ Servlet --%>
         <jsp:include page="/WEB-INF/views/user/components/user-info-bar.jsp" />
 
+        <%-- 2. DASHBOARD BODY --%>
         <div class="dashboard-body">
-                <%-- 2. Sidebar --%>
+
+                <%-- Sidebar --%>
             <jsp:include page="/WEB-INF/views/user/components/user-sidebar.jsp" />
 
-                <%-- 3. Nội dung chính --%>
+                <%-- Content Chính --%>
             <div class="user-content">
 
                     <%-- KHỐI 1: THÔNG TIN CÁ NHÂN --%>
@@ -32,12 +35,23 @@
                         </a>
                     </div>
                     <div class="info-grid">
-                        <div class="info-item"><span>Họ và tên:</span> <strong>${sessionScope.user.fullName}</strong></div>
-                        <div class="info-item"><span>Số điện thoại:</span> <strong>${sessionScope.user.phoneNumber}</strong></div>
-                        <div class="info-item"><span>Giới tính:</span> <strong>-</strong></div>
-                        <div class="info-item"><span>Email:</span> <strong>${sessionScope.user.email}</strong></div>
-                        <div class="info-item"><span>Ngày sinh:</span> <strong>-</strong></div>
-                        <div class="info-item"><span>Địa chỉ mặc định:</span> <strong>-</strong></div>
+                        <div class="info-column">
+                            <div class="info-item"><span>Họ và tên:</span> <strong>${sessionScope.user.fullName}</strong></div>
+                            <div class="info-item"><span>Giới tính:</span> <strong>Nam</strong></div>
+                            <div class="info-item"><span>Ngày sinh:</span> <strong>01/01/2000</strong></div>
+                        </div>
+                        <div class="info-column">
+                            <div class="info-item"><span>Số điện thoại:</span> <strong>${sessionScope.user.phoneNumber}</strong></div>
+                            <div class="info-item"><span>Email:</span> <strong>${sessionScope.user.email}</strong></div>
+
+                            <c:set var="defaultAddrStr" value="Chưa thiết lập"/>
+                            <c:forEach var="addr" items="${addressList}">
+                                <c:if test="${addr.defaultAddress}">
+                                    <c:set var="defaultAddrStr" value="${addr.streetAddress}"/>
+                                </c:if>
+                            </c:forEach>
+                            <div class="info-item"><span>Địa chỉ mặc định:</span> <strong>${defaultAddrStr}</strong></div>
+                        </div>
                     </div>
                 </div>
 
@@ -50,38 +64,70 @@
                         </a>
                     </div>
 
-                        <%-- (Ví dụ thẻ địa chỉ tĩnh - sau này dùng c:forEach) --%>
-                    <div class="address-card">
-                        <div class="address-card-main">
-                            <span class="address-type-badge">Nhà</span>
-                            <strong class="address-name">${sessionScope.user.fullName}</strong>
-                            <span class="address-phone">${sessionScope.user.phoneNumber}</span>
-                            <p class="address-full">1, Thị trấn Núi Sập, Huyện Thoại Sơn, An Giang</p>
+                    <c:if test="${empty addressList}">
+                        <div class="empty-state">
+                            <p>Bạn chưa lưu địa chỉ nào.</p>
                         </div>
-                        <div class="address-card-actions">
-                            <a href="#">Xoá</a>
-                            <a href="#" class="openUpdateModalBtn">Cập nhật</a>
+                    </c:if>
+
+                    <c:forEach var="addr" items="${addressList}">
+                        <div class="address-card ${addr.defaultAddress ? 'default-border' : ''}">
+                            <div class="address-card-main">
+                                <div class="address-badges">
+                                    <span class="address-type-badge">${addr.addressType}</span>
+                                    <c:if test="${addr.defaultAddress}">
+                                        <span class="address-type-badge badge-default">Mặc định</span>
+                                    </c:if>
+                                </div>
+                                <strong class="address-name">${addr.receiverName}</strong>
+                                <span class="address-phone">${addr.phoneNumber}</span>
+                                <p class="address-full">${addr.streetAddress}</p>
+                            </div>
+                            <div class="address-card-actions">
+                                <c:if test="${!addr.defaultAddress}">
+                                    <a href="<c:url value='/account?action=set-default&id=${addr.id}'/>" class="btn-action-default">Đặt mặc định</a>
+                                </c:if>
+
+                                <a href="#" class="openUpdateModalBtn btn-action-edit"
+                                   data-id="${addr.id}"
+                                   data-name="${addr.receiverName}"
+                                   data-phone="${addr.phoneNumber}"
+                                   data-street="${addr.streetAddress}"
+                                   data-type="${addr.addressType}"
+                                   data-default="${addr.defaultAddress}">Cập nhật</a>
+
+                                <a href="<c:url value='/account?action=delete-address&id=${addr.id}'/>"
+                                   class="btn-action-delete"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')">Xoá</a>
+                            </div>
                         </div>
-                    </div>
+                    </c:forEach>
                 </div>
 
-                    <%-- KHỐI 3: TÀI KHOẢN LIÊN KẾT --%>
+                    <%-- TÀI KHOẢN LIÊN KẾT --%>
                 <div class="content-block">
                     <h3>Tài khoản liên kết</h3>
                     <div class="linked-account-item">
                         <div class="linked-info">
-                            <i class="fa-brands fa-google"></i>
+                            <i class="fa-brands fa-google" style="color: #DB4437;"></i>
                             <strong>Google</strong>
-                            <span>Đã liên kết</span>
+                            <c:if test="${sessionScope.user.authProvider == 'google'}"><span>Đã liên kết</span></c:if>
+                            <c:if test="${sessionScope.user.authProvider != 'google'}"><span style="color: #999;">Chưa liên kết</span></c:if>
                         </div>
-                        <a href="#" class="btn-link-danger"><i class="fa-solid fa-link-slash"></i> Huỷ liên kết</a>
+                        <c:if test="${sessionScope.user.authProvider == 'google'}">
+                            <span class="status-connected"><i class="fa-solid fa-check"></i> Đang dùng</span>
+                        </c:if>
                     </div>
                     <div class="linked-account-item">
                         <div class="linked-info">
-                            <i class="fa-brands fa-facebook"></i>
+                            <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>
                             <strong>Facebook</strong>
+                            <c:if test="${sessionScope.user.authProvider == 'facebook'}"><span>Đã liên kết</span></c:if>
+                            <c:if test="${sessionScope.user.authProvider != 'facebook'}"><span style="color: #999;">Chưa liên kết</span></c:if>
                         </div>
-                        <a href="#" class="btn-link"><i class="fa-solid fa-link"></i> Liên kết</a>
+                        <c:if test="${sessionScope.user.authProvider == 'facebook'}">
+                            <span class="status-connected"><i class="fa-solid fa-check"></i> Đang dùng</span>
+                        </c:if>
                     </div>
                 </div>
 
@@ -97,102 +143,143 @@
     </c:if>
 </main>
 
-<%-- =================================================================== --%>
-<%-- MODAL 1: CẬP NHẬT THÔNG TIN CÁ NHÂN                                --%>
-<%-- =================================================================== --%>
+<%-- MODAL 1: CẬP NHẬT THÔNG TIN --%>
 <div class="modal-overlay" id="updateInfoModal">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Cập nhật thông tin cá nhân</h3>
             <button class="close-modal-btn">&times;</button>
         </div>
-        <form action="<c:url value='/update-account'/>" method="POST">
+        <form action="<c:url value='/account'/>" method="POST">
+            <input type="hidden" name="action" value="update-info">
             <div class="modal-body">
                 <div class="form-group">
                     <label for="update-fullname">Họ và tên</label>
-                    <input type="text" id="update-fullname" name="fullName" value="${sessionScope.user.fullName}">
-                </div>
-                <div class="form-group">
-                    <label for="update-gender">Giới tính</label>
-                    <select id="update-gender" name="gender" class="form-control-select">
-                        <option value="">Chọn giới tính</option>
-                        <option value="male">Nam</option>
-                        <option value="female">Nữ</option>
-                        <option value="other">Khác</option>
-                    </select>
+                    <input type="text" id="update-fullname" name="fullName" value="${sessionScope.user.fullName}" required>
                 </div>
                 <div class="form-group">
                     <label for="update-phone">Số điện thoại</label>
-                    <input type="text" id="update-phone" value="${sessionScope.user.phoneNumber}" readonly disabled>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user.phoneNumber}">
+                            <input type="text" value="${sessionScope.user.phoneNumber}" class="input-locked" readonly title="Không thể thay đổi">
+                        </c:when>
+                        <c:otherwise>
+                            <input type="text" name="phoneNumber" placeholder="Nhập SĐT" required pattern="[0-9]{10,11}">
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="form-group">
                     <label for="update-email">Email</label>
-                    <input type="text" id="update-email" value="${sessionScope.user.email}" readonly disabled>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user.email}">
+                            <input type="email" value="${sessionScope.user.email}" class="input-locked" readonly title="Không thể thay đổi">
+                        </c:when>
+                        <c:otherwise>
+                            <input type="email" name="email" placeholder="Nhập Email" required>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
-            <div class="modal-footer modal-footer-split">
-                <button type="button" class="btn btn-outline">Thiết lập lại</button>
-                <button type="submit" class="btn">Cập nhật thông tin</button>
+            <div class="modal-footer">
+                <div class="modal-footer-split">
+                    <button type="button" class="btn-outline close-modal-btn">Hủy</button>
+                    <button type="submit" class="btn">Lưu thay đổi</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<%-- =================================================================== --%>
-<%-- MODAL 2: THÊM ĐỊA CHỈ                                              --%>
-<%-- =================================================================== --%>
+<%-- MODAL 2: THÊM ĐỊA CHỈ --%>
 <div class="modal-overlay" id="addAddressModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Thêm địa chỉ</h3>
+            <h3>Thêm địa chỉ mới</h3>
             <button class="close-modal-btn">&times;</button>
         </div>
-        <form action="<c:url value='/add-address'/>" method="POST">
+        <form action="<c:url value='/account'/>" method="POST">
+            <input type="hidden" name="action" value="add-address">
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="add-street">Địa chỉ nhà</label>
-                    <input type="text" id="add-street" placeholder="Nhập địa chỉ nhà">
+                    <label>Tên người nhận</label>
+                    <input type="text" name="receiverName" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" name="phoneNumber" required pattern="[0-9]{10,11}">
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ chi tiết</label>
+                    <input type="text" name="streetAddress" required>
                 </div>
                 <div class="form-group">
                     <label>Loại địa chỉ</label>
                     <div class="form-radio-group">
-                        <button type="button" class="form-radio-btn active">Nhà</button>
-                        <button type="button" class="form-radio-btn">Văn phòng</button>
+                        <label class="radio-label"><input type="radio" name="addressType" value="Nhà riêng" checked> Nhà riêng</label>
+                        <label class="radio-label" style="margin-left: 15px;"><input type="radio" name="addressType" value="Văn phòng"> Văn phòng</label>
                     </div>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="isDefault" value="true"> Đặt làm địa chỉ mặc định
+                    </label>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-full">Thêm địa chỉ</button>
+                <div class="modal-footer-split">
+                    <button type="button" class="btn-outline close-modal-btn">Hủy</button>
+                    <button type="submit" class="btn">Lưu địa chỉ</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<%-- =================================================================== --%>
-<%-- MODAL 3: CẬP NHẬT ĐỊA CHỈ                                          --%>
-<%-- =================================================================== --%>
+<%-- MODAL 3: UPDATE ĐỊA CHỈ --%>
 <div class="modal-overlay" id="updateAddressModal">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Cập nhật địa chỉ</h3>
             <button class="close-modal-btn">&times;</button>
         </div>
-        <form action="<c:url value='/update-address'/>" method="POST">
+        <form action="<c:url value='/account'/>" method="POST">
+            <input type="hidden" name="action" value="update-address">
+            <input type="hidden" name="addressId" id="update-address-id">
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="update-street">Địa chỉ nhà</label>
-                    <input type="text" id="update-street" value="1, Thị trấn Núi Sập...">
+                    <label>Tên người nhận</label>
+                    <input type="text" id="update-receiver" name="receiverName" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" id="update-phone-addr" name="phoneNumber" required pattern="[0-9]{10,11}">
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ chi tiết</label>
+                    <input type="text" id="update-street" name="streetAddress" required>
+                </div>
+                <div class="form-group">
+                    <label>Loại địa chỉ</label>
+                    <div class="form-radio-group">
+                        <label class="radio-label"><input type="radio" name="addressType" id="update-type-home" value="Nhà riêng"> Nhà riêng</label>
+                        <label class="radio-label" style="margin-left: 15px;"><input type="radio" name="addressType" id="update-type-office" value="Văn phòng"> Văn phòng</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="isDefault" id="update-default" value="true"> Đặt làm địa chỉ mặc định
+                    </label>
                 </div>
             </div>
-            <div class="modal-footer modal-footer-split">
-                <button type="button" class="btn btn-outline-danger">Xoá</button>
-                <button type="submit" class="btn">Lưu thay đổi</button>
+            <div class="modal-footer">
+                <div class="modal-footer-split">
+                    <button type="button" class="btn-outline close-modal-btn">Hủy</button>
+                    <button type="submit" class="btn">Lưu thay đổi</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<%-- Load JS xử lý Popup --%>
 <script src="<c:url value='/js/account.js'/>"></script>
-
 <jsp:include page="/WEB-INF/layout/footer.jsp" />
