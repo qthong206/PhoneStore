@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
 
 <footer>
-    <%-- (Toàn bộ code footer-main, footer-nav, footer-copyright của bạn giữ nguyên) --%>
+    <%-- (Toàn bộ code footer-main, footer-nav, footer-copyright giữ nguyên) --%>
     <div class="footer-main">
         <div class="container footer-grid">
             <div class="footer-column">
@@ -63,14 +63,13 @@
 </footer>
 
 <%-- ============================================= --%>
-<%-- MODAL "CẦN ĐĂNG NHẬP" --%>
+<%-- MODAL "CẦN ĐĂNG NHẬP" (Dùng chung) --%>
 <%-- ============================================= --%>
 <div id="review-login-modal" class="modal-backdrop" style="display:none;">
     <div class="modal-content custom-modal">
         <button class="modal-close" id="modal-close-login-btn">&times;</button>
         <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
         <h3>Cần Đăng Nhập</h3>
-        <%-- Sửa lại text cho chung chung (vì cả Review và Wishlist đều dùng) --%>
         <p>Vui lòng đăng nhập hoặc đăng ký tài khoản để thực hiện chức năng này.</p>
         <div class="modal-buttons">
             <a href="<c:url value='/register'/>" class="btn btn-modal-secondary">Đăng Ký</a>
@@ -78,6 +77,8 @@
         </div>
     </div>
 </div>
+
+<script src="<c:url value='/js/common.js'/>"></script>
 
 </body>
 </html>

@@ -68,7 +68,8 @@ body {
     padding: 15px;
     box-shadow: 0 4px 12px var(--color-shadow);
 }
-.user-nav ul { list-style: none; }
+.user-nav ul { list-style: none; margin: 0; padding: 0; }
+.user-nav ul li { margin-bottom: 5px; }
 .user-nav ul li a {
     display: flex;
     align-items: center;
@@ -93,10 +94,17 @@ body {
     width: 24px;
     text-align: center;
 }
-.user-nav ul li a.logout-link { color: var(--color-danger); }
-.user-nav ul li a.logout-link:hover {
-    background-color: #fbecec;
+
+/* Style riêng cho nút Đăng xuất */
+.user-nav ul li a.logout-link {
     color: var(--color-danger);
+    margin-top: 10px;
+    border-top: 1px solid var(--color-neutral-light);
+    border-radius: 0 0 8px 8px;
+}
+.user-nav ul li a.logout-link:hover {
+    background-color: #ffebee;
+    color: #c62828;
 }
 
 /* --- 5. CỘT NỘI DUNG BÊN PHẢI (Content) --- */
@@ -117,7 +125,7 @@ body {
     font-size: 1.3em;
 }
 
-/* --- 6. TRẠNG THÁI CHUNG (Empty, Login Prompt) --- */
+/* --- 6. TRẠNG THÁI CHUNG --- */
 .empty-state {
     text-align: center;
     padding: 40px 0;
@@ -143,4 +151,122 @@ body {
 .login-prompt-card p {
     margin-bottom: 20px;
     font-size: 1.1em;
+}
+
+/* --- 7. CSS CHO MODAL (STYLE MỚI) --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    width: 90%;
+    max-width: 450px;
+    border-radius: 16px; /* Bo góc tròn hơn */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease;
+    overflow: hidden;
+}
+
+/* Style riêng cho Modal Logout */
+.modal-logout {
+    text-align: center;
+    padding: 0;
+}
+
+.modal-logout .modal-header {
+    border-bottom: none;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.modal-logout .modal-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-dark);
+    text-align: center;
+}
+
+.modal-logout .modal-body {
+    padding: 10px 30px 30px;
+    color: var(--color-neutral-dark);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.modal-logout .modal-footer {
+    background-color: transparent;
+    border-top: none;
+    padding: 0 30px 30px;
+}
+
+.modal-logout .modal-footer-split {
+    gap: 15px; /* Khoảng cách giữa 2 nút */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- BUTTONS IN MODAL --- */
+.btn-large {
+    flex: 1; /* Chia đều chiều rộng */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+/* Nút Ở lại (Primary - Xanh dương) */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+/* Nút Đăng xuất (Outline Secondary - Trắng viền xám) */
+.btn-outline-secondary {
+    background-color: var(--color-white);
+    color: var(--color-text);
+    border-color: #ccc;
+}
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #999;
+    color: var(--color-dark);
+}
+
+/* Các class cũ (để tương thích với modal khác nếu có) */
+.btn-outline {
+    background-color: var(--color-white);
+    color: var(--color-text);
+    border: 1px solid var(--color-neutral-medium);
+}
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-white);
 }
