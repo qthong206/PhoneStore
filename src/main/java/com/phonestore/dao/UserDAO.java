@@ -122,4 +122,49 @@ public class UserDAO {
         }
         return false;
     }
+
+    // Hàm đổi mật khẩu
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBContext.getConnection();
+
+            // 1. Lấy mật khẩu hiện tại trong DB để so sánh
+            String getPassSql = "SELECT password_hash FROM User WHERE id = ?";
+            ps = conn.prepareStatement(getPassSql);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String currentHash = rs.getString("password_hash");
+
+                // 2. Kiểm tra mật khẩu cũ người dùng nhập vào
+                // Nếu dùng BCrypt (như code bạn gửi)
+                if (BCrypt.checkpw(oldPassword, currentHash)) {
+
+                    // 3. Nếu đúng, mã hóa mật khẩu mới và update
+                    String newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+                    String updateSql = "UPDATE User SET password_hash = ? WHERE id = ?";
+                    // Đóng ps cũ để dùng ps mới
+                    ps.close();
+
+                    ps = conn.prepareStatement(updateSql);
+                    ps.setString(1, newHash);
+                    ps.setInt(2, userId);
+
+                    return ps.executeUpdate() > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Đóng kết nối (bạn có thể dùng hàm closeConnections có sẵn)
+            try { if(rs!=null) rs.close(); if(ps!=null) ps.close(); if(conn!=null) conn.close(); } catch(Exception e){}
+        }
+        return false;
+    }
 }

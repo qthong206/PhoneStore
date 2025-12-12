@@ -6,27 +6,20 @@
 
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
-<%-- Load CSS --%>
 <link rel="stylesheet" href="<c:url value='/css/user-layout.css'/>">
 <link rel="stylesheet" href="<c:url value='/css/account.css'/>">
 
 <main class="container user-dashboard">
     <c:if test="${not empty sessionScope.user}">
 
-        <%-- 1. USER INFO BAR (Chứa thống kê) --%>
-        <%-- File này sẽ nhận biến totalOrders và totalSpent từ Servlet --%>
         <jsp:include page="/WEB-INF/views/user/components/user-info-bar.jsp" />
 
-        <%-- 2. DASHBOARD BODY --%>
         <div class="dashboard-body">
-
-                <%-- Sidebar --%>
             <jsp:include page="/WEB-INF/views/user/components/user-sidebar.jsp" />
 
-                <%-- Content Chính --%>
             <div class="user-content">
 
-                    <%-- KHỐI 1: THÔNG TIN CÁ NHÂN --%>
+                    <%-- BLOCK 1: THÔNG TIN CÁ NHÂN --%>
                 <div class="content-block">
                     <div class="content-block-header">
                         <h3>Thông tin cá nhân</h3>
@@ -43,7 +36,6 @@
                         <div class="info-column">
                             <div class="info-item"><span>Số điện thoại:</span> <strong>${sessionScope.user.phoneNumber}</strong></div>
                             <div class="info-item"><span>Email:</span> <strong>${sessionScope.user.email}</strong></div>
-
                             <c:set var="defaultAddrStr" value="Chưa thiết lập"/>
                             <c:forEach var="addr" items="${addressList}">
                                 <c:if test="${addr.defaultAddress}">
@@ -55,7 +47,7 @@
                     </div>
                 </div>
 
-                    <%-- KHỐI 2: SỔ ĐỊA CHỈ --%>
+                    <%-- BLOCK 2: SỔ ĐỊA CHỈ --%>
                 <div class="content-block">
                     <div class="content-block-header">
                         <h3>Sổ địa chỉ</h3>
@@ -63,13 +55,11 @@
                             <i class="fa-solid fa-plus"></i> Thêm địa chỉ
                         </a>
                     </div>
-
                     <c:if test="${empty addressList}">
                         <div class="empty-state">
                             <p>Bạn chưa lưu địa chỉ nào.</p>
                         </div>
                     </c:if>
-
                     <c:forEach var="addr" items="${addressList}">
                         <div class="address-card ${addr.defaultAddress ? 'default-border' : ''}">
                             <div class="address-card-main">
@@ -87,7 +77,6 @@
                                 <c:if test="${!addr.defaultAddress}">
                                     <a href="<c:url value='/account?action=set-default&id=${addr.id}'/>" class="btn-action-default">Đặt mặc định</a>
                                 </c:if>
-
                                 <a href="#" class="openUpdateModalBtn btn-action-edit"
                                    data-id="${addr.id}"
                                    data-name="${addr.receiverName}"
@@ -95,7 +84,6 @@
                                    data-street="${addr.streetAddress}"
                                    data-type="${addr.addressType}"
                                    data-default="${addr.defaultAddress}">Cập nhật</a>
-
                                 <a href="<c:url value='/account?action=delete-address&id=${addr.id}'/>"
                                    class="btn-action-delete"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')">Xoá</a>
@@ -104,30 +92,69 @@
                     </c:forEach>
                 </div>
 
-                    <%-- TÀI KHOẢN LIÊN KẾT --%>
-                <div class="content-block">
-                    <h3>Tài khoản liên kết</h3>
-                    <div class="linked-account-item">
-                        <div class="linked-info">
-                            <i class="fa-brands fa-google" style="color: #DB4437;"></i>
-                            <strong>Google</strong>
-                            <c:if test="${sessionScope.user.authProvider == 'google'}"><span>Đã liên kết</span></c:if>
-                            <c:if test="${sessionScope.user.authProvider != 'google'}"><span style="color: #999;">Chưa liên kết</span></c:if>
+                    <%-- BLOCK 3: MẬT KHẨU & LIÊN KẾT (GRID 2 CỘT MỚI) --%>
+                <div class="account-bottom-grid">
+                        <%-- CỘT TRÁI: MẬT KHẨU --%>
+                    <div class="content-block">
+                        <div class="content-block-header">
+                            <h3>Mật khẩu</h3>
+                            <c:if test="${sessionScope.user.authProvider == 'local'}">
+                                <a href="#" id="openChangePassBtn" class="btn-link-danger">
+                                    <i class="fa-solid fa-pen-to-square"></i> Thay đổi mật khẩu
+                                </a>
+                            </c:if>
                         </div>
-                        <c:if test="${sessionScope.user.authProvider == 'google'}">
-                            <span class="status-connected"><i class="fa-solid fa-check"></i> Đang dùng</span>
-                        </c:if>
+                        <div class="security-info">
+                            <c:if test="${sessionScope.user.authProvider == 'local'}">
+                                <p class="last-update">
+                                    Cập nhật lần cuối:
+                                    <span><fmt:formatDate value="${now}" pattern="dd/MM/yyyy HH:mm" /></span>
+                                </p>
+                            </c:if>
+                            <c:if test="${sessionScope.user.authProvider != 'local'}">
+                                <p class="note-text">Bạn đang đăng nhập bằng <strong>${sessionScope.user.authProvider}</strong>.</p>
+                            </c:if>
+                        </div>
                     </div>
-                    <div class="linked-account-item">
-                        <div class="linked-info">
-                            <i class="fa-brands fa-facebook" style="color: #1877F2;"></i>
-                            <strong>Facebook</strong>
-                            <c:if test="${sessionScope.user.authProvider == 'facebook'}"><span>Đã liên kết</span></c:if>
-                            <c:if test="${sessionScope.user.authProvider != 'facebook'}"><span style="color: #999;">Chưa liên kết</span></c:if>
+
+                        <%-- CỘT PHẢI: LIÊN KẾT --%>
+                    <div class="content-block">
+                        <div class="content-block-header">
+                            <h3>Tài khoản liên kết</h3>
                         </div>
-                        <c:if test="${sessionScope.user.authProvider == 'facebook'}">
-                            <span class="status-connected"><i class="fa-solid fa-check"></i> Đang dùng</span>
-                        </c:if>
+                        <div class="linked-item">
+                            <div class="provider-info">
+                                    <%-- UPDATE: Link ảnh Google chuẩn từ Login --%>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
+                                <strong>Google</strong>
+                                <c:if test="${sessionScope.user.authProvider == 'google'}"><span class="badge-linked">Đã liên kết</span></c:if>
+                            </div>
+                            <div class="provider-action">
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.authProvider == 'google'}">
+                                        <span class="text-muted"><i class="fa-solid fa-check"></i> Đang dùng</span>
+                                    </c:when>
+                                    <c:otherwise><a href="#" class="link-connect"><i class="fa-solid fa-link"></i> Liên kết</a></c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+
+                            <%-- Facebook --%>
+                        <div class="linked-item">
+                            <div class="provider-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook">
+                                <strong>Facebook</strong>
+                                <c:if test="${sessionScope.user.authProvider == 'facebook'}"><span class="badge-linked">Đã liên kết</span></c:if>
+                            </div>
+                            <div class="provider-action">
+                                <c:choose>
+                                    <c:when test="${sessionScope.user.authProvider == 'facebook'}">
+                                        <span class="text-muted"><i class="fa-solid fa-check"></i> Đang dùng</span>
+                                    </c:when>
+                                    <c:otherwise><a href="#" class="link-connect"><i class="fa-solid fa-link"></i> Liên kết</a></c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -143,7 +170,7 @@
     </c:if>
 </main>
 
-<%-- MODAL 1: CẬP NHẬT THÔNG TIN --%>
+<%-- MODAL 1: UPDATE INFO --%>
 <div class="modal-overlay" id="updateInfoModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -154,29 +181,25 @@
             <input type="hidden" name="action" value="update-info">
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="update-fullname">Họ và tên</label>
-                    <input type="text" id="update-fullname" name="fullName" value="${sessionScope.user.fullName}" required>
+                    <label>Họ và tên</label>
+                    <input type="text" name="fullName" value="${sessionScope.user.fullName}" required>
                 </div>
                 <div class="form-group">
-                    <label for="update-phone">Số điện thoại</label>
+                    <label>Số điện thoại</label>
                     <c:choose>
                         <c:when test="${not empty sessionScope.user.phoneNumber}">
-                            <input type="text" value="${sessionScope.user.phoneNumber}" class="input-locked" readonly title="Không thể thay đổi">
+                            <input type="text" value="${sessionScope.user.phoneNumber}" class="input-locked" readonly>
                         </c:when>
-                        <c:otherwise>
-                            <input type="text" name="phoneNumber" placeholder="Nhập SĐT" required pattern="[0-9]{10,11}">
-                        </c:otherwise>
+                        <c:otherwise><input type="text" name="phoneNumber" placeholder="Nhập SĐT" required pattern="[0-9]{10,11}"></c:otherwise>
                     </c:choose>
                 </div>
                 <div class="form-group">
-                    <label for="update-email">Email</label>
+                    <label>Email</label>
                     <c:choose>
                         <c:when test="${not empty sessionScope.user.email}">
-                            <input type="email" value="${sessionScope.user.email}" class="input-locked" readonly title="Không thể thay đổi">
+                            <input type="email" value="${sessionScope.user.email}" class="input-locked" readonly>
                         </c:when>
-                        <c:otherwise>
-                            <input type="email" name="email" placeholder="Nhập Email" required>
-                        </c:otherwise>
+                        <c:otherwise><input type="email" name="email" placeholder="Nhập Email" required></c:otherwise>
                     </c:choose>
                 </div>
             </div>
@@ -190,7 +213,7 @@
     </div>
 </div>
 
-<%-- MODAL 2: THÊM ĐỊA CHỈ --%>
+<%-- MODAL 2: ADD ADDRESS --%>
 <div class="modal-overlay" id="addAddressModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -200,18 +223,9 @@
         <form action="<c:url value='/account'/>" method="POST">
             <input type="hidden" name="action" value="add-address">
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Tên người nhận</label>
-                    <input type="text" name="receiverName" required>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" name="phoneNumber" required pattern="[0-9]{10,11}">
-                </div>
-                <div class="form-group">
-                    <label>Địa chỉ chi tiết</label>
-                    <input type="text" name="streetAddress" required>
-                </div>
+                <div class="form-group"><label>Tên người nhận</label><input type="text" name="receiverName" required></div>
+                <div class="form-group"><label>Số điện thoại</label><input type="text" name="phoneNumber" required pattern="[0-9]{10,11}"></div>
+                <div class="form-group"><label>Địa chỉ chi tiết</label><input type="text" name="streetAddress" required></div>
                 <div class="form-group">
                     <label>Loại địa chỉ</label>
                     <div class="form-radio-group">
@@ -235,7 +249,7 @@
     </div>
 </div>
 
-<%-- MODAL 3: UPDATE ĐỊA CHỈ --%>
+<%-- MODAL 3: UPDATE ADDRESS --%>
 <div class="modal-overlay" id="updateAddressModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -246,18 +260,9 @@
             <input type="hidden" name="action" value="update-address">
             <input type="hidden" name="addressId" id="update-address-id">
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Tên người nhận</label>
-                    <input type="text" id="update-receiver" name="receiverName" required>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" id="update-phone-addr" name="phoneNumber" required pattern="[0-9]{10,11}">
-                </div>
-                <div class="form-group">
-                    <label>Địa chỉ chi tiết</label>
-                    <input type="text" id="update-street" name="streetAddress" required>
-                </div>
+                <div class="form-group"><label>Tên người nhận</label><input type="text" id="update-receiver" name="receiverName" required></div>
+                <div class="form-group"><label>Số điện thoại</label><input type="text" id="update-phone-addr" name="phoneNumber" required pattern="[0-9]{10,11}"></div>
+                <div class="form-group"><label>Địa chỉ chi tiết</label><input type="text" id="update-street" name="streetAddress" required></div>
                 <div class="form-group">
                     <label>Loại địa chỉ</label>
                     <div class="form-radio-group">
@@ -276,6 +281,48 @@
                     <button type="button" class="btn-outline close-modal-btn">Hủy</button>
                     <button type="submit" class="btn">Lưu thay đổi</button>
                 </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%-- MODAL 4: CHANGE PASSWORD --%>
+<div class="modal-overlay" id="changePassModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Đổi mật khẩu</h3>
+            <button class="close-modal-btn">&times;</button>
+        </div>
+        <form action="<c:url value='/account'/>" method="POST">
+            <input type="hidden" name="action" value="update-password">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Mật khẩu cũ</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="oldPassword" placeholder="Nhập mật khẩu cũ" required>
+                        <i class="fa-regular fa-eye toggle-password"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="newPassword" placeholder="Nhập mật khẩu mới" required pattern=".{6,}" title="Tối thiểu 6 ký tự">
+                        <i class="fa-regular fa-eye toggle-password"></i>
+                    </div>
+                    <small style="color: #888; font-size: 0.85em; margin-top: 5px; display:block;">
+                        <i class="fa-solid fa-circle-info"></i> Mật khẩu tối thiểu 6 ký tự
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Nhập lại mật khẩu mới</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
+                        <i class="fa-regular fa-eye toggle-password"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-full btn-danger">Đổi mật khẩu</button>
             </div>
         </form>
     </div>

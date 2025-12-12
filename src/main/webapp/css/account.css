@@ -1,8 +1,8 @@
-/* ========================================= */
-/* CSS CHO TRANG TÀI KHOẢN (ACCOUNT)         */
-/* ========================================= */
+/* ================================================== */
+/* CSS CHO TRANG TÀI KHOẢN (ACCOUNT PAGE)             */
+/* ================================================== */
 
-/* --- CẤU TRÚC BLOCK CHÍNH --- */
+/* --- 1. CÁC KHỐI NỘI DUNG CHÍNH --- */
 .content-block {
     background: var(--color-white);
     padding: 25px;
@@ -26,7 +26,7 @@
     color: var(--color-dark);
 }
 
-/* Link text (Cập nhật, Thêm địa chỉ...) */
+/* --- 2. CÁC NÚT LIÊN KẾT (TEXT LINK BUTTONS) --- */
 .btn-link {
     color: var(--color-primary);
     text-decoration: none;
@@ -37,7 +37,16 @@
 .btn-link:hover { color: var(--color-primary-dark); }
 .btn-link i { margin-right: 5px; }
 
-/* --- THÔNG TIN CÁ NHÂN (GRID) --- */
+/* Nút link màu đỏ (Đổi mật khẩu, Xóa) */
+.btn-link-danger {
+    color: var(--color-danger);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+.btn-link-danger:hover { text-decoration: underline; }
+
+/* --- 3. LƯỚI THÔNG TIN CÁ NHÂN (INFO GRID) --- */
 .info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -57,7 +66,7 @@
     font-weight: 600;
 }
 
-/* --- THẺ ĐỊA CHỈ (ADDRESS CARD) --- */
+/* --- 4. THẺ ĐỊA CHỈ (ADDRESS CARD) --- */
 .address-card {
     display: flex;
     justify-content: space-between;
@@ -70,7 +79,7 @@
 }
 .address-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-/* Card mặc định */
+/* Trạng thái mặc định */
 .address-card.default-border {
     border: 1px solid var(--color-primary);
     background-color: var(--color-primary-ultralight);
@@ -78,9 +87,7 @@
 
 .address-card-main { flex: 1; }
 
-.address-badges {
-    display: flex; gap: 10px; margin-bottom: 8px;
-}
+.address-badges { display: flex; gap: 10px; margin-bottom: 8px; }
 
 .address-type-badge {
     background-color: #f0f2f5;
@@ -108,9 +115,14 @@
     border-left: 1px solid #ccc;
     padding-left: 10px;
 }
-.address-full { margin-top: 8px; color: #444; font-size: 0.95rem; line-height: 1.4; }
+.address-full {
+    margin-top: 8px;
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
 
-/* Cột hành động (bên phải) */
+/* Cột hành động bên phải thẻ địa chỉ */
 .address-card-actions {
     display: flex;
     flex-direction: column;
@@ -127,25 +139,55 @@
 .btn-action-edit { color: var(--color-primary); }
 .btn-action-delete { color: var(--color-danger); }
 
-/* --- TÀI KHOẢN LIÊN KẾT --- */
-.linked-account-item {
+/* --- 5. LƯỚI 2 CỘT DƯỚI CÙNG (MẬT KHẨU & LIÊN KẾT) --- */
+.account-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+/* Khối mật khẩu */
+.security-info { padding: 10px 0; color: #555; }
+.last-update span { font-weight: 600; color: #333; float: right; }
+
+/* Khối tài khoản liên kết */
+.linked-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #f0f0f0;
 }
-.linked-account-item:last-child { border-bottom: none; }
+.linked-item:last-child { border-bottom: none; }
 
-.linked-info { display: flex; align-items: center; gap: 15px; }
-.linked-info i { font-size: 1.8rem; }
-.linked-info strong { display: block; color: #333; }
-.linked-info span { font-size: 0.85rem; color: #999; }
-.status-connected { color: var(--color-success); font-weight: 600; font-size: 0.9rem; }
+.provider-info { display: flex; align-items: center; gap: 12px; }
+.provider-info img { width: 24px; height: 24px; }
+.provider-info strong { font-size: 1rem; color: #333; }
 
-/* ========================================= */
-/* MODAL STYLES (ĐÃ CHUẨN HÓA)               */
-/* ========================================= */
+.badge-linked {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.link-connect {
+    color: var(--color-danger);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+.link-connect:hover { text-decoration: underline; }
+.text-muted { color: #999; font-size: 0.9rem; }
+
+/* ================================================== */
+/* MODAL & FORM STYLES                                */
+/* ================================================== */
+
+/* --- 1. OVERLAY & CONTENT --- */
 .modal-overlay {
     display: none;
     position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
@@ -161,33 +203,63 @@
     display: flex; flex-direction: column;
 }
 
+/* --- 2. HEADER --- */
 .modal-header {
     padding: 15px 20px;
     border-bottom: 1px solid #eee;
     display: flex; justify-content: space-between; align-items: center;
 }
 .modal-header h3 { margin: 0; font-size: 1.2rem; color: #333; }
-.close-modal-btn { background: none; border: none; font-size: 1.5rem; color: #999; cursor: pointer; }
+.close-modal-btn {
+    background: none; border: none;
+    font-size: 1.5rem; color: #999;
+    cursor: pointer;
+}
 .close-modal-btn:hover { color: var(--color-danger); }
 
+/* --- 3. BODY & FORM INPUTS --- */
 .modal-body { padding: 20px; }
 
-/* Form Elements */
 .form-group { margin-bottom: 15px; }
 .form-group label {
-    display: block; font-weight: 600; margin-bottom: 5px; color: #333; font-size: 0.95rem;
+    display: block; font-weight: 600; margin-bottom: 5px;
+    color: #333; font-size: 0.95rem;
 }
-.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"] {
-    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group input[type="password"] {
+    width: 100%; padding: 10px;
+    border: 1px solid #ccc; border-radius: 6px;
+    font-size: 1rem;
 }
 .form-group input:focus { border-color: var(--color-primary); outline: none; }
-input.input-locked { background-color: #f9f9f9; color: #777; cursor: not-allowed; }
 
+/* Input bị khóa (readonly) */
+input.input-locked {
+    background-color: #f9f9f9;
+    color: #777;
+    cursor: not-allowed;
+}
+
+/* Wrapper cho input password (để chứa icon mắt) */
+.input-wrapper { position: relative; width: 100%; }
+.input-wrapper input { padding-right: 40px; }
+
+.toggle-password {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: #999; cursor: pointer; font-size: 1rem;
+}
+.toggle-password:hover { color: #333; }
+
+/* Radio buttons */
 .form-radio-group { display: flex; gap: 20px; }
 .radio-label { display: flex; align-items: center; cursor: pointer; font-size: 0.95rem; }
 .radio-label input { margin-right: 8px; }
 
-/* Footer & Buttons */
+/* --- 4. FOOTER & BUTTONS --- */
 .modal-footer {
     padding: 15px 20px;
     border-top: 1px solid #eee;
@@ -195,15 +267,30 @@ input.input-locked { background-color: #f9f9f9; color: #777; cursor: not-allowed
     border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
 }
 .modal-footer-split { display: flex; gap: 15px; width: 100%; }
+
 .modal-footer button {
-    flex: 1; padding: 10px 0; border-radius: 6px; font-size: 1rem; font-weight: 600;
+    flex: 1; padding: 10px 0;
+    border-radius: 6px; font-size: 1rem; font-weight: 600;
     cursor: pointer; border: 1px solid transparent; text-align: center;
 }
 
-/* Nút HỦY */
+/* Nút Outline (Hủy) */
 .btn-outline { background-color: #fff; color: #dc3545; border-color: #dc3545; }
 .btn-outline:hover { background-color: #dc3545; color: #fff; }
 
-/* Nút LƯU */
+/* Nút Primary (Lưu) */
 .modal-footer .btn { background-color: var(--color-primary); color: #fff; border-color: var(--color-primary); }
 .modal-footer .btn:hover { background-color: var(--color-primary-dark); }
+
+/* Nút Danger Full Width (Đổi mật khẩu) */
+.btn-danger {
+    background-color: #d32f2f; border-color: #d32f2f;
+    color: #fff; width: 100%; padding: 12px; font-size: 1rem;
+}
+.btn-danger:hover { background-color: #b71c1c; }
+.btn-full { width: 100%; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .account-bottom-grid { grid-template-columns: 1fr; }
+}

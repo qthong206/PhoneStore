@@ -1,39 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Lấy các DOM Elements (Modals)
     const addModal = document.getElementById('addAddressModal');
     const updateModal = document.getElementById('updateAddressModal');
     const updateInfoModal = document.getElementById('updateInfoModal');
+    const changePassModal = document.getElementById('changePassModal'); // Mới
 
-    // 2. Lấy các nút mở Modal
     const openAddBtn = document.getElementById('openAddModalBtn');
     const openUpdateBtns = document.querySelectorAll('.openUpdateModalBtn');
     const openUpdateInfoBtn = document.getElementById('openUpdateInfoModalBtn');
+    const openChangePassBtn = document.getElementById('openChangePassBtn'); // Mới
 
-    // 3. Lấy tất cả các nút đóng modal (dấu X và nút Hủy)
     const closeModalBtns = document.querySelectorAll('.close-modal-btn');
 
-    // --- HÀM HỖ TRỢ ---
-    function showModal(modal) {
-        if (modal) {
-            modal.style.display = 'flex'; // Dùng flex để căn giữa màn hình
-        }
-    }
-
-    function hideModal(modal) {
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
+    function showModal(modal) { if (modal) modal.style.display = 'flex'; }
+    function hideModal(modal) { if (modal) modal.style.display = 'none'; }
     function hideAllModals() {
-        hideModal(addModal);
-        hideModal(updateModal);
-        hideModal(updateInfoModal);
+        hideModal(addModal); hideModal(updateModal); hideModal(updateInfoModal); hideModal(changePassModal);
     }
 
-    // --- SỰ KIỆN XỬ LÝ ---
-
-    // A. Mở Modal Thêm Địa Chỉ
     if (openAddBtn) {
         openAddBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -43,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // B. Mở Modal Cập nhật thông tin User
     if (openUpdateInfoBtn) {
         openUpdateInfoBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -51,13 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // C. Mở Modal Sửa Địa chỉ & ĐIỀN DỮ LIỆU CŨ
+    // --- MỞ MODAL ĐỔI PASS ---
+    if (openChangePassBtn) {
+        openChangePassBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const form = changePassModal.querySelector('form');
+            if(form) form.reset();
+            showModal(changePassModal);
+        });
+    }
+
     if (openUpdateBtns) {
         openUpdateBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-
-                // 1. Lấy dữ liệu từ data attributes
                 const id = btn.getAttribute('data-id');
                 const name = btn.getAttribute('data-name');
                 const phone = btn.getAttribute('data-phone');
@@ -65,38 +54,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 const type = btn.getAttribute('data-type');
                 const isDefault = btn.getAttribute('data-default') === 'true';
 
-                // 2. Điền vào Form trong Update Modal
-                const idInput = document.getElementById('update-address-id');
-                const nameInput = document.getElementById('update-receiver');
-                const phoneInput = document.getElementById('update-phone-addr');
-                const streetInput = document.getElementById('update-street');
-                const radioOffice = document.getElementById('update-type-office');
-                const radioHome = document.getElementById('update-type-home');
-                const defaultCheck = document.getElementById('update-default');
+                document.getElementById('update-address-id').value = id;
+                document.getElementById('update-receiver').value = name;
+                document.getElementById('update-phone-addr').value = phone;
+                document.getElementById('update-street').value = street;
 
-                if (idInput) idInput.value = id;
-                if (nameInput) nameInput.value = name;
-                if (phoneInput) phoneInput.value = phone;
-                if (streetInput) streetInput.value = street;
+                if (type === 'Văn phòng') document.getElementById('update-type-office').checked = true;
+                else document.getElementById('update-type-home').checked = true;
 
-                // Xử lý Radio Button
-                if (type === 'Văn phòng' && radioOffice) {
-                    radioOffice.checked = true;
-                } else if (radioHome) {
-                    radioHome.checked = true;
-                }
-
-                // Xử lý Checkbox Mặc định
-                if (defaultCheck) {
-                    defaultCheck.checked = isDefault;
-                }
-
+                document.getElementById('update-default').checked = isDefault;
                 showModal(updateModal);
             });
         });
     }
 
-    // D. Đóng Modal khi bấm nút X hoặc nút Hủy
     if (closeModalBtns) {
         closeModalBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -106,10 +77,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // E. Đóng Modal khi click ra vùng tối bên ngoài
     window.addEventListener('click', (e) => {
-        if (e.target === addModal || e.target === updateModal || e.target === updateInfoModal) {
+        if (e.target === addModal || e.target === updateModal || e.target === updateInfoModal || e.target === changePassModal) {
             hideAllModals();
         }
+    });
+
+    // --- LOGIC ẨN HIỆN PASS ---
+    const toggleEyeIcons = document.querySelectorAll('.toggle-password');
+    toggleEyeIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            if (input && input.getAttribute('type') === 'password') {
+                input.setAttribute('type', 'text');
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            } else if (input) {
+                input.setAttribute('type', 'password');
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            }
+        });
     });
 });

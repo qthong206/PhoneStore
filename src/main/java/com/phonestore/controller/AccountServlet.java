@@ -1,7 +1,7 @@
 package com.phonestore.controller;
 
 import com.phonestore.dao.AddressDAO;
-import com.phonestore.dao.ProductOrderDAO; // Import DAO
+import com.phonestore.dao.ProductOrderDAO;
 import com.phonestore.dao.UserDAO;
 import com.phonestore.model.User;
 import com.phonestore.model.UserAddress;
@@ -29,6 +29,7 @@ public class AccountServlet extends HttpServlet {
         userDAO = new UserDAO();
     }
 
+    // --- GET: HIỂN THỊ & HÀNH ĐỘNG LINK ---
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,8 +42,8 @@ public class AccountServlet extends HttpServlet {
             return;
         }
 
-        // Xử lý các action (Xóa, Set Default) từ URL
         String action = request.getParameter("action");
+
         try {
             if (action != null) {
                 int addressId;
@@ -62,16 +63,15 @@ public class AccountServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        // LOAD DỮ LIỆU HIỂN THỊ
         loadAccountPageData(request, response, user);
     }
 
+    // --- POST: XỬ LÝ FORM ---
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
 
+        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
@@ -86,8 +86,9 @@ public class AccountServlet extends HttpServlet {
             if ("update-info".equals(action)) {
                 String fullName = request.getParameter("fullName");
                 user.setFullName(fullName);
-                // Gọi DAO update User info nếu cần: userDAO.update(user);
-                session.setAttribute("user", user); // Cập nhật session
+                // Gọi DAO update
+                userDAO.updateUserInfo(user);
+                session.setAttribute("user", user);
             }
             else if ("add-address".equals(action)) {
                 UserAddress addr = new UserAddress();
@@ -103,31 +104,49 @@ public class AccountServlet extends HttpServlet {
                 populateAddress(addr, request);
                 addressDAO.updateAddress(addr);
             }
+            // --- XỬ LÝ ĐỔI MẬT KHẨU ---
+            else if ("update-password".equals(action)) {
+                String oldPass = request.getParameter("oldPassword");
+                String newPass = request.getParameter("newPassword");
+                String confirmPass = request.getParameter("confirmPassword");
+
+                if (!newPass.equals(confirmPass)) {
+                    response.sendRedirect(request.getContextPath() + "/account?error=pass_mismatch");
+                    return;
+                }
+
+                // Gọi hàm changePassword đã thêm vào UserDAO trước đó
+                boolean success = userDAO.changePassword(user.getId(), oldPass, newPass);
+
+                if (success) {
+                    response.sendRedirect(request.getContextPath() + "/account?msg=pass_updated");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/account?error=wrong_old_pass");
+                }
+                return; // Kết thúc để tránh redirect mặc định bên dưới
+            }
+
             response.sendRedirect(request.getContextPath() + "/account");
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/account?error=true");
         }
     }
 
-    // --- HÀM LOAD DỮ LIỆU (QUAN TRỌNG) ---
     private void loadAccountPageData(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
-
-        // 1. Lấy thống kê đơn hàng (Giống OrderServlet) -> Fix lỗi không hiện số
         int totalOrders = productOrderDAO.countOrdersByUserId(user.getId());
         double totalSpent = productOrderDAO.sumTotalSpentByUserId(user.getId());
-
-        // 2. Lấy danh sách địa chỉ
         List<UserAddress> addressList = addressDAO.getAllByUserId(user.getId());
 
-        // 3. Đẩy dữ liệu sang JSP
         request.setAttribute("totalOrders", totalOrders);
         request.setAttribute("totalSpent", totalSpent);
         request.setAttribute("addressList", addressList);
-
-        // 4. Biến quan trọng để Sidebar biết đang ở trang nào -> Fix lỗi Sidebar không active
         request.setAttribute("currentView", "account");
+
+        // Gửi thời gian hiện tại để hiển thị "Cập nhật lần cuối" (giả lập)
+        request.setAttribute("now", new java.util.Date());
 
         request.getRequestDispatcher("/WEB-INF/views/user/account.jsp").forward(request, response);
     }
