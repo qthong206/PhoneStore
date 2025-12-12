@@ -12,9 +12,7 @@ public class Cart {
     }
 
     /**
-     * Thêm một sản phẩm vào giỏ hàng hoặc cập nhật số lượng nếu đã tồn tại.
-     * @param product Sản phẩm cần thêm.
-     * @param quantity Số lượng.
+     * Thêm sản phẩm (Dùng cho nút "Thêm vào giỏ" - Cộng dồn số lượng)
      */
     public void addItem(Product product, int quantity) {
         int productId = product.getId();
@@ -28,29 +26,50 @@ public class Cart {
     }
 
     /**
+     * Cập nhật số lượng (Dùng cho nút +/- trong giỏ hàng - Gán số lượng mới)
+     * (HÀM MỚI BỔ SUNG)
+     */
+    public void updateItem(int productId, int quantity) {
+        if (items.containsKey(productId)) {
+            if (quantity <= 0) {
+                items.remove(productId); // Nếu số lượng <= 0 thì xóa luôn
+            } else {
+                CartItem item = items.get(productId);
+                item.setQuantity(quantity); // Gán đè số lượng mới
+            }
+        }
+    }
+
+    /**
      * Xóa một sản phẩm khỏi giỏ hàng.
-     * @param productId ID của sản phẩm cần xóa.
      */
     public void removeItem(int productId) {
         items.remove(productId);
     }
 
     /**
-     * Lấy danh sách tất cả các món hàng trong giỏ.
-     * @return Một Collection các CartItem.
+     * Xóa sạch giỏ hàng (Dùng sau khi thanh toán thành công)
+     * (HÀM MỚI BỔ SUNG)
+     */
+    public void clear() {
+        items.clear();
+    }
+
+    /**
+     * Lấy danh sách item
      */
     public Collection<CartItem> getItems() {
         return items.values();
     }
 
     /**
-     * Tính tổng số tiền của tất cả các sản phẩm trong giỏ hàng.
-     * @return Tổng số tiền.
+     * Tính tổng tiền
      */
     public double getTotal() {
         double total = 0;
         for (CartItem item : items.values()) {
             double price;
+            // Ưu tiên lấy giá khuyến mãi nếu có
             if (item.getProduct().getSalePrice() > 0) {
                 price = item.getProduct().getSalePrice();
             } else {
@@ -62,8 +81,7 @@ public class Cart {
     }
 
     /**
-     * Lấy tổng số lượng của tất cả các sản phẩm (để hiển thị ở Bước 2)
-     * @return Tổng số lượng.
+     * Lấy tổng số lượng sản phẩm (để hiển thị icon giỏ hàng)
      */
     public int getTotalQuantity() {
         int totalQuantity = 0;
