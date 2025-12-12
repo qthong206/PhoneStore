@@ -63,7 +63,7 @@
 </footer>
 
 <%-- ============================================= --%>
-<%-- MODAL "CẦN ĐĂNG NHẬP" (ĐÃ DI DỜI TỪ productDetail.jsp SANG ĐÂY) --%>
+<%-- MODAL "CẦN ĐĂNG NHẬP" --%>
 <%-- ============================================= --%>
 <div id="review-login-modal" class="modal-backdrop" style="display:none;">
     <div class="modal-content custom-modal">
