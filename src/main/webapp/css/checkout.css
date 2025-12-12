@@ -336,3 +336,20 @@ textarea.form-control {
 .checkout-error-box i {
     font-size: 1.2rem;
 }
+
+.form-row-2 {
+    display: flex;
+    gap: 15px;
+}
+.form-row-2 .form-group {
+    flex: 1;
+}
+
+.empty-address-msg {
+    color: #666;
+    font-style: italic;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
