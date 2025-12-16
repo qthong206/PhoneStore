@@ -38,4 +38,9 @@ public class User {
 
     public String getAuthProvider() { return authProvider; }
     public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
+
+    public boolean isAdmin() {
+        return "admin".equalsIgnoreCase(this.role);
+    }
+
 }

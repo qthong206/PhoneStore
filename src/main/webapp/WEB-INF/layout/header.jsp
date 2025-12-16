@@ -123,6 +123,14 @@
                 <i class="fa-solid fa-user nav-icon"></i>
                 <span>Tài Khoản</span>
             </a>
+                <a href="${pageContext.request.contextPath}/admin/product" class="nav-item">
+                    <c:if test="${sessionScope.user != null && sessionScope.user.admin}">
+                        <i class="fa-brands fa-black-tie nav-icon"></i>
+                        <span>Admin Panel</span>
+                    </c:if>
+                </a>
+
+
         </nav>
     </div>
 </header>
