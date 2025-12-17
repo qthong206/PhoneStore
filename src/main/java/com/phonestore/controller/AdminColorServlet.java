@@ -83,7 +83,9 @@ public class AdminColorServlet extends HttpServlet {
         List<Color> list = dao.getAll();
         req.setAttribute("colors", list);
 
-        req.getRequestDispatcher("/WEB-INF/views/admin/color-list.jsp")
+        req.setAttribute("pageCss","color-list.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/color-list.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 
@@ -91,7 +93,9 @@ public class AdminColorServlet extends HttpServlet {
             throws ServletException, IOException {
 
         req.setAttribute("item", c);
-        req.getRequestDispatcher("/WEB-INF/views/admin/color-form.jsp")
+        req.setAttribute("pageCss","color-form.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/color-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 

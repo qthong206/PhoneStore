@@ -2,17 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<html>
-<head>
-    <title>Product Gallery</title>
-    <style>
-        body { font-family: Arial; }
-        img { max-width: 150px; display:block; margin-bottom:5px; }
-        .img-card { border:1px solid #ccc; padding:10px; margin:5px; display:inline-block; }
-        .btn { padding:5px 10px; border:1px solid #333; text-decoration:none; }
-    </style>
-</head>
-<body>
+
 
 <h1>Gallery – ${product.name}</h1>
 
@@ -39,6 +29,4 @@
     </div>
 </c:forEach>
 
-</body>
-</html>
 

@@ -93,7 +93,9 @@ public class AdminProductServlet extends HttpServlet {
         Map<Brand, List<Product>> productMap = productDAO.getProductsGroupedByBrand();
         req.setAttribute("productMap", productMap);
 
-        req.getRequestDispatcher("/WEB-INF/views/admin/product-list.jsp")
+        req.setAttribute("pageCss","product.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-list.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 
@@ -103,7 +105,9 @@ public class AdminProductServlet extends HttpServlet {
     private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        req.getRequestDispatcher("/WEB-INF/views/admin/product-form.jsp")
+        req.setAttribute("pageCss","product-from.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 
@@ -149,7 +153,9 @@ public class AdminProductServlet extends HttpServlet {
 
         req.setAttribute("product", product);
 
-        req.getRequestDispatcher("/WEB-INF/views/admin/product-form.jsp")
+        req.setAttribute("pageCss","product-from.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 

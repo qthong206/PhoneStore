@@ -1,16 +1,16 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: pc
-  Date: 12/16/2025
-  Time: 9:05 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+<header>
+    <div>
+
+        <div>
+            <img src="<c:url value='/images/logo.png'/>" alt="PhoneStore Logo" class="header-logo">
+        </div>
+        <div>
+            <a href="/home">
+                <span>Trang Chủ</span>
+            </a>
+        </div>
+    </div>
+
+</header>
+

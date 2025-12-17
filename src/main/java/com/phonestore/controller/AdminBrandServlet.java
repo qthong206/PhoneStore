@@ -76,14 +76,18 @@ public class AdminBrandServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Brand> brands = brandDAO.getAllBrands();
         req.setAttribute("brands", brands);
-        req.getRequestDispatcher("/WEB-INF/views/admin/brand-list.jsp").forward(req, resp);
+        req.setAttribute("pageCss","brand-list.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/brand-list.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
     }
 
     private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         List<Category> categories = categoryDAO.getAllCategories();
         req.setAttribute("categories", categories);
-        req.getRequestDispatcher("/WEB-INF/views/admin/brand-form.jsp").forward(req, resp);
+        req.setAttribute("pageCss","brand-form.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/brand-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
     }
 
     private void showEditForm(HttpServletRequest req, HttpServletResponse resp)
@@ -97,7 +101,9 @@ public class AdminBrandServlet extends HttpServlet {
         List<Category> categories = categoryDAO.getAllCategories();
         req.setAttribute("categories", categories);
         req.setAttribute("brand", brand);
-        req.getRequestDispatcher("/WEB-INF/views/admin/brand-form.jsp").forward(req, resp);
+        req.setAttribute("pageCss","brand-form.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/brand-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
     }
 
     private void insertBrand(HttpServletRequest req, HttpServletResponse resp)

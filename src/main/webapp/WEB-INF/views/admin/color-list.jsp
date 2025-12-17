@@ -1,19 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<html>
-<head>
-    <title>Admin - Colors</title>
-    <style>
-        body { font-family: Arial; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        th { background: #f0f0f0; }
-        .btn { padding:5px 10px; border:1px solid #333; }
-        .color-box { width:30px; height:30px; display:inline-block; border:1px solid #000; }
-    </style>
-</head>
-<body>
+
 
 <h1>Manage Colors</h1>
 
@@ -48,5 +36,4 @@
     </c:forEach>
 </table>
 
-</body>
-</html>
+

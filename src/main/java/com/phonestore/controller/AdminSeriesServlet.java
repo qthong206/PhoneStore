@@ -83,7 +83,9 @@ public class AdminSeriesServlet extends HttpServlet {
         List<ProductSeries> list = dao.getAllSeries();
         req.setAttribute("series", list);
 
-        req.getRequestDispatcher("/WEB-INF/views/admin/series-list.jsp")
+        req.setAttribute("pageCss","series-list.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/series-list.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 
@@ -91,7 +93,9 @@ public class AdminSeriesServlet extends HttpServlet {
             throws ServletException, IOException {
 
         req.setAttribute("item", s);
-        req.getRequestDispatcher("/WEB-INF/views/admin/series-form.jsp")
+        req.setAttribute("pageCss","series-form.css");
+        req.setAttribute("contentPage","/WEB-INF/views/admin/series-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                 .forward(req, resp);
     }
 

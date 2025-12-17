@@ -1,16 +1,29 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: pc
-  Date: 12/16/2025
-  Time: 9:05 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+
+<aside class="sidebar">
+    <div>
+        <nav>
+            <a><span>QUẢN LÍ SẢN PHẨM</span></a>
+            <a href="${pageContext.request.contextPath}/admin/product">
+                <span>Danh sách sản phẩm</span> </a>
+            <a href="${pageContext.request.contextPath}/admin/product/add">
+                <span>Thêm sản phẩm</span> </a>
+            <a href="${pageContext.request.contextPath}/admin/product/gallery">
+                <span>Thêm ảnh cho sản phẩm</span> </a>
+            <a href="${pageContext.request.contextPath}/admin/color">
+                <span>Danh sách màu  sản phẩm</span></a>
+            <a href="${pageContext.request.contextPath}/admin/color/add">
+                <span>Thêm màu </span></a>
+            <a href="${pageContext.request.contextPath}/admin/brand">
+                <span>Danh sách hãng</span></a>
+            <a href="${pageContext.request.contextPath}/admin/brand/add">
+                <span>Thêm tên hãng</span></a>
+            <a><span>QUẢN LÍ DOANH THU</span></a>
+            <a href="">Thu nhập</a>
+            <a href="">Đơn hàng</a>
+            <a href="">Tài khoản</a>
+
+        </nav>
+    </div>
+</aside>
+

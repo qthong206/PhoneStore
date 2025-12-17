@@ -39,7 +39,9 @@ public class AdminProductGalleryServlet extends HttpServlet {
                 req.setAttribute("product", product);
                 req.setAttribute("images", images);
 
-                req.getRequestDispatcher("/WEB-INF/views/admin/product-gallery.jsp")
+                req.setAttribute("pageCss","gallery.css");
+                req.setAttribute("contentPage","/WEB-INF/views/admin/product-gallery.jsp");
+                req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
                         .forward(req, resp);
                 break;
 

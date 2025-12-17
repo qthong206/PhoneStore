@@ -1,19 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<html>
-<head>
-    <title>Product Form</title>
-    <style>
-        body { font-family: Arial; }
-        .form-row { margin-bottom: 10px; }
-        label { font-weight: bold; display:block; }
-        input, textarea { width: 100%; padding: 5px; }
-        .btn { padding: 5px 10px; border: 1px solid #333; }
-    </style>
-</head>
 
-<body>
 
 <c:set var="isEdit" value="${not empty product}" />
 
@@ -90,5 +78,3 @@
 
 </form>
 
-</body>
-</html>
