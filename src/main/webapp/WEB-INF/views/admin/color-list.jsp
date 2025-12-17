@@ -5,7 +5,7 @@
 
 <h1>Manage Colors</h1>
 
-<a class="btn" href="${pageContext.request.contextPath}/admin/color/add">+ Add Color</a>
+
 <br/><br/>
 
 <table>

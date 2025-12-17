@@ -12,7 +12,6 @@
     </c:choose>
 </h1>
 
-<a href="${pageContext.request.contextPath}/admin/color">&lt; Back</a>
 
 <form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/color/update' : '/admin/color/insert'}">
 

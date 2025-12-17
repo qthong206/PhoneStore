@@ -4,16 +4,18 @@
 
 
 
-<h1>Gallery – ${product.name}</h1>
+<h1>THÊM ẢNH SẢN PHẨM ${product.name}</h1>
 
-<a href="${pageContext.request.contextPath}/admin/product">&lt; Back to product list</a>
+
 <br/><br/>
 
 <h3>Add new image</h3>
 <form method="post" action="${pageContext.request.contextPath}/admin/product/gallery/add">
+    <div class="form-row">
     <input type="hidden" name="productId" value="${product.id}">
     <input type="text" name="imageUrl" placeholder="Image URL" style="width:300px;">
     <button type="submit" class="btn">Add</button>
+    </div>
 </form>
 
 <hr/>

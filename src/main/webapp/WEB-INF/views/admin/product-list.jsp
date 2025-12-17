@@ -3,14 +3,13 @@
 
 
 
-<h1>Product Management</h1>
+<h1>QUẢN LÍ SẢN PHẨM </h1>
 
-<a href="${pageContext.request.contextPath}/admin/product/add" class="btn">+ Add Product</a>
 
 <br/><br/>
 
 <c:forEach var="entry" items="${productMap}">
-    <h3>Brand: ${entry.key.name}</h3>
+    <h3>Hãng: ${entry.key.name}</h3>
 
     <table>
         <tr>

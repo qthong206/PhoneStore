@@ -1,0 +1,77 @@
+/* ================== FORM CONTAINER ================== */
+form {
+    max-width: 600px;
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* ================== FORM TITLE ================== */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+
+
+
+/* ================== FORM ROW ================== */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #334155;
+}
+
+/* ================== INPUT / TEXTAREA / SELECT ================== */
+.form-row input,
+.form-row textarea,
+.form-row select {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    outline: none;
+    transition: all 0.2s ease;
+    background: #f9fafb;
+}
+
+.form-row textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* ================== SUBMIT BUTTON ================== */
+button.btn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #2563eb;
+    color: #ffffff;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button.btn:hover {
+    background: #1e40af;
+    transform: translateY(-1px);
+}

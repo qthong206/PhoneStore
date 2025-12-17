@@ -3,9 +3,9 @@
 
 
 
+
 <h1>Brand Management</h1>
 
-<a href="${pageContext.request.contextPath}/admin/brand/add" class="btn">+ Add Brand</a>
 <br/><br/>
 
 <table>

@@ -13,7 +13,7 @@
     </c:choose>
 </h1>
 
-<a href="${pageContext.request.contextPath}/admin/brand">&lt; Back</a>
+
 <br/><br/>
 
 <form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/brand/update' : '/admin/brand/insert'}">

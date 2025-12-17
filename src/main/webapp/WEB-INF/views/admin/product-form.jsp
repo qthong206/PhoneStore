@@ -8,11 +8,11 @@
 <h1>
     <c:choose>
         <c:when test="${isEdit}">Edit Product</c:when>
-        <c:otherwise>Add Product</c:otherwise>
+        <c:otherwise>THÊM SẢN PHẨM</c:otherwise>
     </c:choose>
 </h1>
 
-<a href="${pageContext.request.contextPath}/admin/product">&lt; Back</a>
+
 <br/><br/>
 
 <form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/product/update' : '/admin/product/insert'}">
