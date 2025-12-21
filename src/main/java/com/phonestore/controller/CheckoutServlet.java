@@ -29,72 +29,27 @@ public class CheckoutServlet extends HttpServlet {
         addressDAO = new AddressDAO();
     }
 
+    /**
+     * doGet: CHỈ DÙNG ĐỂ HIỂN THỊ GIAO DIỆN THANH TOÁN
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        Cart mainCart = (Cart) session.getAttribute("cart"); // Giỏ hàng chính
         User user = (User) session.getAttribute("user");
+        Cart checkoutCart = (Cart) session.getAttribute("checkoutCart");
 
-        // 1. Kiểm tra giỏ hàng chính rỗng
-        if (mainCart == null || mainCart.getItems().isEmpty()) {
+        // Nếu chưa có giỏ hàng thanh toán (User truy cập trực tiếp URL), đá về giỏ hàng
+        if (checkoutCart == null || checkoutCart.getItems().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 
-        // --- MỚI: XỬ LÝ LỌC SẢN PHẨM ĐƯỢC CHỌN ---
-        String[] selectedIds = request.getParameterValues("selectedItems");
-
-        // Nếu user vào thẳng link /checkout mà không qua form (không có selectedItems)
-        // Thì kiểm tra xem session đã có checkoutCart chưa, nếu chưa thì đá về cart
-        Cart checkoutCart = null;
-
-        if (selectedIds != null && selectedIds.length > 0) {
-            // Trường hợp 1: User nhấn nút "Thanh toán" từ giỏ hàng
-            checkoutCart = new Cart(); // Tạo giỏ hàng tạm để thanh toán
-
-            // --- ĐÃ SỬA ĐOẠN NÀY ĐỂ TRÁNH LỖI NẾU getItems() LÀ LIST ---
-            for (String idStr : selectedIds) {
-                try {
-                    int id = Integer.parseInt(idStr);
-
-                    // Tìm item trong giỏ hàng chính thủ công (an toàn nhất)
-                    CartItem foundItem = null;
-                    for (CartItem item : mainCart.getItems()) {
-                        if (item.getProduct().getId() == id) {
-                            foundItem = item;
-                            break;
-                        }
-                    }
-
-                    // Nếu tìm thấy thì thêm vào giỏ hàng thanh toán
-                    if (foundItem != null) {
-                        checkoutCart.addItem(foundItem.getProduct(), foundItem.getQuantity());
-                    }
-
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-            // -----------------------------------------------------------
-
-            // Lưu checkoutCart vào session để dùng cho doPost và hiển thị
-            session.setAttribute("checkoutCart", checkoutCart);
-        } else {
-            // Trường hợp 2: User F5 hoặc Back lại trang checkout
-            checkoutCart = (Cart) session.getAttribute("checkoutCart");
-            if (checkoutCart == null || checkoutCart.getItems().isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/cart");
-                return;
-            }
-        }
-
-        // 2. CHỈ Load địa chỉ NẾU là thành viên
+        // Load địa chỉ nếu là thành viên
         if (user != null) {
             List<UserAddress> addresses = addressDAO.getAllByUserId(user.getId());
             UserAddress defaultAddress = null;
-
             if (addresses != null && !addresses.isEmpty()) {
                 for (UserAddress addr : addresses) {
                     if (addr.isDefaultAddress()) {
@@ -102,11 +57,8 @@ public class CheckoutServlet extends HttpServlet {
                         break;
                     }
                 }
-                if (defaultAddress == null) {
-                    defaultAddress = addresses.get(0);
-                }
+                if (defaultAddress == null) defaultAddress = addresses.get(0);
             }
-
             request.setAttribute("userAddresses", addresses);
             request.setAttribute("defaultAddress", defaultAddress);
         }
@@ -116,16 +68,54 @@ public class CheckoutServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
     }
 
+    /**
+     * doPost: XỬ LÝ 2 TRƯỜNG HỢP (SETUP GIỎ HÀNG & ĐẶT HÀNG)
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
-
-        // --- MỚI: Lấy checkoutCart thay vì cart chính ---
-        Cart checkoutCart = (Cart) session.getAttribute("checkoutCart");
         Cart mainCart = (Cart) session.getAttribute("cart");
+
+        // ==================================================================
+        // TRƯỜNG HỢP 1: SETUP (Nhận request từ Cart.jsp chuyển sang)
+        // ==================================================================
+        String[] selectedIds = request.getParameterValues("selectedItems");
+
+        if (selectedIds != null) {
+            if (mainCart == null) {
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            }
+
+            Cart checkoutCart = new Cart();
+            for (String idStr : selectedIds) {
+                try {
+                    int id = Integer.parseInt(idStr);
+                    // Tìm item trong giỏ chính và copy sang giỏ thanh toán
+                    for (CartItem item : mainCart.getItems()) {
+                        if (item.getProduct().getId() == id) {
+                            checkoutCart.addItem(item.getProduct(), item.getQuantity());
+                            break;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Lưu giỏ tạm vào session và chuyển hướng sang doGet để hiện giao diện
+            session.setAttribute("checkoutCart", checkoutCart);
+            response.sendRedirect(request.getContextPath() + "/checkout");
+            return;
+        }
+
+        // ==================================================================
+        // TRƯỜNG HỢP 2: PLACE ORDER (Nhận request từ Checkout.jsp để đặt hàng)
+        // ==================================================================
+        Cart checkoutCart = (Cart) session.getAttribute("checkoutCart");
         User user = (User) session.getAttribute("user");
 
         if (checkoutCart == null || checkoutCart.getItems().isEmpty()) {
@@ -135,61 +125,61 @@ public class CheckoutServlet extends HttpServlet {
 
         try {
             ProductOrder order = new ProductOrder();
-            if (user != null) {
-                order.setUserId(user.getId());
-            }
+            if (user != null) order.setUserId(user.getId());
 
-            // ... (Phần lấy thông tin địa chỉ giữ nguyên) ...
+            // Lấy thông tin người nhận
             String addressOption = request.getParameter("address_option");
-            if (user == null) {
-                order.setRecipientName(request.getParameter("recipient_name_guest"));
-                order.setRecipientPhone(request.getParameter("recipient_phone_guest"));
-                order.setRecipientEmail(request.getParameter("recipient_email_guest"));
-                order.setShippingAddress(request.getParameter("shipping_address_new"));
-            } else {
-                if ("new".equals(addressOption)) {
+            if (user == null || "new".equals(addressOption)) {
+                // Khách vãng lai HOẶC Thành viên chọn địa chỉ mới
+                // (Lưu ý: name-guest, name-new cần khớp với checkout.jsp)
+                if (user == null) {
+                    order.setRecipientName(request.getParameter("recipient_name_guest"));
+                    order.setRecipientPhone(request.getParameter("recipient_phone_guest"));
+                    order.setRecipientEmail(request.getParameter("recipient_email_guest"));
+                } else {
                     order.setRecipientName(request.getParameter("recipient_name_new"));
                     order.setRecipientPhone(request.getParameter("recipient_phone_new"));
-                    order.setShippingAddress(request.getParameter("shipping_address_new"));
-                } else {
-                    order.setRecipientName(request.getParameter("recipient_name_default"));
-                    order.setRecipientPhone(request.getParameter("recipient_phone_default"));
-                    order.setShippingAddress(request.getParameter("shipping_address_default"));
+                    order.setRecipientEmail(user.getEmail());
                 }
+                order.setShippingAddress(request.getParameter("shipping_address_new"));
+            } else {
+                // Thành viên chọn địa chỉ có sẵn
+                order.setRecipientName(request.getParameter("recipient_name_default"));
+                order.setRecipientPhone(request.getParameter("recipient_phone_default"));
                 order.setRecipientEmail(user.getEmail());
+                order.setShippingAddress(request.getParameter("shipping_address_default"));
             }
 
             order.setPaymentMethod(request.getParameter("payment_method"));
             order.setTotalAmount(checkoutCart.getTotal());
             order.setStatus("pending");
 
-            // Tạo đơn hàng với checkoutCart
+            // Gọi DAO tạo đơn hàng
             int newOrderId = checkoutDAO.createOrder(order, checkoutCart);
 
             if (newOrderId != -1) {
-                // --- ĐÃ SỬA ĐOẠN NÀY ĐỂ HẾT LỖI MÀU ĐỎ ---
-                // Duyệt qua từng Item trong giỏ thanh toán để xóa khỏi giỏ chính
-                for (CartItem item : checkoutCart.getItems()) {
-                    // Lấy ID sản phẩm từ item
-                    int productId = item.getProduct().getId();
-                    // Xóa khỏi giỏ chính
-                    mainCart.removeItem(productId);
+                // --- QUAN TRỌNG: Xóa sản phẩm đã mua khỏi giỏ hàng chính ---
+                if (mainCart != null) {
+                    for (CartItem item : checkoutCart.getItems()) {
+                        mainCart.removeItem(item.getProduct().getId());
+                    }
+                    session.setAttribute("cart", mainCart); // Cập nhật lại session
                 }
-                // ------------------------------------------
 
-                session.setAttribute("cart", mainCart); // Cập nhật lại giỏ chính
-                session.removeAttribute("checkoutCart"); // Xóa giỏ tạm
+                // Xóa giỏ tạm
+                session.removeAttribute("checkoutCart");
 
+                // Chuyển sang trang thành công
                 session.setAttribute("latestOrderId", newOrderId);
                 response.sendRedirect(request.getContextPath() + "/order-success");
             } else {
-                request.setAttribute("checkoutError", "Lỗi tạo đơn hàng.");
+                request.setAttribute("checkoutError", "Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.");
                 doGet(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("checkoutError", "Hệ thống bận: " + e.getMessage());
+            request.setAttribute("checkoutError", "Lỗi hệ thống: " + e.getMessage());
             doGet(request, response);
         }
     }

@@ -29,13 +29,11 @@
     <c:if test="${not empty sessionScope.cart.items}">
         <div class="cart-layout">
 
-                <%-- CỘT TRÁI: DANH SÁCH SẢN PHẨM --%>
             <div class="cart-items-container">
-                <form id="cart-form" action="<c:url value='/checkout'/>" method="GET">
+                <form id="cart-form" action="<c:url value='/checkout'/>" method="POST">
                     <table class="cart-table">
                         <thead>
                         <tr>
-                                <%-- SỬ DỤNG CLASS THAY VÌ WIDTH TRỰC TIẾP --%>
                             <th class="col-checkbox">
                                 <input type="checkbox" id="selectAll" class="cart-checkbox" checked>
                             </th>
@@ -141,7 +139,6 @@
     </c:if>
 </main>
 
-<%-- Script JS --%>
 <script src="<c:url value='/js/cart.js'/>"></script>
 
 <jsp:include page="/WEB-INF/layout/footer.jsp" />
