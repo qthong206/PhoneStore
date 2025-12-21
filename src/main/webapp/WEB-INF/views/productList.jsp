@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
+<fmt:setLocale value="vi_VN"/>
+
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
 <%-- Load CSS --%>
@@ -57,58 +59,57 @@
     <%-- 3. PRODUCT GRID --%>
     <div class="product-list-grid" id="productGrid">
         <c:forEach var="p" items="${products}" varStatus="status">
-            <%--
-                LOGIC ẨN: Nếu index >= 20, thêm class 'hidden-item'.
-                Class này được định nghĩa display: none !important trong CSS.
-            --%>
-            <div class="product-card ${status.index >= 20 ? 'hidden-item' : ''}">
-                <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
-                        <%-- Tag giảm giá --%>
-                    <div class="product-tags">
-                        <c:if test="${p.salePrice > 0 && p.price > p.salePrice}">
-                            <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
-                            <span class="tag tag-discount">
-                                Giảm <fmt:formatNumber value="${discountPercent}" type="percent" maxFractionDigits="0" />
-                            </span>
-                        </c:if>
+
+            <c:if test="${p.status == 1}">
+                <div class="product-card ${status.index >= 20 ? 'hidden-item' : ''}">
+                    <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
+                            <%-- Tag giảm giá --%>
+                        <div class="product-tags">
+                            <c:if test="${p.salePrice > 0}">
+                                <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
+                                <span class="tag tag-discount">
+                                    Giảm <fmt:formatNumber value="${discountPercent}" type="percent" maxFractionDigits="0" />
+                                </span>
+                            </c:if>
+                        </div>
+
+                        <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}" loading="lazy">
+
+                        <h3>${p.name}</h3>
+
+                        <div class="price-container">
+                            <c:choose>
+                                <c:when test="${p.salePrice > 0}">
+                                    <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
+                                    <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                    <p class="original-price">&nbsp;</p>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </a>
+
+                        <%-- Rating & Wishlist --%>
+                    <div class="rating-wishlist-box">
+                        <div class="rating">
+                            <c:if test="${p.reviewCount > 0}">
+                                <i class="fa-solid fa-star"></i>
+                                <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
+                                <span style="font-weight: 400; font-size: 0.8em; margin-left: 2px;">(${p.reviewCount})</span>
+                            </c:if>
+                        </div>
+                        <button class="btn-wishlist ${wishlistIds.contains(p.id) ? 'active' : ''}"
+                                data-product-id="${p.id}"
+                                title="Thêm vào yêu thích">
+                            <i class="icon-heart-empty fa-regular fa-heart"></i>
+                            <i class="icon-heart-filled fa-solid fa-heart"></i>
+                            <span>Yêu thích</span>
+                        </button>
                     </div>
-
-                    <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}" loading="lazy">
-
-                    <h3>${p.name}</h3>
-
-                    <div class="price-container">
-                        <c:choose>
-                            <c:when test="${p.salePrice > 0}">
-                                <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
-                                <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
-                            </c:when>
-                            <c:otherwise>
-                                <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
-                                <p class="original-price">&nbsp;</p>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </a>
-
-                    <%-- Rating & Wishlist --%>
-                <div class="rating-wishlist-box">
-                    <div class="rating">
-                        <c:if test="${p.reviewCount > 0}">
-                            <i class="fa-solid fa-star"></i>
-                            <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
-                            <span style="font-weight: 400; font-size: 0.8em; margin-left: 2px;">(${p.reviewCount})</span>
-                        </c:if>
-                    </div>
-                    <button class="btn-wishlist ${wishlistIds.contains(p.id) ? 'active' : ''}"
-                            data-product-id="${p.id}"
-                            title="Thêm vào yêu thích">
-                        <i class="icon-heart-empty fa-regular fa-heart"></i>
-                        <i class="icon-heart-filled fa-solid fa-heart"></i>
-                        <span>Yêu thích</span>
-                    </button>
                 </div>
-            </div>
+            </c:if>
         </c:forEach>
     </div>
 

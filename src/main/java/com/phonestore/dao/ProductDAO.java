@@ -67,6 +67,7 @@ public class ProductDAO {
                 product.setSeriesId(rs.getInt("series_id"));
                 product.setModel(rs.getString("model"));
                 product.setStorage(rs.getString("storage"));
+                product.setStatus(rs.getInt("status"));
                 return product;
             }
         } catch (Exception e) {
@@ -227,6 +228,7 @@ public class ProductDAO {
                 product.setStorage(rs.getString("storage"));
                 product.setAvgRating(rs.getDouble("avgRating"));
                 product.setReviewCount(rs.getInt("reviewCount"));
+                product.setStatus(rs.getInt("status"));
                 currentProductList.add(product);
             }
         } catch (Exception e) {
@@ -310,6 +312,7 @@ public class ProductDAO {
                 product.setThumbnailUrl(rs.getString("thumbnail_url"));
                 product.setAvgRating(rs.getDouble("avgRating"));
                 product.setReviewCount(rs.getInt("reviewCount"));
+                product.setStatus(rs.getInt("status"));
                 products.add(product);
             }
         } catch (Exception e) {
