@@ -1,31 +1,30 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-
 <c:set var="isEdit" value="${not empty item}" />
 
-<h1>
-    <c:choose>
-        <c:when test="${isEdit}">Edit Series</c:when>
-        <c:otherwise>Add Series</c:otherwise>
-    </c:choose>
-</h1>
+<div class="form-container">
+    <h1>
+        <c:choose>
+            <c:when test="${isEdit}">CHỈNH SỬA SERIES</c:when>
+            <c:otherwise>THÊM SERIES MỚI</c:otherwise>
+        </c:choose>
+    </h1>
 
-<a href="${pageContext.request.contextPath}/admin/series">&lt; Back</a>
-<br/><br/>
+    <form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/series/update' : '/admin/series/insert'}">
 
-<form method="post" action="${pageContext.request.contextPath}${isEdit ? '/admin/series/update' : '/admin/series/insert'}">
+        <c:if test="${isEdit}">
+            <input type="hidden" name="id" value="${item.id}">
+        </c:if>
 
-    <c:if test="${isEdit}">
-        <input type="hidden" name="id" value="${item.id}">
-    </c:if>
+        <div class="form-row">
+            <label>Tên Series</label>
+            <input type="text" name="name" value="${isEdit ? item.name : ''}" required placeholder="Ví dụ: iPhone 15 Series">
+        </div>
 
-    <div class="form-row">
-        <label>Name</label>
-        <input type="text" name="name" value="${isEdit ? item.name : ''}" required>
-    </div>
-
-    <button class="btn" type="submit">${isEdit ? 'Update' : 'Create'}</button>
-
-</form>
-
+        <div class="form-actions">
+            <button class="btn btn-save" type="submit">${isEdit ? 'Cập nhật' : 'Tạo mới'}</button>
+            <a class="btn btn-cancel" href="${pageContext.request.contextPath}/admin/series">Hủy bỏ</a>
+        </div>
+    </form>
+</div>

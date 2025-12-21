@@ -1,8 +1,11 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.BrandDAO;
 import com.phonestore.dao.ProductDAO;
+import com.phonestore.dao.ProductSeriesDAO;
 import com.phonestore.model.Brand;
 import com.phonestore.model.Product;
+import com.phonestore.model.ProductSeries;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,6 +28,9 @@ import java.util.Map;
 public class AdminProductServlet extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
+    // --- KHAI BÁO THÊM DAO ĐỂ LOAD DROPDOWN ---
+    private BrandDAO brandDAO = new BrandDAO();
+    private ProductSeriesDAO seriesDAO = new ProductSeriesDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -105,6 +111,14 @@ public class AdminProductServlet extends HttpServlet {
     private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        // --- LOAD DATA CHO DROPDOWN (QUAN TRỌNG) ---
+        List<Brand> brands = brandDAO.getAllBrands();
+        List<ProductSeries> series = seriesDAO.getAllSeries();
+
+        req.setAttribute("brands", brands);
+        req.setAttribute("series", series);
+        // -------------------------------------------
+
         req.setAttribute("pageCss","product-from.css");
         req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
         req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
@@ -150,6 +164,14 @@ public class AdminProductServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/admin/product");
             return;
         }
+
+        // --- LOAD DATA CHO DROPDOWN (QUAN TRỌNG) ---
+        List<Brand> brands = brandDAO.getAllBrands();
+        List<ProductSeries> series = seriesDAO.getAllSeries();
+
+        req.setAttribute("brands", brands);
+        req.setAttribute("series", series);
+        // -------------------------------------------
 
         req.setAttribute("product", product);
 

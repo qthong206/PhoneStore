@@ -13,12 +13,14 @@
 </head>
 <body>
 <%@include file="header-admin.jsp"%>
+
 <div class="layout">
+    <%-- TRẢ LẠI VỊ TRÍ CŨ: File này chứa MENU BÊN TRÁI --%>
     <%@include file="footer-admin.jsp"%>
+
     <main class="content">
         <jsp:include page="${contentPage}"/>
     </main>
-
 </div>
 
 </body>

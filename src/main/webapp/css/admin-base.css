@@ -1,128 +1,252 @@
-/* RESET */
+/* ================== 1. CẤU HÌNH CƠ BẢN ================== */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/* ================== LAYOUT TỔNG ================== */
-.layout {
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f3f4f6; /* Nền xám nhạt hiện đại */
+    color: #333;
+    font-size: 14px;
     height: 100vh;
     display: flex;
-    gap:8px;
+    flex-direction: column;
 }
 
-/* ================== HEADER ================== */
+a { text-decoration: none; }
+ul { list-style: none; }
+
+/* ================== 2. HEADER (GRADIENT XANH) ================== */
 .header {
     height: 60px;
+    /* 👇 GIỮ LẠI MÀU GRADIENT BẠN THÍCH */
     background: linear-gradient(135deg, #71D9FF, #6994d9);
     display: flex;
     align-items: center;
-    padding: 0 20px;  /* chỉ padding ngang */
-    box-sizing: border-box;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
+    justify-content: space-between;
+    padding: 0 24px;
+    box-shadow: 0 2px 10px rgba(113, 217, 255, 0.3); /* Bóng xanh nhẹ */
+    color: white; /* Chữ trên nền xanh phải là màu trắng */
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.header .header-l {
+/* Logo Area */
+.header-left a {
     display: flex;
     align-items: center;
-    gap: 16px;
-
+    transition: transform 0.2s;
 }
 
-.header-left {
-    height: 40px;      /* 👈 QUAN TRỌNG */
-    width: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;  /* 👈 CHỐT */
+.header-left a:hover {
+    transform: scale(1.05); /* Hiệu ứng nhấn nhẹ */
 }
-.header-left a{
-    text-decoration: none;
-    color: #FFFFFF;
-    border-radius: 15px;
-    height: 30px;
-}
-.header-left a:hover{
-    transform: scale(1.05);              /* 👈 phóng to nhẹ */
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-    color: #ffffff;
 
-}
 .header-logo {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-}
-
-
-/* ================== SIDEBAR (footer-admin.jsp) ================== */
-.sidebar {
-    width: 240px;
-    background: #ffffff;
-    color: #cbd5f5;
-
-    padding: 20px;
-    overflow-y: auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 15px;
-}
-.nav-bar{
-    width: 200px;
-    display: grid;
-    padding: 15px;
-    gap: 10px;
-    border-radius: 16px;
-
-    border: 1px solid #f0f0f0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-}
-.a-item1{
-    height: 42px;
-    background: linear-gradient(135deg, #71D9FF, #6994d9);
-    border-radius: 18px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 14px;
-
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-.a-tiem{
     height: 40px;
-    background: linear-gradient(135deg, #71D9FF, #4fc3f7);
-    border-radius: 16px;
+    object-fit: contain;
+    /* Nếu logo của bạn màu đen, có thể cần filter để nó sáng lên trên nền xanh */
+    /* filter: brightness(0) invert(1); */
+}
 
+/* User Info Area */
+.header-right {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 15px;
+}
 
-    color: #003344;
+.user-greeting {
     font-size: 14px;
-    text-decoration: none;
-
-    transition: all 0.25s ease;  /* 👈 mượt */
-}
-.a-tiem:hover{
-    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
-    transform: scale(1.05);              /* 👈 phóng to nhẹ */
-    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-    color: #ffffff;
+    font-weight: 500;
+    color: #fff; /* Chữ trắng */
 }
 
-/* ================== CONTENT ================== */
-.content {
+.btn-logout {
+    background: rgba(255, 255, 255, 0.2); /* Nền trong suốt mờ */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: background 0.2s;
+}
 
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ================== 3. LAYOUT TỔNG ================== */
+.layout {
+    display: flex;
     flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background: #f8fafc;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 15px;
-
+    overflow: hidden;
 }
+
+/* ================== 4. SIDEBAR (MENU TRÁI) ================== */
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 10px;
+    overflow-y: auto;
+}
+
+/* Nhóm Tiêu đề (VD: QUẢN LÝ SẢN PHẨM) - Chữ nhỏ gọn gàng */
+.a-item1 {
+    display: block;
+    padding: 15px 10px 5px 15px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+}
+
+/* Link Menu Con - Căn trái thẳng hàng */
+.a-tiem {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px; /* Bo góc nhẹ vừa phải */
+    transition: all 0.2s;
+    gap: 12px;
+}
+
+/* Hiệu ứng Hover - Đổi màu chữ sang xanh */
+.a-tiem:hover {
+    background-color: #f0f9ff;
+    color: #007bff; /* Màu xanh thương hiệu */
+}
+
+.a-tiem i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* ================== 5. CONTENT (NỘI DUNG) ================== */
+.content {
+    flex: 1;
+    padding: 30px;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+/* Header của trang Admin (Chứa tiêu đề + Nút thêm mới) */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.admin-header h1 { margin: 0; }
+
+/* ================== 6. TABLE (BẢNG DỮ LIỆU) ================== */
+.table-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 12px 20px;
+    text-align: left;
+}
+
+td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+    vertical-align: middle;
+}
+
+tr:hover { background-color: #fafafa; }
+
+/* ================== 7. FORM ================== */
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-row { margin-bottom: 15px; }
+.form-row label { display: block; margin-bottom: 5px; font-weight: 500; }
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+input:focus { border-color: #6994d9; outline: none; }
+
+/* ================== 8. BUTTONS (DÙNG GRADIENT) ================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.btn:hover { opacity: 0.9; }
+
+/* Nút chính dùng Gradient giống Header */
+.btn-primary {
+    background: linear-gradient(135deg, #71D9FF, #6994d9);
+    color: white;
+    box-shadow: 0 2px 6px rgba(105, 148, 217, 0.4);
+}
+
+.btn-warning { background: #ffc107; color: #333; }
+.btn-danger { background: #ff4d4f; color: white; }
+.btn-info { background: #17a2b8; color: white; }
+.btn-secondary { background: #6c757d; color: white; }
+.btn-cancel { background: #fff; border: 1px solid #ddd; color: #333; }
+
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+
+/* Badge Status */
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
