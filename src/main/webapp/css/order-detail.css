@@ -1,0 +1,198 @@
+/* ========================================= */
+/* CSS CHO TRANG CHI TIẾT ĐƠN HÀNG           */
+/* Đồng bộ style với order.css               */
+/* ========================================= */
+
+/* 1. Header: Nút back và ID đơn hàng */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-neutral-light);
+    margin-bottom: 25px;
+}
+
+.btn-back {
+    text-decoration: none;
+    color: var(--color-neutral-dark);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+.btn-back:hover { color: var(--color-primary); }
+
+.order-id-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+.text-muted { color: #777; }
+.sep { color: #ddd; }
+
+/* Tái sử dụng Badge từ order.css (Copy lại để đảm bảo hiển thị đúng nếu ko load order.css) */
+.status-badge { padding: 4px 12px; border-radius: 4px; font-size: 0.85em; font-weight: 600; }
+.status-badge.pending { background-color: #fff8e1; color: #f57c00; }
+.status-badge.confirmed { background-color: #cce5ff; color: #004085; }
+.status-badge.shipping { background-color: #e3f2fd; color: #1976d2; }
+.status-badge.delivered { background-color: #e8f5e9; color: #2e7d32; }
+.status-badge.cancelled { background-color: #ffebee; color: #c62828; }
+
+/* 2. Info Grid: Địa chỉ & Thông tin chung */
+.order-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background-color: #f9f9f9; /* Nền xám nhẹ để tách biệt */
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #eee;
+}
+
+.info-card h4 {
+    font-size: 1rem;
+    color: var(--color-dark);
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+.info-card h4 i { color: var(--color-primary); margin-right: 8px; }
+
+.info-content p {
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+.info-content p strong { color: #333; }
+
+/* Style riêng cho tên người nhận */
+.recipient-name { font-weight: 700; color: #333; text-transform: uppercase; }
+
+/* 3. Product Table: Danh sách sản phẩm */
+.section-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--color-dark);
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.product-table th {
+    background-color: #f5f5f5;
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.product-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #333;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.product-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.product-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+.product-link:hover { color: var(--color-primary); }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.price-highlight { color: #d70018; font-weight: 600; }
+
+/* 4. Footer Summary: Tổng tiền */
+.order-summary-footer {
+    border-top: 2px solid #f0f0f0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 400px; /* Giới hạn chiều rộng khu vực tổng tiền */
+}
+
+.summary-row span:first-child { text-align: right; flex: 1; }
+.summary-row span:last-child { font-weight: 500; min-width: 100px; text-align: right; }
+
+.summary-row.total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.total-price {
+    color: #d70018;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+/* 5. Action Buttons */
+.action-buttons {
+    margin-top: 20px;
+}
+.btn-cancel {
+    display: inline-block;
+    padding: 8px 20px;
+    background-color: white;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.btn-cancel:hover {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .order-info-grid { grid-template-columns: 1fr; }
+    .detail-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .product-item img { width: 50px; height: 50px; }
+}
