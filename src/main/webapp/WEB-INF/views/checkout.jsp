@@ -37,7 +37,7 @@
         <%-- BƯỚC 1 --%>
         <div id="step-1-content">
             <div class="checkout-section">
-                <c:forEach var="item" items="${sessionScope.cart.items}">
+                <c:forEach var="item" items="${sessionScope.checkoutCart.items}">
                     <div class="summary-item">
                         <img src="<c:url value='${item.product.thumbnailUrl}'/>" alt="${item.product.name}">
                         <div class="item-info">
@@ -136,7 +136,7 @@
             </div>
 
             <div class="checkout-footer">
-                <div class="footer-total"><span>Tổng tiền tạm tính:</span><strong><fmt:formatNumber value="${sessionScope.cart.total}" type="number" pattern="#,##0"/> ₫</strong></div>
+                <div class="footer-total"><span>Tổng tiền tạm tính:</span><strong><fmt:formatNumber value="${sessionScope.checkoutCart.total}" type="number" pattern="#,##0"/> ₫</strong></div>
                 <button type="button" class="btn btn-primary" id="btn-to-step-2">Tiếp tục</button>
             </div>
         </div>
@@ -145,9 +145,9 @@
         <div id="step-2-content" style="display:none;">
             <div class="checkout-section">
                 <div class="summary-totals-step2">
-                    <div class="summary-row"><span>Tạm tính</span><span><fmt:formatNumber value="${sessionScope.cart.total}" type="number" pattern="#,##0"/> ₫</span></div>
+                    <div class="summary-row"><span>Tạm tính</span><span><fmt:formatNumber value="${sessionScope.checkoutCart.total}" type="number" pattern="#,##0"/> ₫</span></div>
                     <div class="summary-row"><span>Phí vận chuyển</span><span>Miễn phí</span></div>
-                    <div class="summary-row total"><span>Tổng thanh toán</span><span><fmt:formatNumber value="${sessionScope.cart.total}" type="number" pattern="#,##0"/> ₫</span></div>
+                    <div class="summary-row total"><span>Tổng thanh toán</span><span><fmt:formatNumber value="${sessionScope.checkoutCart.total}" type="number" pattern="#,##0"/> ₫</span></div>
                 </div>
             </div>
             <div class="checkout-section">
@@ -164,7 +164,7 @@
                 </div>
             </div>
             <div class="checkout-footer">
-                <div class="footer-total"><span>Tổng thanh toán:</span><strong><fmt:formatNumber value="${sessionScope.cart.total}" type="number" pattern="#,##0"/> ₫</strong></div>
+                <div class="footer-total"><span>Tổng thanh toán:</span><strong><fmt:formatNumber value="${sessionScope.checkoutCart.total}" type="number" pattern="#,##0"/> ₫</strong></div>
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-shield-halved"></i> Đặt Hàng</button>
             </div>
         </div>

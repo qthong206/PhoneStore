@@ -3,6 +3,7 @@ package com.phonestore.controller;
 import com.phonestore.dao.AddressDAO;
 import com.phonestore.dao.CheckoutDAO;
 import com.phonestore.model.Cart;
+import com.phonestore.model.CartItem;
 import com.phonestore.model.ProductOrder;
 import com.phonestore.model.User;
 import com.phonestore.model.UserAddress;
@@ -33,20 +34,67 @@ public class CheckoutServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
+        Cart mainCart = (Cart) session.getAttribute("cart"); // Giỏ hàng chính
         User user = (User) session.getAttribute("user");
 
-        if (cart == null || cart.getItems().isEmpty()) {
+        // 1. Kiểm tra giỏ hàng chính rỗng
+        if (mainCart == null || mainCart.getItems().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 
-        // --- LẤY ĐỊA CHỈ NẾU ĐÃ LOGIN ---
+        // --- MỚI: XỬ LÝ LỌC SẢN PHẨM ĐƯỢC CHỌN ---
+        String[] selectedIds = request.getParameterValues("selectedItems");
+
+        // Nếu user vào thẳng link /checkout mà không qua form (không có selectedItems)
+        // Thì kiểm tra xem session đã có checkoutCart chưa, nếu chưa thì đá về cart
+        Cart checkoutCart = null;
+
+        if (selectedIds != null && selectedIds.length > 0) {
+            // Trường hợp 1: User nhấn nút "Thanh toán" từ giỏ hàng
+            checkoutCart = new Cart(); // Tạo giỏ hàng tạm để thanh toán
+
+            // --- ĐÃ SỬA ĐOẠN NÀY ĐỂ TRÁNH LỖI NẾU getItems() LÀ LIST ---
+            for (String idStr : selectedIds) {
+                try {
+                    int id = Integer.parseInt(idStr);
+
+                    // Tìm item trong giỏ hàng chính thủ công (an toàn nhất)
+                    CartItem foundItem = null;
+                    for (CartItem item : mainCart.getItems()) {
+                        if (item.getProduct().getId() == id) {
+                            foundItem = item;
+                            break;
+                        }
+                    }
+
+                    // Nếu tìm thấy thì thêm vào giỏ hàng thanh toán
+                    if (foundItem != null) {
+                        checkoutCart.addItem(foundItem.getProduct(), foundItem.getQuantity());
+                    }
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            // -----------------------------------------------------------
+
+            // Lưu checkoutCart vào session để dùng cho doPost và hiển thị
+            session.setAttribute("checkoutCart", checkoutCart);
+        } else {
+            // Trường hợp 2: User F5 hoặc Back lại trang checkout
+            checkoutCart = (Cart) session.getAttribute("checkoutCart");
+            if (checkoutCart == null || checkoutCart.getItems().isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/cart");
+                return;
+            }
+        }
+
+        // 2. CHỈ Load địa chỉ NẾU là thành viên
         if (user != null) {
             List<UserAddress> addresses = addressDAO.getAllByUserId(user.getId());
             UserAddress defaultAddress = null;
 
-            // Tìm địa chỉ mặc định
             if (addresses != null && !addresses.isEmpty()) {
                 for (UserAddress addr : addresses) {
                     if (addr.isDefaultAddress()) {
@@ -54,7 +102,6 @@ public class CheckoutServlet extends HttpServlet {
                         break;
                     }
                 }
-                // Nếu chưa set default, lấy cái đầu tiên
                 if (defaultAddress == null) {
                     defaultAddress = addresses.get(0);
                 }
@@ -63,7 +110,6 @@ public class CheckoutServlet extends HttpServlet {
             request.setAttribute("userAddresses", addresses);
             request.setAttribute("defaultAddress", defaultAddress);
         }
-        // ---------------------------------
 
         request.setAttribute("pageTitle", "Thanh toán");
         request.setAttribute("pageCss2", "checkout.css");
@@ -76,10 +122,13 @@ public class CheckoutServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
+
+        // --- MỚI: Lấy checkoutCart thay vì cart chính ---
+        Cart checkoutCart = (Cart) session.getAttribute("checkoutCart");
+        Cart mainCart = (Cart) session.getAttribute("cart");
         User user = (User) session.getAttribute("user");
 
-        if (cart == null || cart.getItems().isEmpty()) {
+        if (checkoutCart == null || checkoutCart.getItems().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
@@ -90,22 +139,19 @@ public class CheckoutServlet extends HttpServlet {
                 order.setUserId(user.getId());
             }
 
+            // ... (Phần lấy thông tin địa chỉ giữ nguyên) ...
             String addressOption = request.getParameter("address_option");
-
-            // XỬ LÝ LẤY THÔNG TIN NGƯỜI NHẬN
             if (user == null) {
-                // Khách vãng lai
                 order.setRecipientName(request.getParameter("recipient_name_guest"));
                 order.setRecipientPhone(request.getParameter("recipient_phone_guest"));
                 order.setRecipientEmail(request.getParameter("recipient_email_guest"));
-                order.setShippingAddress(request.getParameter("shipping_address_new")); // Guest luôn nhập mới
+                order.setShippingAddress(request.getParameter("shipping_address_new"));
             } else {
-                // User đã login
                 if ("new".equals(addressOption)) {
                     order.setRecipientName(request.getParameter("recipient_name_new"));
                     order.setRecipientPhone(request.getParameter("recipient_phone_new"));
                     order.setShippingAddress(request.getParameter("shipping_address_new"));
-                } else { // "default" - Lấy từ input readonly đã được điền bởi JS hoặc Servlet
+                } else {
                     order.setRecipientName(request.getParameter("recipient_name_default"));
                     order.setRecipientPhone(request.getParameter("recipient_phone_default"));
                     order.setShippingAddress(request.getParameter("shipping_address_default"));
@@ -114,18 +160,30 @@ public class CheckoutServlet extends HttpServlet {
             }
 
             order.setPaymentMethod(request.getParameter("payment_method"));
-            order.setTotalAmount(cart.getTotal());
+            order.setTotalAmount(checkoutCart.getTotal());
             order.setStatus("pending");
 
-            int newOrderId = checkoutDAO.createOrder(order, cart);
+            // Tạo đơn hàng với checkoutCart
+            int newOrderId = checkoutDAO.createOrder(order, checkoutCart);
 
             if (newOrderId != -1) {
-                session.removeAttribute("cart");
-                // Reset cart trong DB nếu cần (nếu bạn lưu cart item vào DB)
-                // session.setAttribute("latestOrderId", newOrderId);
+                // --- ĐÃ SỬA ĐOẠN NÀY ĐỂ HẾT LỖI MÀU ĐỎ ---
+                // Duyệt qua từng Item trong giỏ thanh toán để xóa khỏi giỏ chính
+                for (CartItem item : checkoutCart.getItems()) {
+                    // Lấy ID sản phẩm từ item
+                    int productId = item.getProduct().getId();
+                    // Xóa khỏi giỏ chính
+                    mainCart.removeItem(productId);
+                }
+                // ------------------------------------------
+
+                session.setAttribute("cart", mainCart); // Cập nhật lại giỏ chính
+                session.removeAttribute("checkoutCart"); // Xóa giỏ tạm
+
+                session.setAttribute("latestOrderId", newOrderId);
                 response.sendRedirect(request.getContextPath() + "/order-success");
             } else {
-                request.setAttribute("checkoutError", "Đã có lỗi xảy ra. Vui lòng thử lại.");
+                request.setAttribute("checkoutError", "Lỗi tạo đơn hàng.");
                 doGet(request, response);
             }
 
