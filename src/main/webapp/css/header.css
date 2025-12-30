@@ -1,5 +1,6 @@
 header {
-    background-color: var(--color-dark);
+    background: linear-gradient(to right bottom, rgb(0, 49, 64), rgb(3, 112, 167));
+
     padding: 15px 0;
     box-shadow: 0 4px 6px var(--color-shadow);
     position: relative;
@@ -32,14 +33,24 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: var(--color-primary-dark);
+
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--color-text-light);
+    backdrop-filter: blur(5px);
+
     padding: 10px 15px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
+}
+
+.category-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-text-light);
+    color: var(--color-white);
 }
 
 .category-icon {
@@ -55,6 +66,8 @@ header {
     border-radius: 25px;
     padding: 4px 5px 4px 0;
     max-width: 650px;
+    /* Thêm shadow nhẹ để nổi bật trên nền gradient */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar input {
@@ -109,7 +122,7 @@ header {
 }
 
 .nav-icon {
-    font-size: 1.4em;
+    font-size: 18px;
     margin-bottom: 5px;
     width: 32px;
     text-align: center;
@@ -121,7 +134,7 @@ header {
     white-space: nowrap;
 }
 
-/* --- BỔ SUNG CSS CHO MEGA MENU --- */
+/* --- MEGA MENU --- */
 
 .category-dropdown {
     position: relative;
@@ -183,15 +196,11 @@ header {
     position: absolute;
     top: -10px;
     left: 100%;
-    width: 250px; /* Chiều rộng 1 cột */
+    width: 250px;
     background-color: var(--color-white);
     border-radius: 8px;
     box-shadow: 0 8px 20px var(--color-shadow);
     padding: 20px;
-
-    /* === SỬA LỖI (XÓA DÒNG NÀY) === */
-    /* margin-left: 10px; */
-    /* Dòng này tạo ra "khoảng hở" 10px, làm mất hover */
 }
 
 .category-menu-list li:hover > .mega-menu-content {

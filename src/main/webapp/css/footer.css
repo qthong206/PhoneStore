@@ -1,11 +1,11 @@
-/* Bỏ màu nền chung cho thẻ footer */
 footer {
     color: var(--color-text-light);
 }
 
-/* --- PHẦN CHÍNH CỦA FOOTER --- */
+/* --- 1. PHẦN MAIN (Lớp trên cùng - Sáng nhất trong Footer) --- */
+/* Màu chuyển từ Xanh Header -> Xanh Đậm */
 .footer-main {
-    background-color: var(--color-dark); /* Nền chính, màu gốc #003140 */
+    background: linear-gradient(to right bottom, rgb(3, 100, 150), rgb(0, 49, 64));
     padding: 40px 0;
 }
 
@@ -17,9 +17,10 @@ footer {
 
 .footer-column h4 {
     font-size: 1.1em;
-    color: var(--color-primary);
     margin-bottom: 15px;
     font-weight: bold;
+    color: var(--color-white);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Thêm bóng chữ nhẹ cho nổi */
 }
 
 .footer-column ul {
@@ -34,17 +35,19 @@ footer {
 
 .footer-column a {
     text-decoration: none;
-    color: var(--color-text-light);
-    transition: color 0.3s ease;
+    color: rgba(255, 255, 255, 0.85);
+    transition: all 0.3s ease;
 }
 
 .footer-column a:hover {
     color: var(--color-accent);
+    padding-left: 5px; /* Hiệu ứng đẩy nhẹ khi hover */
 }
 
 .footer-column p {
     font-size: 0.9em;
     line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .social-icons {
@@ -62,31 +65,46 @@ footer {
     border-radius: 50%;
     color: white;
     font-weight: bold;
-    background-color: #00455a; /* Màu tối hơn một chút */
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* --- THANH NAV SẢN PHẨM --- */
+.social-icons a:hover {
+    background-color: var(--color-primary);
+    transform: translateY(-3px);
+}
+
+/* --- 2. THANH NAV SẢN PHẨM (Lớp giữa - Đậm hơn) --- */
+/* Màu chuyển từ Xanh Đậm -> Xanh Đen */
 .footer-nav {
-    background-color: #003a4d; /* Nền sáng hơn một chút so với nền chính */
+    background: linear-gradient(to right bottom, rgb(0, 49, 64), rgb(0, 35, 45));
     padding: 15px 0;
     text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05); /* Viền mờ ngăn cách */
 }
 
 .footer-nav a {
-    margin: 0 10px;
+    margin: 0 12px;
     text-decoration: none;
-    color: var(--color-text-light);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: color 0.2s;
 }
 
 .footer-nav a:hover {
     color: var(--color-accent);
 }
 
-/* --- PHẦN BẢN QUYỀN --- */
+/* --- 3. PHẦN BẢN QUYỀN (Lớp đáy - Đậm nhất/Tối nhất) --- */
+/* Màu chuyển từ Xanh Đen -> Gần như Đen */
 .footer-copyright {
-    background-color: var(--color-dark); /* Nền tối hơn một chút so với nền chính */
+    background: linear-gradient(to right bottom, rgb(0, 35, 45), rgb(0, 20, 25));
     padding: 20px 0;
     text-align: center;
-    font-size: 0.8em;
-    color: var(--color-accent);
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }

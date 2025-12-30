@@ -72,8 +72,8 @@
         <h3>Cần Đăng Nhập</h3>
         <p>Vui lòng đăng nhập hoặc đăng ký tài khoản để thực hiện chức năng này.</p>
         <div class="modal-buttons">
-            <a href="<c:url value='/register'/>" class="btn btn-modal-secondary">Đăng Ký</a>
-            <a href="<c:url value='/login'/>" class="btn btn-modal-primary">Đăng Nhập</a>
+            <a href="<c:url value='/register'/>" class="btn btn-gradient-secondary">Đăng Ký</a>
+            <a href="<c:url value='/login'/>" class="btn btn-gradient-primary">Đăng Nhập</a>
         </div>
     </div>
 </div>
