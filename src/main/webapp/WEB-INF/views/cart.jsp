@@ -77,10 +77,9 @@
                                 </td>
 
                                 <td class="price-cell">
-                                    <span class="current-price"><fmt:formatNumber value="${priceToUse}" type="number" pattern="#,##0"/> ₫</span>
-                                    <c:if test="${item.product.salePrice > 0 && item.product.price > item.product.salePrice}">
-                                        <span class="old-price"><fmt:formatNumber value="${item.product.price}" type="number" pattern="#,##0"/> ₫</span>
-                                    </c:if>
+                                    <span class="current-price">
+                                        <fmt:formatNumber value="${priceToUse}" type="number" pattern="#,##0"/> ₫
+                                    </span>
                                 </td>
 
                                 <td>

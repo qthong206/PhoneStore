@@ -24,6 +24,7 @@ public class OrderDetailServlet extends HttpServlet {
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
 
+        // 1. Kiểm tra đăng nhập
         if (user == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
@@ -38,7 +39,7 @@ public class OrderDetailServlet extends HttpServlet {
         try {
             int orderId = Integer.parseInt(idRaw);
 
-            // Hàm này giờ đã có trong DAO (do code ở trên đã thêm vào)
+            // 2. Lấy thông tin đơn hàng chi tiết
             ProductOrder order = orderDAO.getOrderById(orderId);
 
             if (order == null || order.getUserId() == null || order.getUserId() != user.getId()) {
@@ -47,7 +48,13 @@ public class OrderDetailServlet extends HttpServlet {
             }
 
             List<OrderDetail> details = orderDAO.getOrderDetails(orderId);
+            int totalOrders = orderDAO.countOrdersByUserId(user.getId());
+            double totalSpent = orderDAO.sumTotalSpentByUserId(user.getId());
 
+            req.setAttribute("totalOrders", totalOrders);
+            req.setAttribute("totalSpent", totalSpent);
+
+            // 4. Gửi dữ liệu chi tiết đơn hàng
             req.setAttribute("order", order);
             req.setAttribute("details", details);
             req.setAttribute("currentView", "order");

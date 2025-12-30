@@ -25,7 +25,8 @@ public class ProductOrderDAO {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // --- CÁC HÀM THỐNG KÊ ---
+    // [Image of SQL count aggregation]
+    // --- Đếm tổng đơn hàng của User ---
     public int countOrdersByUserId(int userId) {
         String query = "SELECT COUNT(*) FROM ProductOrder WHERE user_id = ?";
         try {
@@ -38,6 +39,7 @@ public class ProductOrderDAO {
         return 0;
     }
 
+    // --- Tính tổng tiền đã chi tiêu (Chỉ tính đơn thành công) ---
     public double sumTotalSpentByUserId(int userId) {
         String query = "SELECT SUM(total_amount) FROM ProductOrder WHERE user_id = ? AND status = 'delivered'";
         try {
@@ -50,8 +52,7 @@ public class ProductOrderDAO {
         return 0;
     }
 
-    // --- QUERY CƠ BẢN ---
-    // Lưu ý: Đã sửa sub-query dùng bảng 'OrderDetail' cho khớp
+    // --- Query cơ bản lấy thông tin Order + 1 sản phẩm đại diện ---
     private String BASE_QUERY =
             "SELECT o.*, " +
                     " (SELECT p.name FROM Product p JOIN OrderDetail od ON p.id = od.product_id WHERE od.order_id = o.id LIMIT 1) as first_p_name, " +
@@ -76,7 +77,7 @@ public class ProductOrderDAO {
         return o;
     }
 
-    // --- LẤY DANH SÁCH ĐƠN HÀNG ---
+    // --- Lấy 5 đơn hàng gần nhất ---
     public List<ProductOrder> getRecentOrders(int userId) {
         List<ProductOrder> list = new ArrayList<>();
         String query = BASE_QUERY + "WHERE o.user_id = ? ORDER BY o.created_at DESC LIMIT 5";
@@ -90,6 +91,7 @@ public class ProductOrderDAO {
         return list;
     }
 
+    // --- Lấy danh sách đơn hàng theo trạng thái ---
     public List<ProductOrder> getOrdersByUserId(int userId, String status) {
         List<ProductOrder> list = new ArrayList<>();
         StringBuilder query = new StringBuilder(BASE_QUERY + "WHERE o.user_id = ?");
@@ -109,7 +111,7 @@ public class ProductOrderDAO {
         return list;
     }
 
-    // --- LẤY 1 ĐƠN HÀNG ---
+    // --- Lấy chi tiết 1 đơn hàng theo ID ---
     public ProductOrder getOrderById(int orderId) {
         String query = BASE_QUERY + "WHERE o.id = ?";
         try {
@@ -122,11 +124,9 @@ public class ProductOrderDAO {
         return null;
     }
 
-    // --- LẤY CHI TIẾT SẢN PHẨM TRONG ĐƠN (ĐÃ SỬA TÊN BẢNG & CỘT) ---
+    // --- Lấy danh sách sản phẩm trong đơn hàng ---
     public List<OrderDetail> getOrderDetails(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
-
-        // 1. Sửa tên bảng thành OrderDetail (theo ảnh bạn gửi)
         String query = "SELECT od.*, p.name, p.thumbnail_url " +
                 "FROM OrderDetail od " +
                 "JOIN Product p ON od.product_id = p.id " +
@@ -141,16 +141,12 @@ public class ProductOrderDAO {
                 od.setId(rs.getInt("id"));
                 od.setOrderId(rs.getInt("order_id"));
                 od.setProductId(rs.getInt("product_id"));
-
-                // 2. Sửa tên cột theo ảnh Database
                 od.setQuantity(rs.getInt("quantity"));
                 od.setPriceAtPurchase(rs.getDouble("price_at_purchase"));
 
-                // Map thông tin phụ
                 od.setProductName(rs.getString("name"));
                 od.setThumbnailUrl(rs.getString("thumbnail_url"));
 
-                // Tính thành tiền
                 double total = od.getQuantity() * od.getPriceAtPurchase();
                 od.setTotalMoney(total);
 
@@ -162,5 +158,26 @@ public class ProductOrderDAO {
             closeConnections();
         }
         return list;
+    }
+
+    // --- Hủy đơn hàng (Chỉ khi status = 'pending') ---
+    public boolean cancelOrder(int orderId) {
+        String sql = "UPDATE ProductOrder SET status = 'cancelled' WHERE id = ? AND status = 'pending'";
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, orderId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return false;
     }
 }

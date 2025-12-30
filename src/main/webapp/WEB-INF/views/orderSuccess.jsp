@@ -3,22 +3,36 @@
 
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
-<%-- Tải file CSS mới --%>
 <link rel="stylesheet" href="<c:url value='/css/orderSuccess.css'/>">
 
 <main class="container">
-    <div class="success-box">
-        <div class="success-icon">
-            <i class="fa-solid fa-check"></i>
-        </div>
-        <h2>Đặt hàng thành công!</h2>
-        <p>Cảm ơn bạn đã tin tưởng và mua sắm tại PhoneStore.</p>
-        <p>Mã đơn hàng của bạn là: <strong>#${orderId}</strong></p>
+    <div class="success-wrapper">
+        <div class="success-box">
+            <div class="icon-container">
+                <div class="success-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="icon-ring"></div>
+            </div>
 
-        <div class="success-actions">
-            <a href="<c:url value='/home'/>" class="btn btn-secondary">Về trang chủ</a>
-            <%-- TODO: Tạo trang Lịch sử đơn hàng --%>
-            <a href="<c:url value='/order'/>" class="btn btn-primary">Xem chi tiết đơn hàng</a>
+            <h2>Đặt hàng thành công!</h2>
+            <p class="sub-text">Cảm ơn bạn đã tin tưởng và mua sắm tại PhoneStore.</p>
+
+            <div class="order-info">
+                <span>Mã đơn hàng:</span>
+                <span class="order-id">#${orderId}</span>
+            </div>
+
+            <p class="email-note">Thông tin chi tiết đơn hàng đã được gửi tới email của bạn.</p>
+
+            <div class="success-actions">
+                <a href="<c:url value='/home'/>" class="btn btn-secondary">
+                    <i class="fa-solid fa-house"></i> Về trang chủ
+                </a>
+                <a href="<c:url value='/order'/>" class="btn btn-primary">
+                    Xem đơn hàng <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </div>
 </main>

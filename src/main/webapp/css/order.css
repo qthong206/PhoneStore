@@ -107,6 +107,7 @@
 
 .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 500; }
 .status-badge.pending { background-color: #fff8e1; color: #f57c00; }
+.status-badge.confirmed { background-color: #f3e5f5; color: #7b1fa2; }
 .status-badge.shipping { background-color: #e3f2fd; color: #1976d2; }
 .status-badge.delivered { background-color: #e8f5e9; color: #2e7d32; }
 .status-badge.cancelled { background-color: #ffebee; color: #c62828; }

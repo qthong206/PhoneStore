@@ -1,118 +1,162 @@
-/* Container hẹp hơn cho checkout */
+/* ========================================= */
+/* CSS CHO TRANG THANH TOÁN (CHECKOUT)       */
+/* ========================================= */
+
+/* Container hẹp hơn để form tập trung */
 .container-narrow {
     max-width: 800px;
-    width: 90%;
+    width: 95%;
+    margin: 0 auto;
 }
 
 /* =================================== */
-/* 1. HEADER (MỚI - ĐÃ THÊM) */
+/* 1. HEADER & NAVIGATION */
 /* =================================== */
 .checkout-header {
     display: flex;
     align-items: center;
-    gap: 15px; /* Khoảng cách giữa nút back và H2 */
-    margin-bottom: 20px;
-
-    /* Căn lề: Nút back bên trái, H2 ở giữa */
-    position: relative; /* Bắt buộc */
-    justify-content: center; /* Đẩy H2 ra giữa */
+    justify-content: center; /* Căn giữa tiêu đề */
+    position: relative;
+    margin-bottom: 25px;
+    padding-top: 10px;
 }
+
 .checkout-header h2 {
     margin: 0;
-    padding: 0;
     font-size: 1.8rem;
-    text-align: center;
+    color: var(--color-dark);
+    font-weight: 700;
 }
+
 .checkout-back-btn {
-    position: absolute; /* Đặt nút back bên trái */
+    position: absolute;
     left: 0;
-    font-size: 1.5rem;
-    color: var(--color-text);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: var(--color-neutral-dark);
     text-decoration: none;
-    padding: 5px; /* Tăng vùng bấm */
+    padding: 8px 12px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    background-color: var(--color-neutral-light);
 }
+
 .checkout-back-btn:hover {
+    background-color: var(--color-primary-ultralight);
     color: var(--color-primary);
 }
 
-
-/* 2. THANH TIẾN TRÌNH (HEADER 2 BƯỚC) */
+/* THANH TIẾN TRÌNH (STEPS) */
 .checkout-steps {
     display: flex;
-    margin-bottom: 20px;
-    background-color: var(--color-neutral-light);
-    border-radius: 8px;
+    margin-bottom: 30px;
+    background-color: var(--color-white);
+    border-radius: 50px; /* Bo tròn mạnh */
     overflow: hidden;
+    box-shadow: 0 2px 8px var(--color-shadow);
+    border: 1px solid var(--color-neutral-light);
 }
+
 .step-item {
-    flex: 1; /* Chia 50/50 */
+    flex: 1;
     text-align: center;
-    padding: 15px;
-    font-size: 1.1rem;
+    padding: 12px;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--color-neutral-medium);
-    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
+
 .step-item.active {
+    background-color: var(--color-primary-ultralight);
     color: var(--color-primary);
-    border-bottom: 3px solid var(--color-primary);
+    font-weight: 700;
 }
+
 .step-item span {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 24px;
     height: 24px;
-    line-height: 24px;
     border-radius: 50%;
     background-color: var(--color-neutral-medium);
     color: var(--color-white);
+    font-size: 0.8rem;
     font-weight: bold;
-    font-size: 0.9rem;
-    margin-right: 8px;
 }
+
 .step-item.active span {
     background-color: var(--color-primary);
 }
 
-
-/* 3. CÁC KHỐI CHUNG */
+/* =================================== */
+/* 2. CÁC KHỐI NỘI DUNG (SECTION) */
+/* =================================== */
 .checkout-section {
     background-color: var(--color-white);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 25px;
     margin-bottom: 20px;
+    box-shadow: 0 2px 10px var(--color-shadow);
 }
+
 .checkout-section h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--color-dark);
     margin-bottom: 20px;
     padding-bottom: 10px;
+    border-bottom: 1px dashed var(--color-neutral-light);
 }
 
-/* Tái sử dụng .form-group và .form-control */
+/* Form Styles */
 .form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-weight: 500; margin-bottom: 6px; }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
 .form-control {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px 15px;
     border: 1px solid var(--color-neutral-medium);
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 0.95rem;
+    transition: border-color 0.2s;
     box-sizing: border-box;
 }
+.form-control:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-primary-ultralight);
+}
 .form-control[readonly] {
-    background-color: var(--color-neutral-light);
-    cursor: not-allowed;
+    background-color: #f8f9fa;
+    cursor: default;
+    border-color: #eee;
 }
-textarea.form-control {
-    resize: vertical;
-}
+textarea.form-control { resize: vertical; }
 
-/* 4. NỘI DUNG BƯỚC 1 */
+.form-row-2 {
+    display: flex;
+    gap: 15px;
+}
+.form-row-2 .form-group { flex: 1; }
+
+/* =================================== */
+/* 3. DANH SÁCH SẢN PHẨM (STEP 1) */
+/* =================================== */
 .summary-item {
     display: flex;
     align-items: center;
     gap: 15px;
-    /* Thêm border-bottom cho mỗi sản phẩm */
     border-bottom: 1px solid var(--color-neutral-light);
     padding-bottom: 15px;
     margin-bottom: 15px;
@@ -122,126 +166,134 @@ textarea.form-control {
     margin-bottom: 0;
 }
 .summary-item img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    border-radius: 8px;
     border: 1px solid var(--color-neutral-light);
+    padding: 2px;
+    background: #fff;
 }
-.summary-item .item-info {
-    flex-grow: 1;
-}
+.summary-item .item-info { flex-grow: 1; }
 .summary-item .item-info p {
     font-size: 0.95rem;
     font-weight: 500;
     line-height: 1.4;
+    margin: 0 0 5px 0;
+    color: var(--color-text);
 }
 .item-price-step1 {
-    color: var(--color-danger);
-    font-weight: bold !important;
+    color: var(--color-danger) !important;
+    font-weight: 700 !important;
 }
+
+/* --- HIỂN THỊ SỐ LƯỢNG (ĐÃ SỬA: BADGE STYLE) --- */
 .item-quantity {
     font-size: 0.9rem;
-    color: var(--color-neutral-dark);
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    background-color: var(--color-primary-ultralight); /* Nền xanh nhạt */
+    padding: 6px 12px;
+    border-radius: 20px; /* Bo tròn */
+    border: 1px solid var(--color-accent);
+    white-space: nowrap;
+    display: inline-block;
 }
+
+/* User Info Box */
 .user-info-box {
     background-color: var(--color-primary-ultralight);
     border: 1px solid var(--color-accent);
     color: var(--color-dark);
     padding: 15px;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+.user-info-box i { color: var(--color-primary); }
+
+/* Address Toggle */
 .address-toggle-group {
     display: flex;
     gap: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
 }
 .radio-group {
     display: flex;
     align-items: center;
-    gap: 6px;
-}
-.radio-group input[type="radio"] { cursor: pointer; }
-.radio-group label { cursor: pointer; font-weight: 500; }
-
-/* 5. NỘI DUNG BƯỚC 2 */
-.voucher-box {
-    display: flex;
-    gap: 10px;
-}
-.voucher-box .form-control {
-    flex-grow: 1;
-}
-.btn-apply-voucher {
-    background-color: var(--color-primary-ultralight);
-    color: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    padding: 0 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-}
-.voucher-select {
-    display: flex;
-    align-items: center;
     gap: 8px;
-    background-color: var(--color-primary-ultralight);
-    padding: 10px;
-    border-radius: 4px;
-    margin-top: 10px;
-    color: var(--color-primary);
     cursor: pointer;
 }
-.voucher-select .fa-chevron-right {
-    margin-left: auto;
-}
+.radio-group label { cursor: pointer; font-weight: 500; margin: 0; }
+.radio-group input[type="radio"] { accent-color: var(--color-primary); transform: scale(1.1); }
 
+/* =================================== */
+/* 4. THANH TOÁN & TỔNG KẾT (STEP 2) */
+/* =================================== */
 .summary-totals-step2 {
-    padding: 10px 0;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
 }
 .summary-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.95rem;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    color: #555;
 }
 .summary-row.total {
-    font-size: 1.3rem;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--color-danger);
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px dashed var(--color-neutral-medium);
+    border-top: 1px dashed #ccc;
+    margin-bottom: 0;
 }
-.payment-method {
-    margin-bottom: 10px; /* Khoảng cách giữa 2 nút */
-}
+
+/* Payment Method */
+.payment-method { margin-bottom: 12px; }
 .payment-method label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     padding: 15px;
     border: 1px solid var(--color-neutral-medium);
-    border-radius: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
+.payment-method label:hover { border-color: var(--color-primary); }
 .payment-method input[type="radio"]:checked + label {
     border-color: var(--color-primary);
     background-color: var(--color-primary-ultralight);
+    box-shadow: 0 0 0 1px var(--color-primary) inset;
 }
 .payment-method label i {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--color-primary);
-    width: 30px; /* Căn lề icon */
+    width: 25px;
     text-align: center;
 }
+
+/* Shipping Info Summary */
 .shipping-info-summary {
     background-color: var(--color-neutral-light);
     padding: 15px;
-    border-radius: 4px;
-    line-height: 1.7;
+    border-radius: 8px;
+    line-height: 1.8;
+    font-size: 0.95rem;
 }
 
-/* 6. FOOTER (CHUNG) */
+/* =================================== */
+/* 5. FOOTER (STICKY) & BUTTONS */
+/* =================================== */
 .checkout-footer {
     background-color: var(--color-white);
     padding: 20px;
@@ -251,8 +303,10 @@ textarea.form-control {
     align-items: center;
     position: sticky;
     bottom: 0;
-    box-shadow: 0 -2px 10px var(--color-shadow);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    z-index: 100;
 }
+
 .footer-total {
     display: flex;
     flex-direction: column;
@@ -262,69 +316,42 @@ textarea.form-control {
     color: var(--color-neutral-dark);
 }
 .footer-total strong {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--color-danger);
+    font-weight: 700;
 }
+
+/* --- NÚT TIẾP TỤC & ĐẶT HÀNG (GRADIENT STYLE) --- */
 .checkout-footer .btn-primary {
-    padding: 12px 30px;
+    /* Gradient Cam -> Đỏ */
+    background: linear-gradient(135deg, #FF8D4B 0%, #dc3545 100%);
+    border: none;
+    color: white;
+    padding: 12px 35px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkout-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #dc3545 0%, #FF8D4B 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+}
+.checkout-footer .btn-primary i {
     font-size: 1rem;
 }
 
-/* Nút kiểm tra (Bước 2) */
-.check-items-link {
-    display: block;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--color-primary);
-    text-decoration: none;
-    margin-top: 20px;
-}
-.check-items-link:hover {
-    text-decoration: underline;
-}
-
-/* =================================== */
-/* CSS CHO MODAL (MỚI - ĐÃ THÊM) */
-/* =Access-Control-Allow-Origin: *
-================================= */
-.modal-backdrop {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-.modal-close {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 2rem;
-    color: var(--color-neutral-medium);
-    background: none; border: none;
-    cursor: pointer;
-}
-.modal-content.form-modal {
-    background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px var(--color-shadow);
-    width: 90%;
-    max-width: 600px;
-    position: relative;
-    text-align: left;
-}
-.modal-content.form-modal h3 {
-    font-size: 1.5rem;
-    color: var(--color-dark);
-    margin-bottom: 25px;
-    text-align: center;
-}
-
 .checkout-error-box {
-    background-color: #fff0f1; /* Màu đỏ nhạt */
-    border: 1px solid var(--color-danger);
+    background-color: #fff2f2;
+    border: 1px solid #ffcdd2;
     color: var(--color-danger);
     padding: 15px;
     border-radius: 8px;
@@ -333,23 +360,12 @@ textarea.form-control {
     align-items: center;
     gap: 10px;
 }
-.checkout-error-box i {
-    font-size: 1.2rem;
-}
-
-.form-row-2 {
-    display: flex;
-    gap: 15px;
-}
-.form-row-2 .form-group {
-    flex: 1;
-}
 
 .empty-address-msg {
-    color: #666;
-    font-style: italic;
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
     text-align: center;
+    color: #666;
+    padding: 15px;
+    font-style: italic;
+    background: #f9f9f9;
+    border-radius: 8px;
 }
