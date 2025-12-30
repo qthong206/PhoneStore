@@ -6,9 +6,6 @@
 
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
-<%-- Load CSS --%>
-<link rel="stylesheet" href="<c:url value='/css/productList.css'/>">
-
 <main class="container">
 
     <%-- 1. BREADCRUMBS --%>
@@ -39,17 +36,17 @@
     <div class="sort-bar">
         <h3>Sắp xếp theo</h3>
         <div class="sort-options">
-            <a href="?${currentQueryString}&sort=popular"
+            <a href="?${currentQueryString}sort=popular"
                class="btn-sort ${empty param.sort || param.sort == 'popular' ? 'active' : ''}">
                 <i class="fa-regular fa-star"></i> Phổ biến
             </a>
 
-            <a href="?${currentQueryString}&sort=price_asc"
+            <a href="?${currentQueryString}sort=price_asc"
                class="btn-sort ${param.sort == 'price_asc' ? 'active' : ''}">
                 <i class="fa-solid fa-arrow-up-wide-short"></i> Giá Thấp - Cao
             </a>
 
-            <a href="?${currentQueryString}&sort=price_desc"
+            <a href="?${currentQueryString}sort=price_desc"
                class="btn-sort ${param.sort == 'price_desc' ? 'active' : ''}">
                 <i class="fa-solid fa-arrow-down-wide-short"></i> Giá Cao - Thấp
             </a>
@@ -63,7 +60,6 @@
             <c:if test="${p.status == 1}">
                 <div class="product-card ${status.index >= 20 ? 'hidden-item' : ''}">
                     <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
-                            <%-- Tag giảm giá --%>
                         <div class="product-tags">
                             <c:if test="${p.salePrice > 0}">
                                 <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
@@ -91,7 +87,6 @@
                         </div>
                     </a>
 
-                        <%-- Rating & Wishlist --%>
                     <div class="rating-wishlist-box">
                         <div class="rating">
                             <c:if test="${p.reviewCount > 0}">

@@ -38,12 +38,10 @@ public class ProductListServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // 1. Lấy tham số
             String categorySlug = request.getParameter("category");
             String brandSlug = request.getParameter("brand");
             String sortType = request.getParameter("sort");
 
-            // 2. Query String cho Sort
             StringBuilder sb = new StringBuilder();
             if (categorySlug != null) sb.append("category=").append(categorySlug).append("&");
             if (brandSlug != null) sb.append("brand=").append(brandSlug).append("&");
@@ -52,34 +50,31 @@ public class ProductListServlet extends HttpServlet {
             List<Product> productList;
             Category currentCategory = null;
             Brand currentBrand = null;
-            String pageTitle = "Sản phẩm";
+            String pageTitle = "Tất cả sản phẩm";
 
             if (brandSlug != null && !brandSlug.isEmpty()) {
                 currentBrand = brandDAO.getBrandBySlug(brandSlug);
-                if (currentBrand == null) {
-                    response.sendError(404, "Không tìm thấy thương hiệu");
-                    return;
+
+                if (currentBrand != null) {
+                    currentCategory = categoryDAO.getCategoryById(currentBrand.getCategoryId());
+                    productList = productDAO.getProductsByBrandSlug(brandSlug, sortType);
+                    pageTitle = currentBrand.getName();
+                } else {
+                    productList = productDAO.getAllProducts(sortType);
                 }
-                currentCategory = categoryDAO.getCategoryById(currentBrand.getCategoryId());
-                if (currentCategory == null) {
-                    response.sendError(404, "Không tìm thấy danh mục cha");
-                    return;
-                }
-                productList = productDAO.getProductsByBrandSlug(brandSlug, sortType);
-                pageTitle = currentBrand.getName();
 
             } else if (categorySlug != null && !categorySlug.isEmpty()) {
                 currentCategory = categoryDAO.getCategoryBySlug(categorySlug);
-                if (currentCategory == null) {
-                    response.sendError(404, "Không tìm thấy danh mục");
-                    return;
+
+                if (currentCategory != null) {
+                    productList = productDAO.getProductsByCategoryId(currentCategory.getId(), sortType);
+                    pageTitle = currentCategory.getName();
+                } else {
+                    productList = productDAO.getAllProducts(sortType);
                 }
-                productList = productDAO.getProductsByCategoryId(currentCategory.getId(), sortType);
-                pageTitle = currentCategory.getName();
 
             } else {
-                response.sendRedirect(request.getContextPath() + "/home");
-                return;
+                productList = productDAO.getAllProducts(sortType);
             }
 
             ViewHelper.loadWishlistData(request, wishlistDAO);

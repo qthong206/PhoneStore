@@ -20,7 +20,6 @@ public class ProductDAO {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
-    // Đóng kết nối để tránh leak resource
     private void closeConnections() {
         try {
             if (rs != null) rs.close();
@@ -31,10 +30,37 @@ public class ProductDAO {
         }
     }
 
-    /**
-     * LẤY CHI TIẾT SẢN PHẨM (ĐÃ NÂNG CẤP)
-     * Thêm b.slug và b.category_id để phục vụ Breadcrumbs
-     */
+    // --- [MỚI] HÀM LẤY TẤT CẢ SẢN PHẨM (Dùng cho trang danh sách mặc định) ---
+    public List<Product> getAllProducts(String sortType) {
+        List<Product> products = new ArrayList<>();
+        // Query tương tự getProductsByCategoryId nhưng không có WHERE
+        String query = "SELECT " +
+                "    p.*, b.name as brand_name, b.logo_url, " +
+                "    AVG(pr.rating) as avgRating, " +
+                "    COUNT(pr.id) as reviewCount " +
+                "FROM Product p " +
+                "JOIN Brand b ON p.brand_id = b.id " +
+                "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
+                "GROUP BY p.id" +
+                getOrderByClause(sortType);
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = mapRowToProduct(rs); // Tách hàm map row cho gọn
+                products.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return products;
+    }
+
+    // --- CÁC HÀM LẤY CHI TIẾT (Giữ nguyên) ---
     public Product getProductById(int productId) {
         String query = "SELECT p.*, " +
                 "       b.name as brand_name, b.logo_url, " +
@@ -78,7 +104,8 @@ public class ProductDAO {
         return null;
     }
 
-    // Lấy thông tin Dòng sản phẩm (Series) theo ID
+    // ... (Giữ nguyên các hàm getVariants, getColors, getGallery...) ...
+
     public ProductSeries getProductSeriesById(int seriesId) {
         String query = "SELECT * FROM ProductSeries WHERE id = ?";
         try {
@@ -101,7 +128,6 @@ public class ProductDAO {
         return null;
     }
 
-    // Lấy danh sách các biến thể (Variant) cùng Series và Model (ví dụ: iPhone 15 Pro 128GB, 256GB...)
     public List<Product> getVariantsBySeriesAndModel(int seriesId, String model) {
         List<Product> variants = new ArrayList<>();
         String query = "SELECT id, storage, price, sale_price FROM Product " +
@@ -130,7 +156,6 @@ public class ProductDAO {
         return variants;
     }
 
-    // Lấy danh sách màu sắc có sẵn của một Dòng sản phẩm (Series)
     public List<Color> getColorsBySeriesId(int seriesId) {
         List<Color> colors = new ArrayList<>();
         String query = "SELECT DISTINCT c.id, c.name, c.hex_code " +
@@ -159,7 +184,6 @@ public class ProductDAO {
         return colors;
     }
 
-    // Lấy danh sách ảnh Gallery (ảnh phụ) của sản phẩm
     public List<String> getGalleryImagesByProductId(int productId) {
         List<String> galleryImages = new ArrayList<>();
         String query = "SELECT image_url FROM ProductGallery " +
@@ -182,11 +206,11 @@ public class ProductDAO {
         return galleryImages;
     }
 
-    // Lấy danh sách sản phẩm nhóm theo Thương hiệu (Dùng cho trang chủ hoặc trang Brand tổng hợp)
+    // Lấy danh sách sản phẩm nhóm theo Thương hiệu (Dùng cho trang chủ)
     public Map<Brand, List<Product>> getProductsGroupedByBrand() {
         Map<Brand, List<Product>> productMap = new LinkedHashMap<>();
         String query = "SELECT " +
-                "    p.*, b.name as brand_name, b.logo_url, " +
+                "    p.*, b.name as brand_name, b.logo_url, b.slug as brand_slug, " +
                 "    AVG(pr.rating) as avgRating, " +
                 "    COUNT(pr.id) as reviewCount " +
                 "FROM Product p " +
@@ -211,24 +235,14 @@ public class ProductDAO {
                     currentBrand.setId(brandId);
                     currentBrand.setName(rs.getString("brand_name"));
                     currentBrand.setLogoUrl(rs.getString("logo_url"));
+                    currentBrand.setSlug(rs.getString("brand_slug"));
+
                     currentProductList = new ArrayList<>();
                     productMap.put(currentBrand, currentProductList);
                 }
 
-                Product product = new Product();
-                product.setId(rs.getInt("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getDouble("price"));
-                product.setSalePrice(rs.getDouble("sale_price"));
-                product.setThumbnailUrl(rs.getString("thumbnail_url"));
+                Product product = mapRowToProduct(rs);
                 product.setBrand(currentBrand);
-                product.setSeriesId(rs.getInt("series_id"));
-                product.setModel(rs.getString("model"));
-                product.setStorage(rs.getString("storage"));
-                product.setAvgRating(rs.getDouble("avgRating"));
-                product.setReviewCount(rs.getInt("reviewCount"));
-                product.setStatus(rs.getInt("status"));
                 currentProductList.add(product);
             }
         } catch (Exception e) {
@@ -238,8 +252,7 @@ public class ProductDAO {
         }
         return productMap;
     }
-
-    // Lấy các sản phẩm liên quan cùng Thương hiệu (Hiển thị ở trang chi tiết sản phẩm)
+    // ... (Giữ nguyên getRelatedProductsByBrand) ...
     public List<Product> getRelatedProductsByBrand(int brandId, int currentProductId, int limit) {
         List<Product> relatedProducts = new ArrayList<>();
         String query = "SELECT " +
@@ -280,11 +293,8 @@ public class ProductDAO {
         return relatedProducts;
     }
 
-    /**
-     * Lấy danh sách sản phẩm theo Danh mục (Category) có hỗ trợ SẮP XẾP
-     * @param categoryId ID danh mục
-     * @param sortType Kiểu sắp xếp (price_asc, price_desc, popular)
-     */
+    // --- CÁC HÀM LẤY LIST THEO ĐIỀU KIỆN (Có Sort) ---
+
     public List<Product> getProductsByCategoryId(int categoryId, String sortType) {
         List<Product> products = new ArrayList<>();
         String query = "SELECT " +
@@ -296,7 +306,7 @@ public class ProductDAO {
                 "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
                 "WHERE b.category_id = ? " +
                 "GROUP BY p.id" +
-                getOrderByClause(sortType); // Thêm mệnh đề ORDER BY động
+                getOrderByClause(sortType);
 
         try {
             conn = DBContext.getConnection();
@@ -304,16 +314,7 @@ public class ProductDAO {
             ps.setInt(1, categoryId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getInt("id"));
-                product.setName(rs.getString("name"));
-                product.setPrice(rs.getDouble("price"));
-                product.setSalePrice(rs.getDouble("sale_price"));
-                product.setThumbnailUrl(rs.getString("thumbnail_url"));
-                product.setAvgRating(rs.getDouble("avgRating"));
-                product.setReviewCount(rs.getInt("reviewCount"));
-                product.setStatus(rs.getInt("status"));
-                products.add(product);
+                products.add(mapRowToProduct(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -323,11 +324,6 @@ public class ProductDAO {
         return products;
     }
 
-    /**
-     * Lấy danh sách sản phẩm theo Slug Thương hiệu (Brand) có hỗ trợ SẮP XẾP
-     * @param brandSlug Slug thương hiệu (ví dụ: 'apple', 'samsung')
-     * @param sortType Kiểu sắp xếp
-     */
     public List<Product> getProductsByBrandSlug(String brandSlug, String sortType) {
         List<Product> products = new ArrayList<>();
         String query = "SELECT " +
@@ -339,7 +335,7 @@ public class ProductDAO {
                 "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
                 "WHERE b.slug = ? " +
                 "GROUP BY p.id" +
-                getOrderByClause(sortType); // Thêm mệnh đề ORDER BY động
+                getOrderByClause(sortType);
 
         try {
             conn = DBContext.getConnection();
@@ -347,15 +343,7 @@ public class ProductDAO {
             ps.setString(1, brandSlug);
             rs = ps.executeQuery();
             while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getInt("id"));
-                product.setName(rs.getString("name"));
-                product.setPrice(rs.getDouble("price"));
-                product.setSalePrice(rs.getDouble("sale_price"));
-                product.setThumbnailUrl(rs.getString("thumbnail_url"));
-                product.setAvgRating(rs.getDouble("avgRating"));
-                product.setReviewCount(rs.getInt("reviewCount"));
-                products.add(product);
+                products.add(mapRowToProduct(rs));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -365,9 +353,8 @@ public class ProductDAO {
         return products;
     }
 
-    // --- CÁC HÀM CRUD DÀNH CHO ADMIN ---
-
-    // Thêm sản phẩm mới
+    // --- CÁC HÀM ADMIN CRUD (Giữ nguyên) ---
+    // ... (insert, update, delete, toggleStatus giữ nguyên như code cũ) ...
     public void insertProduct(Product p) {
         String sql = "INSERT INTO Product(name, description, price, sale_price, thumbnail_url, brand_id, series_id, model, storage, status) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -455,19 +442,46 @@ public class ProductDAO {
         }
     }
 
-    // --- HÀM PHỤ TRỢ: TẠO CÂU LỆNH SẮP XẾP SQL ---
+
+    // --- HÀM HELPER: MAP ROW TO PRODUCT OBJECT ---
+    // (Giúp code gọn hơn, tránh lặp lại logic gán dữ liệu)
+    private Product mapRowToProduct(ResultSet rs) throws Exception {
+        Product p = new Product();
+        p.setId(rs.getInt("id"));
+        p.setName(rs.getString("name"));
+        // Check if description column exists in ResultSet to avoid error in some queries
+        try { p.setDescription(rs.getString("description")); } catch(Exception e) {}
+        p.setPrice(rs.getDouble("price"));
+        p.setSalePrice(rs.getDouble("sale_price"));
+        p.setThumbnailUrl(rs.getString("thumbnail_url"));
+        p.setSeriesId(rs.getInt("series_id"));
+        p.setModel(rs.getString("model"));
+        p.setStorage(rs.getString("storage"));
+        p.setStatus(rs.getInt("status"));
+
+        // Map rating & review count
+        p.setAvgRating(rs.getDouble("avgRating"));
+        p.setReviewCount(rs.getInt("reviewCount"));
+
+        // Map brand (nếu có join)
+        try {
+            Brand b = new Brand();
+            b.setId(rs.getInt("brand_id"));
+            b.setName(rs.getString("brand_name"));
+            b.setLogoUrl(rs.getString("logo_url"));
+            p.setBrand(b);
+        } catch (Exception e) {}
+
+        return p;
+    }
+
     private String getOrderByClause(String sortType) {
         if (sortType == null) return " ORDER BY reviewCount DESC, avgRating DESC";
-
         switch (sortType) {
-            case "price_asc":
-                return " ORDER BY COALESCE(p.sale_price, p.price) ASC"; // Giá thấp -> cao (ưu tiên giá sale)
-            case "price_desc":
-                return " ORDER BY COALESCE(p.sale_price, p.price) DESC"; // Giá cao -> thấp
-            case "popular":
-                return " ORDER BY reviewCount DESC, avgRating DESC"; // Phổ biến (nhiều review, điểm cao)
-            default:
-                return " ORDER BY reviewCount DESC, avgRating DESC";
+            case "price_asc": return " ORDER BY COALESCE(p.sale_price, p.price) ASC";
+            case "price_desc": return " ORDER BY COALESCE(p.sale_price, p.price) DESC";
+            case "popular": return " ORDER BY reviewCount DESC, avgRating DESC";
+            default: return " ORDER BY reviewCount DESC, avgRating DESC";
         }
     }
 }
