@@ -68,6 +68,7 @@
                                                 <span class="status-badge ${o.status}">
                                                     <c:choose>
                                                         <c:when test="${o.status == 'pending'}">Chờ xác nhận</c:when>
+                                                        <c:when test="${o.status == 'confirmed'}">Đã xác nhận</c:when>
                                                         <c:when test="${o.status == 'shipping'}">Đang vận chuyển</c:when>
                                                         <c:when test="${o.status == 'delivered'}">Giao thành công</c:when>
                                                         <c:when test="${o.status == 'cancelled'}">Đã hủy</c:when>

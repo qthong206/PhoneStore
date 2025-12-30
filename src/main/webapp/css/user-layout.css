@@ -1,159 +1,177 @@
-/* --- 1. LAYOUT CHUNG CHO DASHBOARD --- */
+/* --- 1. LAYOUT CHUNG --- */
 body {
-    background-color: var(--color-neutral-light);
+    background-color: #f5f7fa; /* Màu nền xám xanh nhạt hiện đại */
 }
 .user-dashboard {
-    padding-top: 0;
+    padding-top: 20px;
+    padding-bottom: 50px;
 }
 
-/* --- 2. THANH THÔNG TIN TRÊN CÙNG (Header Info Bar) --- */
+/* --- 2. THANH THÔNG TIN (HEADER INFO BAR) - Style Card Rời --- */
 .user-page-header {
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    background-color: var(--color-white);
-    padding: 20px;
-    border-radius: 12px;
+    /* Bỏ background và shadow của container cha để tách thành 3 card */
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
     margin-bottom: 30px;
-    box-shadow: 0 4px 12px var(--color-shadow);
 }
+
 .header-info-block {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: 15px;
-    flex: 1;
-    border-right: 1px solid var(--color-neutral-light);
-    padding: 0 20px;
+    background-color: var(--color-white);
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Bóng nhẹ */
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s ease;
 }
-.header-info-block:last-child { border-right: none; }
-.header-info-block:first-child { padding-left: 0; }
 
+/* Hiệu ứng nhấc lên nhẹ khi hover vào từng thẻ */
+.header-info-block:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Xóa border-right cũ */
+.header-info-block { border-right: none; }
+.header-info-block:last-child { border-right: none; }
+.header-info-block:first-child { padding-left: 25px; }
+
+/* Icon hình tròn */
 .header-info-block .avatar,
 .header-info-block .icon-wrapper {
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    background-color: var(--color-primary-ultralight);
+    /* Gradient nhẹ cho icon đẹp hơn */
+    background: linear-gradient(135deg, var(--color-primary-ultralight), #e3f2fd);
     color: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2em;
+    font-size: 1.6em;
     flex-shrink: 0;
 }
-.info-text strong {
-    font-size: 1.2em;
-    color: var(--color-dark);
-    display: block;
-}
-.info-text p, .info-text span {
-    font-size: 0.9em;
-    color: var(--color-neutral-medium);
-    margin: 0;
+
+/* Riêng Avatar User cho nổi bật hơn */
+.header-info-block.user-details-block .avatar {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(var(--color-primary), 0.3);
 }
 
-/* --- 3. PHẦN THÂN (2 CỘT) --- */
+.info-text strong {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--color-dark);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.info-text p, .info-text span {
+    font-size: 0.95em;
+    color: var(--color-neutral-dark);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* --- 3. BỐ CỤC 2 CỘT --- */
 .dashboard-body {
     display: flex;
     gap: 30px;
     align-items: flex-start;
 }
 
-/* --- 4. MENU BÊN TRÁI (Sidebar) --- */
+/* --- 4. MENU BÊN TRÁI (SIDEBAR) - Soft UI Style --- */
 .user-nav {
     width: 280px;
     flex-shrink: 0;
     background-color: var(--color-white);
     border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 4px 12px var(--color-shadow);
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 20px;
 }
+
 .user-nav ul { list-style: none; margin: 0; padding: 0; }
-.user-nav ul li { margin-bottom: 5px; }
+.user-nav ul li { margin-bottom: 8px; }
+
 .user-nav ul li a {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 14px 18px;
+    border-radius: 10px;
     text-decoration: none;
     color: var(--color-text);
     font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
 }
+
 .user-nav ul li a:hover {
+    background-color: var(--color-neutral-light);
+    color: var(--color-primary);
+    transform: translateX(5px);
+}
+
+.user-nav ul li a.active {
     background-color: var(--color-primary-ultralight);
     color: var(--color-primary);
+    font-weight: 700;
+    border-left-color: var(--color-primary);
 }
-.user-nav ul li a.active {
-    background-color: var(--color-primary);
-    color: var(--color-text-light);
-}
+
 .user-nav ul li a i {
     font-size: 1.2em;
     width: 24px;
     text-align: center;
+    transition: color 0.2s;
 }
 
-/* Style riêng cho nút Đăng xuất */
+.user-nav ul li a.logout-link {
+    color: var(--color-neutral-dark);
+}
+
 .user-nav ul li a.logout-link {
     color: var(--color-danger);
-    margin-top: 10px;
-    border-top: 1px solid var(--color-neutral-light);
-    border-radius: 0 0 8px 8px;
-}
-.user-nav ul li a.logout-link:hover {
-    background-color: #ffebee;
-    color: #c62828;
+    margin-top: 5px;
 }
 
-/* --- 5. CỘT NỘI DUNG BÊN PHẢI (Content) --- */
+.user-nav ul li a.logout-link:hover {
+    background-color: #fff5f5;
+    color: #d32f2f;
+    transform: translateX(5px);
+}
+
+/* --- 5. NỘI DUNG CHÍNH (CONTENT) --- */
 .user-content { flex-grow: 1; }
 
 .content-block {
     background-color: var(--color-white);
     border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 12px var(--color-shadow);
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     margin-bottom: 30px;
 }
+
 .content-block h3 {
-    margin: 0 0 20px 0;
+    margin: 0 0 25px 0;
     padding-bottom: 15px;
-    border-bottom: 1px solid var(--color-neutral-light);
+    border-bottom: 2px solid var(--color-neutral-light);
     color: var(--color-dark);
-    font-size: 1.3em;
+    font-size: 1.4em;
+    font-weight: 700;
 }
 
-/* --- 6. TRẠNG THÁI CHUNG --- */
-.empty-state {
-    text-align: center;
-    padding: 40px 0;
-}
-.empty-state i {
-    font-size: 3.5em;
-    color: var(--color-neutral-medium);
-    margin-bottom: 20px;
-}
-.empty-state p {
-    color: var(--color-neutral-medium);
-    margin-bottom: 25px;
-}
-
-.login-prompt-card {
-    width: 100%;
-    text-align: center;
-    background-color: var(--color-white);
-    border-radius: 12px;
-    padding: 50px;
-    box-shadow: 0 4px 12px var(--color-shadow);
-}
-.login-prompt-card p {
-    margin-bottom: 20px;
-    font-size: 1.1em;
-}
-
-/* --- 7. CSS CHO MODAL (STYLE MỚI) --- */
+/* --- 6. MODAL --- */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -163,6 +181,7 @@ body {
     z-index: 9999;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(2px);
 }
 
 .modal-content {
