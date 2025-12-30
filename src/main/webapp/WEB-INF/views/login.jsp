@@ -3,8 +3,6 @@
 
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 <link rel="stylesheet" href="<c:url value='/css/login.css'/>">
-<%-- Bạn cần thêm Font Awesome vào header.jsp để hiển thị icon --%>
-<%-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/> --%>
 
 <main class="container">
     <div class="login-container">

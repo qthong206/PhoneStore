@@ -7,6 +7,8 @@
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
 <main class="container">
+    <input type="hidden" id="contextPathHolder" value="${pageContext.request.contextPath}" />
+
     <c:forEach var="entry" items="${productMap}">
         <c:set var="brand" value="${entry.key}" />
         <c:set var="productsInBrand" value="${entry.value}" />
@@ -14,13 +16,15 @@
         <section class="brand-section">
             <div class="section-header">
                 <h2>${brand.name} Chính Hãng</h2>
-                <a href="<c:url value='/products?brand=${brand.slug}'/>" class="view-all-link">Xem tất cả</a>
+                    <%-- Link chuyển sang trang Products lọc theo Brand Slug --%>
+                <a href="<c:url value='/products?brand=${brand.slug}'/>" class="view-all-link">
+                    Xem tất cả <i class="fa-solid fa-angle-right"></i>
+                </a>
             </div>
 
             <div class="product-grid">
                 <c:forEach var="p" items="${productsInBrand}" varStatus="loop">
                     <c:if test="${p.status == 1}">
-
                         <c:if test="${loop.index < 5}">
                             <div class="product-card">
                                 <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
@@ -56,12 +60,11 @@
                                             <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
                                         </c:if>
                                     </div>
-
-                                    <button class="btn-wishlist ${wishlistIds.contains(p.id) ? 'active' : ''}"
-                                            data-product-id="${p.id}">
+                                    <button class="btn-icon-heart ${wishlistIds.contains(p.id) ? 'active' : ''}"
+                                            data-product-id="${p.id}"
+                                            title="Yêu thích">
                                         <i class="icon-heart-empty fa-regular fa-heart"></i>
                                         <i class="icon-heart-filled fa-solid fa-heart"></i>
-                                        <span>Yêu thích</span>
                                     </button>
                                 </div>
                             </div>

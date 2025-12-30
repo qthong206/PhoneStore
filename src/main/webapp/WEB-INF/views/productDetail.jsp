@@ -4,28 +4,22 @@
 
 <jsp:include page="/WEB-INF/layout/header.jsp" />
 
+<%-- 1. [QUAN TRỌNG] THÊM FILE CSS CHI TIẾT --%>
+<link rel="stylesheet" href="<c:url value='/css/product-detail.css'/>">
+
 <main class="container">
     <c:if test="${not empty product && not empty series && not empty category}">
 
-        <%-- =================================== --%>
-        <%-- SỬA BREADCRUMBS (ĐÃ HẾT CỨNG) --%>
-        <%-- =================================== --%>
         <nav class="breadcrumb-nav">
             <a href="<c:url value='/home'/>">Trang chủ</a>
             <i class="fa-solid fa-chevron-right"></i>
-
-                <%-- Link 1: Trỏ về trang Category (VD: /products?category=dien-thoai) --%>
             <a href="<c:url value='/products?category=${category.slug}'/>">${category.name}</a>
             <i class="fa-solid fa-chevron-right"></i>
-
-                <%-- Link 2: Trỏ về trang Brand (VD: /products?brand=apple) --%>
             <a href="<c:url value='/products?brand=${product.brand.slug}'/>">${product.brand.name}</a>
             <i class="fa-solid fa-chevron-right"></i>
-
             <span>${series.name} ${product.model}</span>
         </nav>
 
-        <%-- (Toàn bộ code còn lại của trang giữ nguyên) --%>
         <div class="product-detail-grid">
             <div class="product-col-left">
                 <h1>${product.name}</h1>
@@ -107,15 +101,21 @@
                             </c:forEach>
                         </div>
                     </div>
+
+                        <%-- 2. [QUAN TRỌNG] CẬP NHẬT CLASS NÚT BẤM MUA HÀNG --%>
                     <form action="<c:url value='/cart'/>" method="post" class="add-to-cart-form">
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="productId" value="${product.id}">
                         <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-primary btn-full">
+
+                            <%-- Nút Thêm vào giỏ: Dùng btn-gradient-primary --%>
+                        <button type="button" onclick="this.form.submit()" class="btn btn-full btn-gradient-primary btn-lg">
                             <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
                         </button>
-                        <button type="submit" class="btn btn-secondary btn-full">
-                            Mua ngay
+
+                            <%-- Nút Mua ngay: Dùng btn-gradient-hot --%>
+                        <button type="submit" class="btn btn-full btn-gradient-hot btn-lg">
+                            <i class="fa-solid fa-bag-shopping"></i> Mua ngay
                         </button>
                     </form>
                 </div>
@@ -217,7 +217,9 @@
                                 <div class="score-count-v2">(0 đánh giá)</div>
                             </c:otherwise>
                         </c:choose>
-                        <button class="btn btn-primary" id="btn-write-review">Viết đánh giá</button>
+
+                            <%-- 3. CẬP NHẬT CLASS NÚT VIẾT ĐÁNH GIÁ --%>
+                        <button class="btn btn-gradient-primary" id="btn-write-review">Viết đánh giá</button>
                     </div>
 
                     <div class="summary-bars-v2">
@@ -283,11 +285,13 @@
         <div class="empty-state">
             <h2>404 - Không tìm thấy</h2>
             <p>Xin lỗi, sản phẩm hoặc danh mục bạn tìm kiếm không tồn tại.</p>
-            <a href="<c:url value='/home'/>" class="btn btn-primary">Về Trang chủ</a>
+                <%-- CẬP NHẬT CLASS NÚT VỀ TRANG CHỦ --%>
+            <a href="<c:url value='/home'/>" class="btn btn-gradient-primary">
+                <i class="fa-solid fa-house"></i> Về Trang chủ
+            </a>
         </div>
     </c:if>
 
-    <%-- (Modal giữ nguyên) --%>
     <c:if test="${not empty sessionScope.user}">
         <div id="review-form-modal" class="modal-backdrop" style="display:none;">
             <div class="modal-content form-modal">
@@ -310,7 +314,8 @@
                         <label for="review-comment">Nhận xét của bạn:</label>
                         <textarea name="comment_body" id="review-comment" class="form-control" rows="4" placeholder="Xin mời chia sẻ một số cảm nhận về sản phẩm..."></textarea>
                     </div>
-                    <button type="submit" class="btn btn-modal-primary" style="width: 100%;">Gửi đánh giá</button>
+                        <%-- CẬP NHẬT CLASS NÚT GỬI ĐÁNH GIÁ --%>
+                    <button type="submit" class="btn btn-gradient-primary btn-full">Gửi đánh giá</button>
                 </form>
             </div>
         </div>

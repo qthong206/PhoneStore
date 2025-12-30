@@ -5,175 +5,38 @@ main.container {
 .brand-section {
     background-color: var(--color-white);
     border-radius: 12px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 12px var(--color-shadow);
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding: 25px;
+    box-shadow: 0 4px 15px var(--color-shadow);
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     border-bottom: 1px solid var(--color-neutral-light);
     padding-bottom: 15px;
 }
 
 .section-header h2 {
-    font-size: 1.5em;
+    font-size: 1.6em;
     color: var(--color-dark);
     margin: 0;
     padding: 0;
+    font-weight: 700;
 }
 
 .view-all-link {
     text-decoration: none;
     color: var(--color-primary);
-    font-weight: 500;
-}
-
-.product-grid {
-    display: grid;
-    /* Hiển thị 5 sản phẩm trên một hàng trên màn hình lớn */
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-
-.product-card {
-    border: 1px solid #eee;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px var(--color-shadow);
-}
-
-.product-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    padding: 15px;
-}
-
-.product-tags {
-    margin-bottom: 10px;
-    height: 22px; /* Giữ chiều cao cố định */
-}
-
-.tag {
-    font-size: 0.75em;
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-weight: bold;
-    /* Xóa 'color: var(--color-white);' khỏi đây */
-}
-
-/* SỬA LỖI TẠI ĐÂY:
-  1. Đổi tên class từ .tag-promo -> .tag-discount
-  2. Dùng màu đỏ nhạt #f8d7da
-*/
-.tag-discount {
-    background-color: #f8d7da; /* Màu đỏ nhạt */
-    color: var(--color-danger); /* Chữ đỏ đậm */
-}
-
-.product-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    margin-bottom: 15px;
-}
-
-.product-card h3 {
-    font-size: 1em;
-    font-weight: 500;
-    height: 45px; /* 2 dòng chữ */
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-.price-container {
-    text-align: left;
-}
-
-.sale-price {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--color-danger);
-}
-
-.original-price {
-    font-size: 0.9em;
-    color: var(--color-neutral-medium);
-    text-decoration: line-through;
-}
-
-/* =================================== */
-/* CSS THÊM CHO RATING & WISHLIST */
-/* =================================== */
-
-.product-card .product-link {
-    /* Rút ngắn padding-bottom để nhường chỗ */
-    padding-bottom: 5px;
-}
-
-.product-card h3 {
-    margin-bottom: 10px; /* Giảm margin bottom */
-}
-
-/* Khung chứa cả 2 (sao và tim) */
-.rating-wishlist-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px; /* Padding riêng */
-    border-top: 1px solid var(--color-neutral-light);
-}
-
-/* Khối sao (bên trái) */
-.rating {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #ffc107; /* Màu vàng */
-}
-.rating span {
-    color: var(--color-text); /* Màu chữ thường */
-    margin-left: 3px;
-}
-
-/* Nút Tim (bên phải) */
-.btn-wishlist {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 3px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-primary); /* Màu xanh viền */
+    font-weight: 600;
+    font-size: 0.95em;
     transition: color 0.2s;
 }
-.btn-wishlist:hover {
-    opacity: 0.7;
-}
-.btn-wishlist i {
-    margin-right: 4px;
-    font-size: 1.1rem; /* Icon to hơn chữ 1 chút */
-}
+.view-all-link:hover { color: var(--color-primary-dark); }
 
-/* Ẩn/hiện icon rỗng/đặc (Logic giống productDetail) */
-.btn-wishlist .icon-heart-filled {
-    display: none;
-}
-.btn-wishlist.active {
-    color: var(--color-primary); /* Đổi thành màu xanh đặc */
-}
-.btn-wishlist.active .icon-heart-filled {
-    display: inline-block;
-}
-.btn-wishlist.active .icon-heart-empty {
-    display: none;
+@media (max-width: 768px) {
+    .section-header { flex-direction: row; }
 }

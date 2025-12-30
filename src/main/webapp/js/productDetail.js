@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- 2. LOGIC MỞ MODAL ĐÁNH GIÁ (Giữ nguyên) ---
+    // --- 2. LOGIC MODAL (Giữ nguyên) ---
     const btnWriteReview = document.getElementById('btn-write-review');
-    const loginModal = document.getElementById('review-login-modal');
+    const loginModal = document.getElementById('review-login-modal'); // Kiểm tra lại ID này trong JSP của bạn có đúng không
     const formModal = document.getElementById('review-form-modal');
     const closeLoginBtn = document.getElementById('modal-close-login-btn');
     const closeFormBtn = document.getElementById('modal-close-form-btn');
@@ -24,90 +24,95 @@ document.addEventListener('DOMContentLoaded', function() {
         btnWriteReview.addEventListener('click', function() {
             if (formModal) {
                 formModal.style.display = 'flex';
-            } else {
+            } else if (loginModal) { // Thêm check tồn tại
                 loginModal.style.display = 'flex';
+            } else {
+                // Nếu chưa đăng nhập và không tìm thấy modal login, chuyển hướng trang login
+                window.location.href = 'login';
             }
         });
     }
 
-    // --- 3. LOGIC ĐÓNG CÁC MODAL (Giữ nguyên) ---
-    if (closeLoginBtn) {
-        closeLoginBtn.addEventListener('click', function() {
-            loginModal.style.display = 'none';
-        });
-    }
-    if (closeFormBtn) {
-        closeFormBtn.addEventListener('click', function() {
-            formModal.style.display = 'none';
-        });
-    }
+    if (closeLoginBtn) closeLoginBtn.addEventListener('click', () => loginModal.style.display = 'none');
+    if (closeFormBtn) closeFormBtn.addEventListener('click', () => formModal.style.display = 'none');
+
     function closeModalOnClickOutside(modal) {
         if (modal) {
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) modal.style.display = 'none';
             });
         }
     }
     closeModalOnClickOutside(loginModal);
     closeModalOnClickOutside(formModal);
 
-    // --- 4. LOGIC NÚT "YÊU THÍCH" (ĐÃ SỬA LỖI) ---
-    const btnFavorite = document.getElementById('btn-favorite');
 
-    if (btnFavorite) {
-        btnFavorite.addEventListener('click', function() {
+    // --- 3. HÀM XỬ LÝ YÊU THÍCH (DÙNG CHUNG) ---
+    function handleToggleWishlist(btn) {
+        const productId = btn.dataset.productId;
 
-            const productId = this.dataset.productId;
-
-            // Logic kiểm tra đăng nhập (đã đúng)
-            if (!formModal) {
-                if (loginModal) {
-                    loginModal.style.display = 'flex';
-                }
-                return;
+        if (!formModal) {
+            // Logic chưa đăng nhập
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+            } else {
+                alert("Vui lòng đăng nhập để sử dụng tính năng này");
+                window.location.href = 'login';
             }
+            return;
+        }
 
-            // ĐÃ ĐĂNG NHẬP -> Xử lý Fetch
-            const isCurrentlyFavorited = this.classList.contains('active');
-            const action = isCurrentlyFavorited ? 'remove' : 'add';
+        const isCurrentlyFavorited = btn.classList.contains('active');
+        const action = isCurrentlyFavorited ? 'remove' : 'add';
+        const contextPath = document.body.dataset.contextPath || '';
+        const url = contextPath ? `${contextPath}/wishlist` : 'wishlist';
 
-            // SỬA LỖI 1: Lấy contextPath (giống home.js)
-            const contextPath = document.body.dataset.contextPath || '';
-
-            // SỬA LỖI 2: Dùng contextPath trong URL
-            fetch(`${contextPath}/wishlist`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `action=${action}&productId=${productId}`
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=${action}&productId=${productId}`
+        })
+            .then(response => {
+                if (response.status === 401) {
+                    if (loginModal) loginModal.style.display = 'flex';
+                    else window.location.href = 'login';
+                    return null;
+                }
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
             })
-                .then(response => {
-                    // SỬA LỖI 3: Thêm logic kiểm tra 401 (Session hết hạn)
-                    if (response.status === 401) {
-                        if (loginModal) loginModal.style.display = 'flex';
-                        return null; // Dừng lại
-                    }
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (!data) return; // Bị 401
+            .then(data => {
+                if (!data) return;
+                if (data.success) {
+                    btn.classList.toggle('active');
 
-                    if (data.success) {
-                        this.classList.toggle('active');
-                    } else {
-                        alert('Có lỗi xảy ra, vui lòng thử lại.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Lỗi Fetch:', error);
-                    // Xóa alert cũ vì nó gây nhầm lẫn
-                });
+                    btn.style.transform = "scale(1.3)";
+                    setTimeout(() => btn.style.transform = "scale(1)", 200);
+                } else {
+                    alert('Có lỗi xảy ra: ' + (data.message || 'Thử lại sau'));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+    // --- 4. GẮN SỰ KIỆN CHO CÁC NÚT ---
+
+    const btnFavoriteMain = document.getElementById('btn-favorite');
+    if (btnFavoriteMain) {
+        btnFavoriteMain.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleToggleWishlist(this);
         });
     }
+
+    const relatedWishlistBtns = document.querySelectorAll('.btn-wishlist');
+    relatedWishlistBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleToggleWishlist(this);
+        });
+    });
+
 });
