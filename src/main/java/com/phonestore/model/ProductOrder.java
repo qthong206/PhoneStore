@@ -15,6 +15,7 @@ public class ProductOrder {
     private String paymentMethod;
     private String firstProductName;
     private String firstProductImage;
+    private String username;
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -40,4 +41,6 @@ public class ProductOrder {
     public void setFirstProductName(String firstProductName) { this.firstProductName = firstProductName; }
     public String getFirstProductImage() { return firstProductImage; }
     public void setFirstProductImage(String firstProductImage) { this.firstProductImage = firstProductImage; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 }

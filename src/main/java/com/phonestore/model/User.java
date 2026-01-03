@@ -10,6 +10,7 @@ public class User {
     private String passwordHash;
     private String role;
     private String authProvider;
+    private boolean active = true;
 
     // Constructors
     public User() {}
@@ -38,6 +39,9 @@ public class User {
 
     public String getAuthProvider() { return authProvider; }
     public void setAuthProvider(String authProvider) { this.authProvider = authProvider; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(this.role);
