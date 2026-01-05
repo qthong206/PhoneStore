@@ -24,50 +24,54 @@
 
             <div class="product-grid">
                 <c:forEach var="p" items="${productsInBrand}" varStatus="loop">
-                        <c:if test="${loop.index < 5}">
-                            <div class="product-card">
-                                <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
-                                    <div class="product-tags">
-                                        <c:if test="${p.salePrice > 0}">
-                                            <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
-                                            <span class="tag tag-discount">
-                                                Giảm <fmt:formatNumber value="${discountPercent}" type="percent" maxFractionDigits="0" />
-                                            </span>
-                                        </c:if>
-                                    </div>
-                                    <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}" loading="lazy">
-                                    <h3>${p.name}</h3>
+                    <%-- Chỉ hiện tối đa 5 sản phẩm --%>
+                    <c:if test="${loop.index < 5}">
+                        <div class="product-card">
+                            <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
 
-                                    <div class="price-container">
-                                        <c:choose>
-                                            <c:when test="${p.salePrice > 0}">
-                                                <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
-                                                <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
-                                                <p class="original-price">&nbsp;</p>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </a>
-
-                                <div class="rating-wishlist-box">
-                                    <div class="rating">
-                                        <c:if test="${p.reviewCount > 0}">
-                                            <i class="fa-solid fa-star"></i>
-                                            <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
-                                        </c:if>
-                                    </div>
-                                    <button class="btn-icon-heart ${wishlistIds.contains(p.id) ? 'active' : ''}"
-                                            data-product-id="${p.id}"
-                                            title="Yêu thích">
-                                        <i class="icon-heart-empty fa-regular fa-heart"></i>
-                                        <i class="icon-heart-filled fa-solid fa-heart"></i>
-                                    </button>
+                                <div class="product-tags">
+                                        <%-- [ĐÃ SỬA]: Dùng hàm tiện ích isOnSale() và getDiscountPercent() --%>
+                                    <c:if test="${p.onSale}">
+                                        <span class="tag tag-discount">
+                                            Giảm ${p.discountPercent}%
+                                        </span>
+                                    </c:if>
                                 </div>
+
+                                <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="${p.name}" loading="lazy">
+                                <h3>${p.name}</h3>
+
+                                <div class="price-container">
+                                    <c:choose>
+                                        <%-- [ĐÃ SỬA]: Dùng hàm tiện ích isOnSale() --%>
+                                        <c:when test="${p.onSale}">
+                                            <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
+                                            <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
+                                            <p class="original-price" style="visibility: hidden;">&nbsp;</p>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </a>
+
+                            <div class="rating-wishlist-box">
+                                <div class="rating">
+                                    <c:if test="${p.reviewCount > 0}">
+                                        <i class="fa-solid fa-star"></i>
+                                        <span><fmt:formatNumber value="${p.avgRating}" maxFractionDigits="1" /></span>
+                                    </c:if>
+                                </div>
+                                <button class="btn-icon-heart ${wishlistIds.contains(p.id) ? 'active' : ''}"
+                                        data-product-id="${p.id}"
+                                        title="Yêu thích">
+                                    <i class="icon-heart-empty fa-regular fa-heart"></i>
+                                    <i class="icon-heart-filled fa-solid fa-heart"></i>
+                                </button>
                             </div>
-                        </c:if>
+                        </div>
+                    </c:if>
                 </c:forEach>
             </div>
         </section>

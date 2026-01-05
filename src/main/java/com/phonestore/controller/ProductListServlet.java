@@ -38,58 +38,122 @@ public class ProductListServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            // 1. Lấy tham số từ URL
             String categorySlug = request.getParameter("category");
             String brandSlug = request.getParameter("brand");
+            String search = request.getParameter("q"); // Từ khóa tìm kiếm
             String sortType = request.getParameter("sort");
 
-            StringBuilder sb = new StringBuilder();
-            if (categorySlug != null) sb.append("category=").append(categorySlug).append("&");
-            if (brandSlug != null) sb.append("brand=").append(brandSlug).append("&");
-            request.setAttribute("currentQueryString", sb.toString());
+            // Xử lý trang (Pagination)
+            int page = 1;
+            int pageSize = 12; // Số sản phẩm trên 1 trang
+            try {
+                String pageParam = request.getParameter("page");
+                if (pageParam != null) page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) { page = 1; }
 
-            List<Product> productList;
+            // Xử lý lọc giá
+            Double minPrice = parseDouble(request.getParameter("min_price"));
+            Double maxPrice = parseDouble(request.getParameter("max_price"));
+
+            // 2. Phân giải Slug thành ID
+            // Vì filterProducts cần ID (int), nhưng URL lại là Slug (String)
+            Integer categoryId = null;
             Category currentCategory = null;
-            Brand currentBrand = null;
-            String pageTitle = "Tất cả sản phẩm";
-
-            if (brandSlug != null && !brandSlug.isEmpty()) {
-                currentBrand = brandDAO.getBrandBySlug(brandSlug);
-
-                if (currentBrand != null) {
-                    currentCategory = categoryDAO.getCategoryById(currentBrand.getCategoryId());
-                    productList = productDAO.getProductsByBrandSlug(brandSlug, sortType);
-                    pageTitle = currentBrand.getName();
-                } else {
-                    productList = productDAO.getAllProducts(sortType);
-                }
-
-            } else if (categorySlug != null && !categorySlug.isEmpty()) {
+            if (categorySlug != null && !categorySlug.isEmpty()) {
                 currentCategory = categoryDAO.getCategoryBySlug(categorySlug);
-
                 if (currentCategory != null) {
-                    productList = productDAO.getProductsByCategoryId(currentCategory.getId(), sortType);
-                    pageTitle = currentCategory.getName();
-                } else {
-                    productList = productDAO.getAllProducts(sortType);
+                    categoryId = currentCategory.getId();
                 }
-
-            } else {
-                productList = productDAO.getAllProducts(sortType);
             }
 
+            Integer brandId = null;
+            Brand currentBrand = null;
+            if (brandSlug != null && !brandSlug.isEmpty()) {
+                currentBrand = brandDAO.getBrandBySlug(brandSlug);
+                if (currentBrand != null) {
+                    brandId = currentBrand.getId();
+                }
+            }
+
+            // 3. Gọi DAO để Lọc và Phân trang (Sử dụng hàm filterProducts MỚI)
+            // Lưu ý: Hàm filterProducts của bạn chưa hỗ trợ lọc theo categoryId.
+            // Nếu bạn muốn lọc Category, bạn cần cập nhật thêm tham số categoryId vào filterProducts trong DAO.
+            // Tạm thời ở đây tôi dùng logic: Nếu có categoryId -> Dùng getProductsByCategoryId (như cũ nhưng có sort)
+            // Nếu dùng bộ lọc nâng cao -> Dùng filterProducts.
+
+            // TUY NHIÊN, tốt nhất là bạn nên update filterProducts để nhận cả categoryId.
+            // Ở đây tôi giả định bạn sẽ dùng filterProducts cho Brand/Search/Price
+            // Còn nếu click Category menu thì dùng hàm getProductsByCategoryId.
+
+            List<Product> productList;
+            int totalProducts = 0;
+
+            // Logic chọn hàm DAO phù hợp
+            if (categoryId != null) {
+                // Trường hợp xem danh mục (chưa hỗ trợ lọc giá/brand kết hợp trong hàm getProductsByCategoryId cũ)
+                productList = productDAO.getProductsByCategoryId(categoryId, sortType);
+                // (Lưu ý: Bạn nên nâng cấp hàm filterProducts để nhận thêm tham số categoryId sẽ tốt hơn)
+                totalProducts = productList.size(); // Tạm thời
+            } else {
+                // Trường hợp xem Brand, Search, hoặc Tất cả (Có hỗ trợ lọc giá, phân trang)
+                productList = productDAO.filterProducts(brandId, minPrice, maxPrice, search, sortType, page, pageSize);
+                totalProducts = productDAO.countProducts(brandId, minPrice, maxPrice, search);
+            }
+
+            // Tính tổng số trang
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+            // 4. Thiết lập Tiêu đề trang
+            String pageTitle = "Tất cả sản phẩm";
+            if (currentBrand != null) pageTitle = currentBrand.getName();
+            else if (currentCategory != null) pageTitle = currentCategory.getName();
+            else if (search != null && !search.isEmpty()) pageTitle = "Tìm kiếm: " + search;
+
+            // 5. Build lại QueryString để giữ bộ lọc khi chuyển trang
+            StringBuilder qs = new StringBuilder();
+            if (categorySlug != null) qs.append("&category=").append(categorySlug);
+            if (brandSlug != null) qs.append("&brand=").append(brandSlug);
+            if (search != null) qs.append("&q=").append(search);
+            if (sortType != null) qs.append("&sort=").append(sortType);
+            if (minPrice != null) qs.append("&min_price=").append(minPrice.intValue());
+            if (maxPrice != null) qs.append("&max_price=").append(maxPrice.intValue());
+            request.setAttribute("queryString", qs.toString());
+
+            // 6. Load Wishlist & Gửi dữ liệu sang View
             ViewHelper.loadWishlistData(request, wishlistDAO);
 
             request.setAttribute("products", productList);
             request.setAttribute("pageTitle", pageTitle);
+
             request.setAttribute("currentCategory", currentCategory);
             request.setAttribute("currentBrand", currentBrand);
-            request.setAttribute("pageCss", "productList.css");
 
+            // Gửi dữ liệu phân trang & bộ lọc lại cho JSP hiển thị
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("searchKeyword", search);
+            request.setAttribute("minPrice", minPrice);
+            request.setAttribute("maxPrice", maxPrice);
+            request.setAttribute("sortBy", sortType);
+
+            request.setAttribute("pageCss", "productList.css");
             request.getRequestDispatcher("/WEB-INF/views/productList.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(500, e.getMessage());
+        }
+    }
+
+    // Helper parse double an toàn
+    private Double parseDouble(String s) {
+        if (s == null || s.isEmpty()) return null;
+        try {
+            return Double.parseDouble(s);
+        } catch (Exception e) {
+            return null;
         }
     }
 }

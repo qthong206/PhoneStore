@@ -32,49 +32,76 @@
             </div>
 
             <div class="category-dropdown">
-                <a href="#" class="category-button">
+                <a href="<c:url value='/products'/>" class="category-button">
                     <i class="fa-solid fa-bars category-icon"></i>
                     <span>Danh mục</span>
                 </a>
 
                 <div class="category-menu-container">
+
+                    <%-- [ĐÃ XÓA]: Tiêu đề "Loại sản phẩm" ở đây theo yêu cầu --%>
+
                     <ul class="category-menu-list">
                         <c:forEach var="cat" items="${applicationScope.allCategories}">
                             <li>
                                 <a href="<c:url value='/products?category=${cat.slug}'/>">
                                     <span><i class="${cat.iconClass}"></i> ${cat.name}</span>
 
-                                    <c:if test="${cat.slug == 'dien-thoai' || cat.slug == 'tablet'}">
-                                        <i class="fa-solid fa-chevron-right"></i>
+                                        <%-- Mũi tên nếu có menu con --%>
+                                    <c:if test="${not empty applicationScope.brandsByCategory[cat.id]}">
+                                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
                                     </c:if>
                                 </a>
 
-                                <c:if test="${cat.slug == 'dien-thoai' || cat.slug == 'tablet'}">
+                                    <%-- MEGA MENU (Hiện khi hover vào Category) --%>
+                                <c:if test="${not empty applicationScope.brandsByCategory[cat.id]}">
                                     <div class="mega-menu-content">
-                                        <h4>Thương hiệu</h4>
+                                        <h4>Hãng ${cat.name}</h4>
                                         <div class="mega-brand-list">
-                                            <c:forEach var="brand" items="${applicationScope.allBrands}">
-                                                <c:if test="${brand.categoryId == cat.id}">
-                                                    <a href="<c:url value='/products?category=${cat.slug}&brand=${brand.slug}'/>" class="mega-brand-item">${brand.name}</a>
-                                                </c:if>
+                                            <c:forEach var="brand" items="${applicationScope.brandsByCategory[cat.id]}">
+                                                <a href="<c:url value='/products?category=${cat.slug}&brand=${brand.slug}'/>" class="mega-brand-item">
+                                                        ${brand.name}
+                                                </a>
                                             </c:forEach>
                                         </div>
                                     </div>
                                 </c:if>
                             </li>
                         </c:forEach>
+
+                        <%-- [MỚI] Tiêu đề "Chuyên trang thương hiệu" giống ảnh mẫu --%>
+                        <li>
+                            <div class="brand-section-header">
+                                Chuyên trang thương hiệu
+                            </div>
+
+                            <div class="bottom-brand-grid">
+                                <c:forEach var="brand" items="${applicationScope.allBrands}">
+                                    <a href="<c:url value='/products?brand=${brand.slug}'/>" class="bottom-brand-item">
+                                            <%-- Logic: Nếu có Logo thì hiện Logo, không thì hiện Tên --%>
+                                        <c:choose>
+                                            <c:when test="${not empty brand.logoUrl}">
+                                                <img src="<c:url value='/${brand.logoUrl}'/>" alt="${brand.name}" class="brand-logo-img">
+                                                <span class="brand-name-text">${brand.name}</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                ${brand.name}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </a>
+                                </c:forEach>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <%-- [QUAN TRỌNG] Cập nhật Form tìm kiếm --%>
+        <%-- Form tìm kiếm --%>
         <div class="search-bar">
             <form action="<c:url value='/products'/>" method="GET" class="search-form" autocomplete="off" style="width: 100%; display: flex;">
-                <input type="text" id="searchInput" name="search" placeholder="Bạn cần tìm gì?" required>
+                <input type="text" id="searchInput" name="q" placeholder="Bạn cần tìm gì?" required>
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-
-                <%-- Khối hiển thị gợi ý (Mới) --%>
                 <div id="search-suggestions-box" class="search-suggestions-box" style="display: none;"></div>
             </form>
         </div>

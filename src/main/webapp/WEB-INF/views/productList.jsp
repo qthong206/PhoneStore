@@ -8,24 +8,39 @@
 
 <main class="container">
 
-    <%-- 1. BREADCRUMBS --%>
+    <%-- 1. BREADCRUMBS (ĐÃ SỬA LOGIC HIỂN THỊ) --%>
     <nav class="breadcrumb-nav">
         <a href="<c:url value='/home'/>">Trang chủ</a>
         <i class="fa-solid fa-chevron-right"></i>
 
         <c:choose>
+            <%-- TRƯỜNG HỢP 1: Có Category (VD: Điện thoại, hoặc Điện thoại > Apple) --%>
             <c:when test="${not empty currentCategory}">
                 <c:choose>
                     <c:when test="${empty currentBrand}">
+                        <%-- Chỉ xem Category --%>
                         <span>${currentCategory.name}</span>
                     </c:when>
                     <c:otherwise>
+                        <%-- Xem Brand trong Category --%>
                         <a href="<c:url value='/products?category=${currentCategory.slug}'/>">${currentCategory.name}</a>
                         <i class="fa-solid fa-chevron-right"></i>
                         <span>${currentBrand.name}</span>
                     </c:otherwise>
                 </c:choose>
             </c:when>
+
+            <%-- TRƯỜNG HỢP 2: Không có Category, nhưng CÓ Brand (Click từ Trang chủ) --%>
+            <c:when test="${not empty currentBrand}">
+                <span>Thương hiệu ${currentBrand.name}</span>
+            </c:when>
+
+            <%-- TRƯỜNG HỢP 3: Tìm kiếm --%>
+            <c:when test="${not empty param.q}">
+                <span>Tìm kiếm: "${param.q}"</span>
+            </c:when>
+
+            <%-- TRƯỜNG HỢP 4: Mặc định --%>
             <c:otherwise>
                 <span>Tất cả sản phẩm</span>
             </c:otherwise>
@@ -60,11 +75,12 @@
             <c:if test="${p.status == 1}">
                 <div class="product-card ${status.index >= 20 ? 'hidden-item' : ''}">
                     <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
+
+                            <%-- Tag giảm giá --%>
                         <div class="product-tags">
-                            <c:if test="${p.salePrice > 0}">
-                                <c:set var="discountPercent" value="${(p.price - p.salePrice) / p.price}" />
+                            <c:if test="${p.onSale}">
                                 <span class="tag tag-discount">
-                                    Giảm <fmt:formatNumber value="${discountPercent}" type="percent" maxFractionDigits="0" />
+                                    Giảm ${p.discountPercent}%
                                 </span>
                             </c:if>
                         </div>
@@ -75,13 +91,13 @@
 
                         <div class="price-container">
                             <c:choose>
-                                <c:when test="${p.salePrice > 0}">
+                                <c:when test="${p.onSale}">
                                     <p class="sale-price"><fmt:formatNumber value="${p.salePrice}" type="number" pattern="#,##0"/> ₫</p>
                                     <p class="original-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
                                 </c:when>
                                 <c:otherwise>
                                     <p class="sale-price"><fmt:formatNumber value="${p.price}" type="number" pattern="#,##0"/> ₫</p>
-                                    <p class="original-price">&nbsp;</p>
+                                    <p class="original-price" style="visibility: hidden;">&nbsp;</p>
                                 </c:otherwise>
                             </c:choose>
                         </div>

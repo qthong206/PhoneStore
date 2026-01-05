@@ -6,15 +6,16 @@ import com.phonestore.dao.SpecificationDAO;
 import com.phonestore.dao.WishlistDAO;
 import com.phonestore.model.*;
 import com.phonestore.utils.ViewHelper;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet(urlPatterns = {"/product-detail"})
 public class ProductDetailServlet extends HttpServlet {
@@ -37,20 +38,32 @@ public class ProductDetailServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            int productId = Integer.parseInt(request.getParameter("id"));
+            String idParam = request.getParameter("id");
+            if (idParam == null || idParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
+            }
+            int productId = Integer.parseInt(idParam);
 
-            // 1. Sản phẩm chính
+            // 1. Lấy Sản phẩm chính
             Product product = productDAO.getProductById(productId);
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy sản phẩm");
                 return;
             }
 
-            // 2. Thông tin liên quan
+            // 2. Lấy thông tin liên quan (Series, Variants, Colors)
             ProductSeries series = productDAO.getProductSeriesById(product.getSeriesId());
             List<Product> variants = productDAO.getVariantsBySeriesAndModel(product.getSeriesId(), product.getModel());
-            List<Color> colors = productDAO.getColorsByProductId(productId);
 
+            // [MÀU SẮC 1 - LỰA CHỌN]: Lấy tất cả màu của các SP cùng Series và cùng Model để vẽ nút chọn màu
+            List<Color> modelColors = productDAO.getSameModelColors(product.getSeriesId(), product.getModel());
+
+            // [MÀU SẮC 2 - HIỆN TẠI]: Lấy màu của chính SP này để biết đang active màu nào
+            List<Color> currentColors = productDAO.getColorsByProductId(productId);
+            Color activeColor = (currentColors != null && !currentColors.isEmpty()) ? currentColors.get(0) : null;
+
+            // Lấy ảnh Gallery
             List<String> galleryImages = productDAO.getGalleryImagesByProductId(productId);
 
             // 3. Reviews & Specs
@@ -58,24 +71,24 @@ public class ProductDetailServlet extends HttpServlet {
             ReviewSummaryDTO reviewSummary = reviewDAO.getReviewSummary(productId);
             List<Specification> specsList = specificationDAO.getSpecificationsByProductId(productId);
 
-            // --- 4. WISHLIST (SỬ DỤNG VIEW HELPER) ---
+            // 4. Wishlist (Xử lý an toàn)
             ViewHelper.loadWishlistData(request, wishlistDAO);
-
-            // Riêng trang Detail cần check thêm biến "isFavorited" (sản phẩm này có tim chưa)
-            // Ta có thể tận dụng dữ liệu wishlistIds vừa được ViewHelper lấy
-            // (Lưu ý: Phải ép kiểu Set vì setAttribute lưu Object)
-            @SuppressWarnings("unchecked")
-            java.util.Set<Integer> wishlistIds = (java.util.Set<Integer>) request.getAttribute("wishlistIds");
-            boolean isFavorited = wishlistIds.contains(productId);
+            boolean isFavorited = false;
+            Object wishlistObj = request.getAttribute("wishlistIds");
+            if (wishlistObj instanceof Set<?>) {
+                @SuppressWarnings("unchecked")
+                Set<Integer> wishlistIds = (Set<Integer>) wishlistObj;
+                isFavorited = wishlistIds.contains(productId);
+            }
             request.setAttribute("isFavorited", isFavorited);
-            // ----------------------------------------
 
-            // 5. Sản phẩm tương tự
-            int brandId = product.getBrand().getId();
+            // 5. Sản phẩm tương tự (Cùng Brand)
+            int brandId = (product.getBrand() != null) ? product.getBrand().getId() : 0;
             List<Product> relatedProducts = productDAO.getRelatedProductsByBrand(brandId, productId, 5);
 
-            // 6. Breadcrumbs (Category)
-            int categoryId = product.getBrand().getCategoryId();
+            // 6. Breadcrumbs (Lấy Category từ Product, không phải Brand)
+            int categoryId = product.getCategoryId();
+            @SuppressWarnings("unchecked")
             List<Category> allCategories = (List<Category>) getServletContext().getAttribute("allCategories");
             Category currentCategory = null;
             if (allCategories != null) {
@@ -87,11 +100,15 @@ public class ProductDetailServlet extends HttpServlet {
                 }
             }
 
-            // 7. Gửi dữ liệu
+            // 7. Gửi dữ liệu sang JSP
             request.setAttribute("product", product);
             request.setAttribute("series", series);
             request.setAttribute("variants", variants);
-            request.setAttribute("colors", colors);
+
+            // Gửi cả 2 loại màu để JSP xử lý
+            request.setAttribute("colors", modelColors); // Danh sách nút bấm
+            request.setAttribute("activeColor", activeColor); // Màu đang chọn
+
             request.setAttribute("galleryImages", galleryImages);
             request.setAttribute("reviews", reviews);
             request.setAttribute("reviewSummary", reviewSummary);
