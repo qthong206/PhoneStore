@@ -5,6 +5,8 @@ import com.phonestore.model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
 
@@ -167,4 +169,5 @@ public class UserDAO {
         }
         return false;
     }
+
 }

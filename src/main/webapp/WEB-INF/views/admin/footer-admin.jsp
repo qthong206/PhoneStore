@@ -30,7 +30,7 @@
                 <a class="a-item1"><span>QUẢN LÝ KINH DOANH</span></a>
 
                 <%-- Giả định bạn có OrderServlet --%>
-                <a href="${pageContext.request.contextPath}/admin/order" class="a-tiem">
+                <a href="${pageContext.request.contextPath}/admin/orders" class="a-tiem">
                     <i class="fa-solid fa-file-invoice-dollar"></i> <span>Đơn hàng</span>
                 </a>
 
