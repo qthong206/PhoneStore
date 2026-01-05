@@ -1,248 +1,163 @@
 package com.phonestore.controller;
 
-import com.phonestore.dao.BrandDAO;
-import com.phonestore.dao.ProductDAO;
-import com.phonestore.dao.ProductSeriesDAO;
-import com.phonestore.model.Brand;
-import com.phonestore.model.Product;
-import com.phonestore.model.ProductSeries;
-
+import com.phonestore.dao.*;
+import com.phonestore.model.*;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(urlPatterns = {
-        "/admin/product",
-        "/admin/product/add",
-        "/admin/product/insert",
-        "/admin/product/edit",
-        "/admin/product/update",
-        "/admin/product/delete",
-        "/admin/product/toggle"
+        "/admin/product", "/admin/product/add", "/admin/product/insert",
+        "/admin/product/edit", "/admin/product/update", "/admin/product/delete", "/admin/product/toggle"
 })
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
 public class AdminProductServlet extends HttpServlet {
 
     private ProductDAO productDAO = new ProductDAO();
-    // --- KHAI BÁO THÊM DAO ĐỂ LOAD DROPDOWN ---
     private BrandDAO brandDAO = new BrandDAO();
     private ProductSeriesDAO seriesDAO = new ProductSeriesDAO();
+    private CategoryDAO categoryDAO = new CategoryDAO();
+    private ProductGalleryDAO galleryDAO = new ProductGalleryDAO();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
-
         switch (path) {
-            case "/admin/product":
-                listProducts(req, resp);
-                break;
-
-            case "/admin/product/add":
-                showAddForm(req, resp);
-                break;
-
-            case "/admin/product/edit":
-                showEditForm(req, resp);
-                break;
-
-            case "/admin/product/delete":
-                deleteProduct(req, resp);
-                break;
-
-            case "/admin/product/toggle":
-                toggleStatus(req, resp);
-                break;
-
-            default:
-                resp.sendError(404, "Not found");
+            case "/admin/product": listProducts(req, resp); break;
+            case "/admin/product/add": showAddForm(req, resp); break;
+            case "/admin/product/edit": showEditForm(req, resp); break;
+            case "/admin/product/delete": deleteProduct(req, resp); break;
+            case "/admin/product/toggle": toggleStatus(req, resp); break;
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
+        if (path.contains("/insert")) insertProduct(req, resp);
+        else if (path.contains("/update")) updateProduct(req, resp);
+    }
 
-        switch (path) {
-            case "/admin/product/insert":
-                insertProduct(req, resp);
-                break;
+    private void insertProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        Product p = extractProduct(req);
+        List<String> paths = saveFiles(req);
 
-            case "/admin/product/update":
-                updateProduct(req, resp);
-                break;
+        if (!paths.isEmpty()) p.setThumbnailUrl(paths.get(0)); // Ảnh 1 làm thumbnail
 
-            default:
-                resp.sendError(404);
+        int productId = productDAO.insertProduct(p); // Hàm này phải trả về ID (Generated Keys)
+
+        for (int i = 0; i < paths.size(); i++) {
+            galleryDAO.insertImage(productId, paths.get(i), i); // Lưu gallery kèm thứ tự
         }
-    }
-
-    /* ================================
-                LIST PRODUCTS
-       ================================ */
-    private void listProducts(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        // --- [QUAN TRỌNG] SỬA DÒNG NÀY ---
-        // Dùng hàm dành riêng cho Admin để lấy cả sản phẩm ẩn (status=0)
-        Map<Brand, List<Product>> productMap = productDAO.getAllProductsGroupedByBrandForAdmin();
-
-        req.setAttribute("productMap", productMap);
-
-        req.setAttribute("pageCss","product.css");
-        req.setAttribute("contentPage","/WEB-INF/views/admin/product-list.jsp");
-        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
-                .forward(req, resp);
-    }
-
-    /* ================================
-                SHOW ADD FORM
-       ================================ */
-    private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        // --- LOAD DATA CHO DROPDOWN ---
-        List<Brand> brands = brandDAO.getAllBrands();
-        List<ProductSeries> series = seriesDAO.getAllSeries();
-
-        req.setAttribute("brands", brands);
-        req.setAttribute("series", series);
-
-        req.setAttribute("pageCss","product-from.css");
-        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
-        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
-                .forward(req, resp);
-    }
-
-    /* ================================
-                INSERT PRODUCT
-       ================================ */
-    private void insertProduct(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
-        Product p = new Product();
-        p.setName(req.getParameter("name"));
-        p.setDescription(req.getParameter("description"));
-        p.setPrice(parseDouble(req.getParameter("price")));
-        p.setSalePrice(parseDouble(req.getParameter("salePrice")));
-        p.setThumbnailUrl(req.getParameter("thumbnailUrl"));
-        p.setSeriesId(parseInt(req.getParameter("seriesId")));
-        p.setModel(req.getParameter("model"));
-        p.setStorage(req.getParameter("storage"));
-        p.setStatus(parseInt(req.getParameter("status")));
-
-        Brand b = new Brand();
-        b.setId(parseInt(req.getParameter("brandId")));
-        p.setBrand(b);
-
-        productDAO.insertProduct(p);
-
         resp.sendRedirect(req.getContextPath() + "/admin/product");
     }
 
-    /* ================================
-                SHOW EDIT FORM
-       ================================ */
-    private void showEditForm(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private void updateProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        Product p = extractProduct(req);
+        p.setId(id);
 
-        int id = parseInt(req.getParameter("id"));
-        Product product = productDAO.getProductById(id);
-
-        if (product == null) {
-            resp.sendRedirect(req.getContextPath() + "/admin/product");
-            return;
+        List<String> newPaths = saveFiles(req);
+        if (!newPaths.isEmpty()) {
+            p.setThumbnailUrl(newPaths.get(0));
+            galleryDAO.deleteAllByProductId(id); // Xóa cũ ghi mới để cập nhật thứ tự
+            for (int i = 0; i < newPaths.size(); i++) {
+                galleryDAO.insertImage(id, newPaths.get(i), i);
+            }
+        } else {
+            p.setThumbnailUrl(req.getParameter("oldThumbnail"));
         }
-
-        // --- LOAD DATA CHO DROPDOWN ---
-        List<Brand> brands = brandDAO.getAllBrands();
-        List<ProductSeries> series = seriesDAO.getAllSeries();
-
-        req.setAttribute("brands", brands);
-        req.setAttribute("series", series);
-
-        req.setAttribute("product", product);
-
-        req.setAttribute("pageCss","product-from.css");
-        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
-        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp")
-                .forward(req, resp);
-    }
-
-    /* ================================
-                UPDATE PRODUCT
-       ================================ */
-    private void updateProduct(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
-        Product p = new Product();
-        p.setId(parseInt(req.getParameter("id")));
-        p.setName(req.getParameter("name"));
-        p.setDescription(req.getParameter("description"));
-        p.setPrice(parseDouble(req.getParameter("price")));
-        p.setSalePrice(parseDouble(req.getParameter("salePrice")));
-        p.setThumbnailUrl(req.getParameter("thumbnailUrl"));
-        p.setSeriesId(parseInt(req.getParameter("seriesId")));
-        p.setModel(req.getParameter("model"));
-        p.setStorage(req.getParameter("storage"));
-        p.setStatus(parseInt(req.getParameter("status")));
-
-        Brand b = new Brand();
-        b.setId(parseInt(req.getParameter("brandId")));
-        p.setBrand(b);
 
         productDAO.updateProduct(p);
-
         resp.sendRedirect(req.getContextPath() + "/admin/product");
     }
 
-    /* ================================
-                DELETE PRODUCT
-       ================================ */
-    private void deleteProduct(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
+    private List<String> saveFiles(HttpServletRequest req) throws IOException, ServletException {
+        List<String> filePaths = new ArrayList<>();
+        String uploadPath = getServletContext().getRealPath("/") + "images/products";
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdirs();
 
-        int id = parseInt(req.getParameter("id"));
-        productDAO.deleteProduct(id);
-
-        resp.sendRedirect(req.getContextPath() + "/admin/product");
+        for (Part part : req.getParts()) {
+            if (part.getName().equals("imageFiles") && part.getSize() > 0) {
+                String fileName = System.currentTimeMillis() + "_" + part.getSubmittedFileName();
+                part.write(uploadPath + File.separator + fileName);
+                filePaths.add("images/products/" + fileName);
+            }
+        }
+        return filePaths;
     }
 
-    /* ================================
-                TOGGLE STATUS
-       ================================ */
-    private void toggleStatus(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
+    private Product extractProduct(HttpServletRequest req) {
+        Product p = new Product();
 
-        int id = parseInt(req.getParameter("id"));
-        productDAO.toggleStatus(id);
+        p.setName(req.getParameter("name"));
+        p.setDescription(req.getParameter("description"));
+        p.setModel(req.getParameter("model"));
+        p.setStorage(req.getParameter("storage"));
 
-        resp.sendRedirect(req.getContextPath() + "/admin/product");
+        // Sử dụng các hàm parseInt/parseDouble có bọc try-catch
+        p.setPrice(parseDouble(req.getParameter("price")));
+        p.setSalePrice(parseDouble(req.getParameter("salePrice")));
+        p.setStockQuantity(parseInt(req.getParameter("stockQuantity")));
+        p.setCategoryId(parseInt(req.getParameter("categoryId")));
+        p.setSeriesId(parseInt(req.getParameter("seriesId")));
+        p.setStatus(parseInt(req.getParameter("status")));
+        int brandId = parseInt(req.getParameter("brandId"));
+        p.setBrand(new Brand(brandId));
+
+        return p;
     }
 
-    /* ================================
-                Helper
-       ================================ */
+    // Đảm bảo bạn đã có 2 hàm helper này ở cuối file Servlet
     private int parseInt(String s) {
-        try { return Integer.parseInt(s); }
-        catch (Exception e) { return 0; }
+        try {
+            return (s == null || s.trim().isEmpty()) ? 0 : Integer.parseInt(s.trim());
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private double parseDouble(String s) {
-        try { return Double.parseDouble(s); }
-        catch (Exception e) { return 0; }
+        try {
+            return (s == null || s.trim().isEmpty()) ? 0 : Double.parseDouble(s.trim());
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    // Các hàm showAddForm, showEditForm, listProducts giữ nguyên như bạn đã có...
+    private void listProducts(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("productMap", productDAO.getAllProductsGroupedByBrandForAdmin());
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-list.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
+    }
+    private void showAddForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("brands", brandDAO.getAllBrands());
+        req.setAttribute("series", seriesDAO.getAllSeries());
+        req.setAttribute("categories", categoryDAO.getAllCategories());
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
+    }
+    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Product product = productDAO.getProductById(Integer.parseInt(req.getParameter("id")));
+        req.setAttribute("brands", brandDAO.getAllBrands());
+        req.setAttribute("series", seriesDAO.getAllSeries());
+        req.setAttribute("categories", categoryDAO.getAllCategories());
+        req.setAttribute("product", product);
+        req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
+        req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
+    }
+    private void deleteProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        productDAO.deleteProduct(Integer.parseInt(req.getParameter("id")));
+        resp.sendRedirect(req.getContextPath() + "/admin/product");
+    }
+    private void toggleStatus(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        productDAO.toggleStatus(Integer.parseInt(req.getParameter("id")));
+        resp.sendRedirect(req.getContextPath() + "/admin/product");
     }
 }

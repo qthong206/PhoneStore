@@ -1,70 +1,98 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
-<%-- Set locale để format số tiền đúng kiểu Việt Nam --%>
-<fmt:setLocale value="vi_VN"/>
-
-<div class="admin-header">
-    <h1>QUẢN LÝ SẢN PHẨM</h1>
-    <a href="${pageContext.request.contextPath}/admin/product/add" class="btn btn-primary">
-        <i class="fa-solid fa-plus"></i> Thêm sản phẩm mới
+<%-- HEADER TRANG --%>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <div>
+        <h2 class="page-title">Danh sách sản phẩm</h2>
+        <p style="color: var(--text-light); font-size: 13px; margin-top: 5px;">
+            Quản lý tồn kho và trạng thái hiển thị theo từng thương hiệu
+        </p>
+    </div>
+    <a href="${pageContext.request.contextPath}/admin/product/add" class="btn btn-add">
+        <i class="fa-solid fa-plus"></i> Thêm mới
     </a>
 </div>
 
-<br/>
-
+<%-- NỘI DUNG --%>
 <c:forEach var="entry" items="${productMap}">
-    <div class="brand-section" style="margin-bottom: 30px;">
-        <h3>Hãng: ${entry.key.name}</h3>
+    <div class="glass-panel">
+            <%-- Tiêu đề Hãng sử dụng biến màu Base --%>
+        <div class="brand-group-header">
+            <span class="brand-label">BRAND</span>
+            <h4 class="brand-name">${entry.key.name}</h4>
+        </div>
 
-        <div class="table-container">
+        <div class="table-responsive">
             <table>
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style="width: 60px;">ID</th>
+                    <th style="width: 80px;">Ảnh</th>
                     <th>Tên sản phẩm</th>
-                    <th>Model / Storage</th>
-                    <th>Giá Gốc</th>
-                    <th>Giá Sau Giảm</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th>Loại</th>
+                    <th>Giá bán</th>
+                    <th style="text-align: center;">Tồn</th>
+                    <th style="text-align: center;">Trạng thái</th>
+                    <th style="width: 150px; text-align: center;">Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="p" items="${entry.value}">
                     <tr>
-                        <td>${p.id}</td>
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.model} <br/> <small>${p.storage}</small></td>
-
-                        <td style="text-decoration: line-through; color: #888;">
-                            <fmt:formatNumber value="${p.price}" type="number"/> ₫
-                        </td>
-
-                        <td style="color: #d70018; font-weight: bold;">
-                            <fmt:formatNumber value="${p.salePrice}" type="number"/> ₫
-                        </td>
-
+                        <td class="text-bold-light">#${p.id}</td>
                         <td>
-                            <c:choose>
-                                <c:when test="${p.status == 1}">
-                                    <span class="badge badge-success" style="background: green; color: white; padding: 4px 8px; border-radius: 4px;">Active</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="badge badge-danger" style="background: red; color: white; padding: 4px 8px; border-radius: 4px;">Hidden</span>
-                                </c:otherwise>
-                            </c:choose>
+                            <img src="<c:url value='/${p.thumbnailUrl}'/>" alt="Img">
                         </td>
-
                         <td>
-                            <a class="btn btn-sm btn-warning" href="${pageContext.request.contextPath}/admin/product/edit?id=${p.id}">Edit</a>
-
-                            <a class="btn btn-sm btn-info" href="${pageContext.request.contextPath}/admin/product/gallery?productId=${p.id}" style="background-color: #17a2b8; color: white;">Ảnh</a>
-
-                            <a class="btn btn-sm btn-secondary" href="${pageContext.request.contextPath}/admin/product/toggle?id=${p.id}" style="background-color: #6c757d; color: white;">Toggle</a>
-
-                            <a class="btn btn-sm btn-danger" href="${pageContext.request.contextPath}/admin/product/delete?id=${p.id}" onclick="return confirm('Bạn có chắc muốn xóa không?')">Delete</a>
+                            <div class="product-name-main">${p.name}</div>
+                            <div class="product-info-sub">Model: ${p.model} | ${p.storage}</div>
+                        </td>
+                        <td>
+                            <span class="category-text">
+                                <c:choose>
+                                    <c:when test="${p.categoryId == 1}">Điện thoại</c:when>
+                                    <c:when test="${p.categoryId == 2}">Laptop</c:when>
+                                    <c:when test="${p.categoryId == 3}">Phụ kiện</c:when>
+                                    <c:otherwise>Khác</c:otherwise>
+                                </c:choose>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="price-sale">
+                                <fmt:formatNumber value="${p.salePrice}" type="currency" currencySymbol="₫"/>
+                            </div>
+                            <div class="price-old">
+                                <fmt:formatNumber value="${p.price}" type="currency" currencySymbol="₫"/>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="stock-status ${p.stockQuantity <= 5 ? 'stock-low' : ''}">
+                                    ${p.stockQuantity}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="badge ${p.status == 1 ? 'status-active' : 'status-hidden'}">
+                                    ${p.status == 1 ? 'Active' : 'Hidden'}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="display: inline-flex; gap: 5px;">
+                                <a href="${pageContext.request.contextPath}/admin/product/edit?id=${p.id}" class="btn btn-sm btn-edit" title="Sửa">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/product/toggle?id=${p.id}"
+                                   class="btn btn-sm ${p.status == 1 ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                                   title="Bật/Tắt hiển thị">
+                                    <i class="fa-solid ${p.status == 1 ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                                </a>
+                                <a href="${pageContext.request.contextPath}/admin/product/delete?id=${p.id}"
+                                   class="btn btn-sm btn-delete"
+                                   onclick="return confirm('Xóa sản phẩm này?')">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 </c:forEach>

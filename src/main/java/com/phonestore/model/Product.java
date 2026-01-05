@@ -14,8 +14,23 @@ public class Product {
     private double avgRating;
     private int reviewCount;
     private int status;
+    private int categoryId;
+    private int stockQuantity;
 
     public Product() {}
+
+    public int getDiscountPercent() {
+        if (price <= 0 || salePrice <= 0 || salePrice >= price) return 0;
+        return (int) Math.round(((price - salePrice) / price) * 100);
+    }
+
+    public boolean isOnSale() {
+        return salePrice > 0 && salePrice < price;
+    }
+
+    public double getRealPrice() {
+        return (salePrice > 0 && salePrice < price) ? salePrice : price;
+    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -37,11 +52,15 @@ public class Product {
     public void setModel(String model) { this.model = model; }
     public String getStorage() { return storage; }
     public void setStorage(String storage) { this.storage = storage; }
-    public double getAvgRating() {return avgRating;}
-    public void setAvgRating(double avgRating) {this.avgRating = avgRating;}
-    public int getReviewCount() {return reviewCount;}
-    public void setReviewCount(int reviewCount) {this.reviewCount = reviewCount;}
-
+    public double getAvgRating() { return avgRating; }
+    public void setAvgRating(double avgRating) { this.avgRating = avgRating; }
+    public int getReviewCount() { return reviewCount; }
+    public void setReviewCount(int reviewCount) { this.reviewCount = reviewCount; }
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
+    public int getCategoryId() { return categoryId; }
+    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+
+    public int getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
 }
