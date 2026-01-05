@@ -22,14 +22,12 @@ public class AdminUserDAO {
         return u;
     }
 
-    // 📌 Danh sách + tìm kiếm
+    //  Danh sách + tìm kiếm
     public List<User> getUsers(String keyword) {
         List<User> list = new ArrayList<>();
-        String sql =
-                "SELECT * FROM User " +
-                        "WHERE role <> 'admin' " +
-                        "AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?) " +
-                        "ORDER BY id DESC";
+        String sql = "SELECT * FROM User WHERE role <> 'admin' " +
+                "AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?) " +
+                "ORDER BY id DESC";
 
         try (Connection c = DBContext.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -39,15 +37,19 @@ public class AdminUserDAO {
             ps.setString(2, k);
             ps.setString(3, k);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) list.add(map(rs));
+            // Dùng try-with-resources cho ResultSet
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(map(rs));
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
 
-    // 📌 Chi tiết user
+    //  Chi tiết user
     public User getById(int id) {
         String sql = "SELECT * FROM User WHERE id=?";
         try (Connection c = DBContext.getConnection();
@@ -62,7 +64,7 @@ public class AdminUserDAO {
         return null;
     }
 
-    // 📌 Khóa / mở user
+    //  Khóa / mở user
     public void updateStatus(int id, boolean active) {
         String sql = "UPDATE User SET active=? WHERE id=?";
         try (Connection c = DBContext.getConnection();

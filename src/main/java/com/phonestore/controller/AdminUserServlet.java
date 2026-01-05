@@ -17,6 +17,8 @@ public class AdminUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        // Thêm dòng này để nhận keyword tiếng Việt đúng
+        req.setCharacterEncoding("UTF-8");
 
         String keyword = req.getParameter("keyword");
         List<User> users = adminUserDAO.getUsers(keyword);
@@ -32,11 +34,17 @@ public class AdminUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
+        try {
+            int id = Integer.parseInt(req.getParameter("id"));
+            boolean active = Boolean.parseBoolean(req.getParameter("active"));
 
-        int id = Integer.parseInt(req.getParameter("id"));
-        boolean active = Boolean.parseBoolean(req.getParameter("active"));
+            adminUserDAO.updateStatus(id, active);
 
-        adminUserDAO.updateStatus(id, active);
+            // Có thể thêm session message ở đây để hiển thị thông báo "Cập nhật thành công"
+            req.getSession().setAttribute("message", "Đã cập nhật trạng thái tài khoản!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         resp.sendRedirect(req.getContextPath() + "/admin/user");
     }
 }
