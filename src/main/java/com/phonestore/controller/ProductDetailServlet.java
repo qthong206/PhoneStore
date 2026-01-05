@@ -49,7 +49,8 @@ public class ProductDetailServlet extends HttpServlet {
             // 2. Thông tin liên quan
             ProductSeries series = productDAO.getProductSeriesById(product.getSeriesId());
             List<Product> variants = productDAO.getVariantsBySeriesAndModel(product.getSeriesId(), product.getModel());
-            List<Color> colors = productDAO.getColorsBySeriesId(product.getSeriesId());
+            List<Color> colors = productDAO.getColorsByProductId(productId);
+
             List<String> galleryImages = productDAO.getGalleryImagesByProductId(productId);
 
             // 3. Reviews & Specs

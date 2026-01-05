@@ -116,3 +116,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+// --- LOGIC CHUYỂN ẢNH SẢN PHẨM (GALLERY) ---
+const galleryContainer = document.querySelector('.product-gallery');
+if (galleryContainer) {
+    const mainImage = galleryContainer.querySelector('.gallery-main-image img');
+    const thumbnails = galleryContainer.querySelectorAll('.gallery-thumbnails img');
+
+    // Hàm xử lý chung để đổi ảnh
+    function activeThumbnail(selectedThumb) {
+        // 1. Xóa class active ở tất cả ảnh nhỏ
+        thumbnails.forEach(t => t.classList.remove('active'));
+
+        // 2. Thêm class active cho ảnh đang được chọn
+        selectedThumb.classList.add('active');
+
+        // 3. Đổi ảnh lớn ngay lập tức
+        mainImage.src = selectedThumb.src;
+    }
+
+    thumbnails.forEach(thumb => {
+        // Sự kiện 1: Click chuột
+        thumb.addEventListener('click', function() {
+            activeThumbnail(this);
+        });
+
+        // Sự kiện 2: Rê chuột vào (Hover)
+        thumb.addEventListener('mouseenter', function() {
+            activeThumbnail(this);
+        });
+    });
+}

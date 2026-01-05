@@ -1,6 +1,5 @@
 header {
     background: linear-gradient(to right bottom, rgb(0, 49, 64), rgb(3, 112, 167));
-
     padding: 15px 0;
     box-shadow: 0 4px 6px var(--color-shadow);
     position: relative;
@@ -16,7 +15,6 @@ header {
     overflow: visible;
 }
 
-/* --- KHỐI BÊN TRÁI: LOGO VÀ DANH MỤC --- */
 .header-left {
     display: flex;
     align-items: center;
@@ -33,12 +31,10 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
-
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: var(--color-text-light);
     backdrop-filter: blur(5px);
-
     padding: 10px 15px;
     border-radius: 8px;
     text-decoration: none;
@@ -57,7 +53,7 @@ header {
     font-size: 1.1em;
 }
 
-/* --- KHỐI Ở GIỮA: THANH TÌM KIẾM --- */
+/* --- [UPDATED] Search Bar --- */
 .search-bar {
     flex-grow: 1;
     display: flex;
@@ -66,8 +62,14 @@ header {
     border-radius: 25px;
     padding: 4px 5px 4px 0;
     max-width: 650px;
-    /* Thêm shadow nhẹ để nổi bật trên nền gradient */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Để định vị khung gợi ý */
+}
+
+.search-form {
+    width: 100%;
+    display: flex;
+    position: relative;
 }
 
 .search-bar input {
@@ -100,7 +102,90 @@ header {
     background-color: var(--color-light);
 }
 
-/* --- KHỐI BÊN PHẢI: CÁC MỤC ĐIỀU HƯỚNG --- */
+/* --- [NEW] Style Gợi ý tìm kiếm --- */
+.search-suggestions-box {
+    position: absolute;
+    top: 100%; /* Đẩy xuống dưới ô input */
+    left: 20px; /* Căn trái khớp với input */
+    width: calc(100% - 20px);
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    border-radius: 0 0 12px 12px;
+    z-index: 1000;
+    border-top: 1px solid #f0f0f0;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.suggestion-header {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* List từ khóa */
+.suggestion-keywords ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.suggestion-keywords li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+.suggestion-keywords li a:hover {
+    background-color: #f0f8ff;
+    color: var(--color-primary);
+    padding-left: 20px;
+    transition: all 0.2s;
+}
+
+/* List sản phẩm */
+.suggestion-product-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+.suggestion-product-item:last-child { border-bottom: none; }
+.suggestion-product-item:hover { background-color: #f9f9f9; }
+
+.sug-prod-img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    margin-right: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.sug-prod-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sug-price-box { font-size: 0.85rem; }
+.sug-price-sale { color: var(--color-danger); font-weight: 700; margin-right: 8px; }
+.sug-price-original { color: #999; text-decoration: line-through; font-size: 0.8rem; }
+
+/* --- Nav Items --- */
 .header-nav {
     display: flex;
     gap: 20px;
@@ -134,12 +219,8 @@ header {
     white-space: nowrap;
 }
 
-/* --- MEGA MENU --- */
-
-.category-dropdown {
-    position: relative;
-}
-
+/* --- Mega Menu & Dropdown --- */
+.category-dropdown { position: relative; }
 .category-menu-container {
     display: none;
     position: absolute;
@@ -152,19 +233,9 @@ header {
     padding: 10px;
     z-index: 1001;
 }
-
-.category-dropdown.menu-open .category-menu-container {
-    display: block;
-}
-
-.category-menu-list {
-    list-style: none;
-}
-
-.category-menu-list li {
-    position: relative;
-}
-
+.category-dropdown.menu-open .category-menu-container { display: block; }
+.category-menu-list { list-style: none; }
+.category-menu-list li { position: relative; }
 .category-menu-list li a {
     display: flex;
     justify-content: space-between;
@@ -176,21 +247,12 @@ header {
     font-weight: 500;
     transition: background-color 0.2s ease;
 }
-.category-menu-list li a i {
-    color: var(--color-primary);
-    margin-right: 10px;
-}
-.category-menu-list li a .fa-chevron-right {
-    font-size: 0.8em;
-    color: var(--color-neutral-medium);
-}
-
+.category-menu-list li a i { color: var(--color-primary); margin-right: 10px; }
+.category-menu-list li a .fa-chevron-right { font-size: 0.8em; color: var(--color-neutral-medium); }
 .category-menu-list li a:hover {
     background-color: var(--color-primary-ultralight);
     color: var(--color-primary);
 }
-
-/* Hộp chứa menu con (mega menu) */
 .mega-menu-content {
     display: none;
     position: absolute;
@@ -202,25 +264,13 @@ header {
     box-shadow: 0 8px 20px var(--color-shadow);
     padding: 20px;
 }
-
-.category-menu-list li:hover > .mega-menu-content {
-    display: block;
-}
-
-/* =================================== */
-/* CSS CHO MEGA MENU (DANH SÁCH TÊN) */
-/* =================================== */
-
+.category-menu-list li:hover > .mega-menu-content { display: block; }
 .mega-menu-content h4 {
     font-size: 1.1rem;
     color: var(--color-dark);
     margin-bottom: 15px;
 }
-
-.mega-brand-list {
-    display: block;
-}
-
+.mega-brand-list { display: block; }
 .mega-brand-item {
     display: block;
     padding: 8px 10px;

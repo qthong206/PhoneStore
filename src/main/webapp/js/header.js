@@ -1,62 +1,141 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    /* --- LOGIC MENU DANH MỤC --- */
     const dropdown = document.querySelector('.category-dropdown');
     const button = document.querySelector('.category-button');
 
     if (dropdown && button) {
-
-        // Logic Click vào nút "Danh mục"
         button.addEventListener('click', function (event) {
-            event.preventDefault(); // Ngăn link href="#" nhảy trang
-            dropdown.classList.toggle('menu-open'); // Bật/Tắt class mở menu
+            event.preventDefault();
+            dropdown.classList.toggle('menu-open');
         });
 
-        // Logic "Click-away" (Bấm ra ngoài để đóng menu)
         document.addEventListener('click', function (event) {
-            // Nếu click *bên ngoài* khối dropdown VÀ nó đang mở
             if (!dropdown.contains(event.target) && dropdown.classList.contains('menu-open')) {
                 dropdown.classList.remove('menu-open');
             }
         });
     }
+
+    /* --- [NEW] LOGIC TÌM KIẾM GỢI Ý (LIVE SEARCH) --- */
+    const searchInput = document.getElementById('searchInput');
+    const suggestionBox = document.getElementById('search-suggestions-box');
+
+    // Lấy contextPath từ thẻ body đã gán ở header.jsp
+    const contextPath = document.body.getAttribute('data-context-path') || '';
+
+    let timeout = null;
+    const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+    if (searchInput && suggestionBox) {
+        searchInput.addEventListener('input', function() {
+            const keyword = this.value.trim();
+            clearTimeout(timeout);
+
+            if (keyword.length < 2) {
+                suggestionBox.style.display = 'none';
+                return;
+            }
+
+            timeout = setTimeout(() => {
+                fetchSuggestion(keyword);
+            }, 300);
+        });
+
+        // Ẩn khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !suggestionBox.contains(e.target)) {
+                suggestionBox.style.display = 'none';
+            }
+        });
+
+        // Hiện lại khi focus
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2 && suggestionBox.innerHTML.trim() !== "") {
+                suggestionBox.style.display = 'block';
+            }
+        });
+    }
+
+    function fetchSuggestion(keyword) {
+        // Gọi đến Servlet /api/search-suggestion
+        const apiUrl = `${contextPath}/api/search-suggestion?q=${encodeURIComponent(keyword)}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) throw new Error("Lỗi kết nối");
+                return response.json();
+            })
+            .then(data => {
+                if ((data.keywords && data.keywords.length > 0) || (data.products && data.products.length > 0)) {
+                    renderSuggestions(data);
+                    suggestionBox.style.display = 'block';
+                } else {
+                    suggestionBox.style.display = 'none';
+                }
+            })
+            .catch(err => console.error("Lỗi tìm kiếm:", err));
+    }
+
+    function renderSuggestions(data) {
+        let html = '';
+
+        // 1. Gợi ý từ khóa
+        if (data.keywords && data.keywords.length > 0) {
+            html += `<div class="suggestion-header">Có phải bạn muốn tìm</div>`;
+            html += `<div class="suggestion-keywords"><ul>`;
+            data.keywords.forEach(key => {
+                html += `<li><a href="${contextPath}/products?search=${encodeURIComponent(key)}">${key}</a></li>`;
+            });
+            html += `</ul></div>`;
+        }
+
+        // 2. Gợi ý sản phẩm
+        if (data.products && data.products.length > 0) {
+            html += `<div class="suggestion-header">Sản phẩm gợi ý</div>`;
+            data.products.forEach(p => {
+                const detailLink = `${contextPath}/product-detail?id=${p.id}`;
+                const imgUrl = `${contextPath}/${p.thumbnailUrl}`;
+
+                let priceHtml = '';
+                if (p.salePrice > 0) {
+                    priceHtml = `<span class="sug-price-sale">${formatter.format(p.salePrice)}</span>
+                                  <span class="sug-price-original">${formatter.format(p.price)}</span>`;
+                } else {
+                    priceHtml = `<span class="sug-price-sale">${formatter.format(p.price)}</span>`;
+                }
+
+                html += `
+                    <a href="${detailLink}" class="suggestion-product-item">
+                        <img src="${imgUrl}" alt="${p.name}" class="sug-prod-img">
+                        <div class="sug-prod-info">
+                            <h4>${p.name}</h4>
+                            <div class="sug-price-box">${priceHtml}</div>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+        suggestionBox.innerHTML = html;
+    }
 });
 
-/**
- * Hàm mở Modal (Được gọi trực tiếp từ onclick ở header.jsp)
- */
+/* --- LOGIC MODAL LOGIN --- */
 function showLoginModal(event) {
-    if (event) event.preventDefault(); // Ngăn thẻ a chuyển trang
-
-    // Tìm modal bằng ID (ID này nằm trong file footer.jsp)
+    if (event) event.preventDefault();
     const modal = document.getElementById('review-login-modal');
-
     if (modal) {
-        modal.style.display = 'flex'; // Hiển thị modal
-    } else {
-        console.error("Không tìm thấy modal với ID: review-login-modal");
+        modal.style.display = 'flex';
     }
 }
 
-/**
- * Gán sự kiện đóng Modal (Khi trang tải xong)
- */
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('review-login-modal');
     const closeBtn = document.getElementById('modal-close-login-btn');
-
-    // Chỉ chạy nếu modal tồn tại trong trang
     if (modal && closeBtn) {
-
-        // 1. Sự kiện click nút X (Close)
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-
-        // 2. Sự kiện click ra ngoài vùng trắng (Overlay) để đóng
+        closeBtn.addEventListener('click', function() { modal.style.display = 'none'; });
         window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
+            if (event.target === modal) modal.style.display = 'none';
         });
     }
 });

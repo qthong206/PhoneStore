@@ -96,7 +96,10 @@ public class AdminProductServlet extends HttpServlet {
     private void listProducts(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Map<Brand, List<Product>> productMap = productDAO.getProductsGroupedByBrand();
+        // --- [QUAN TRỌNG] SỬA DÒNG NÀY ---
+        // Dùng hàm dành riêng cho Admin để lấy cả sản phẩm ẩn (status=0)
+        Map<Brand, List<Product>> productMap = productDAO.getAllProductsGroupedByBrandForAdmin();
+
         req.setAttribute("productMap", productMap);
 
         req.setAttribute("pageCss","product.css");
@@ -111,13 +114,12 @@ public class AdminProductServlet extends HttpServlet {
     private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // --- LOAD DATA CHO DROPDOWN (QUAN TRỌNG) ---
+        // --- LOAD DATA CHO DROPDOWN ---
         List<Brand> brands = brandDAO.getAllBrands();
         List<ProductSeries> series = seriesDAO.getAllSeries();
 
         req.setAttribute("brands", brands);
         req.setAttribute("series", series);
-        // -------------------------------------------
 
         req.setAttribute("pageCss","product-from.css");
         req.setAttribute("contentPage","/WEB-INF/views/admin/product-form.jsp");
@@ -165,13 +167,12 @@ public class AdminProductServlet extends HttpServlet {
             return;
         }
 
-        // --- LOAD DATA CHO DROPDOWN (QUAN TRỌNG) ---
+        // --- LOAD DATA CHO DROPDOWN ---
         List<Brand> brands = brandDAO.getAllBrands();
         List<ProductSeries> series = seriesDAO.getAllSeries();
 
         req.setAttribute("brands", brands);
         req.setAttribute("series", series);
-        // -------------------------------------------
 
         req.setAttribute("product", product);
 

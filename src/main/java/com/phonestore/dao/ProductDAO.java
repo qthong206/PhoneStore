@@ -216,9 +216,10 @@ public class ProductDAO {
                 "FROM Product p " +
                 "JOIN Brand b ON p.brand_id = b.id " +
                 "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
-                "GROUP BY p.id " +
-                "ORDER BY b.id, p.id";
+                "WHERE p.status = 1 " +
 
+                "GROUP BY p.id " +
+                "ORDER BY b.id, p.price DESC";
         try {
             conn = DBContext.getConnection();
             if (conn == null) return productMap;
@@ -252,6 +253,57 @@ public class ProductDAO {
         }
         return productMap;
     }
+
+    // --- HÀM DÀNH RIÊNG CHO ADMIN (Lấy cả sản phẩm ẩn) ---
+    public Map<Brand, List<Product>> getAllProductsGroupedByBrandForAdmin() {
+        Map<Brand, List<Product>> productMap = new LinkedHashMap<>();
+
+        // Query này KHÔNG CÓ "WHERE p.status = 1"
+        String query = "SELECT " +
+                "    p.*, b.name as brand_name, b.logo_url, b.slug as brand_slug, " +
+                "    AVG(pr.rating) as avgRating, " +
+                "    COUNT(pr.id) as reviewCount " +
+                "FROM Product p " +
+                "JOIN Brand b ON p.brand_id = b.id " +
+                "LEFT JOIN ProductReview pr ON p.id = pr.product_id " +
+                "GROUP BY p.id " +
+                "ORDER BY b.id, p.id DESC"; // Sắp xếp theo ID giảm dần để thấy sp mới thêm
+
+        try {
+            conn = DBContext.getConnection();
+            if (conn == null) return productMap;
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            Brand currentBrand = null;
+            List<Product> currentProductList = null;
+
+            while (rs.next()) {
+                int brandId = rs.getInt("brand_id");
+
+                if (currentBrand == null || brandId != currentBrand.getId()) {
+                    currentBrand = new Brand();
+                    currentBrand.setId(brandId);
+                    currentBrand.setName(rs.getString("brand_name"));
+                    currentBrand.setLogoUrl(rs.getString("logo_url"));
+                    currentBrand.setSlug(rs.getString("brand_slug"));
+
+                    currentProductList = new ArrayList<>();
+                    productMap.put(currentBrand, currentProductList);
+                }
+
+                Product product = mapRowToProduct(rs);
+                product.setBrand(currentBrand);
+                currentProductList.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return productMap;
+    }
+
     // ... (Giữ nguyên getRelatedProductsByBrand) ...
     public List<Product> getRelatedProductsByBrand(int brandId, int currentProductId, int limit) {
         List<Product> relatedProducts = new ArrayList<>();
@@ -484,4 +536,103 @@ public class ProductDAO {
             default: return " ORDER BY reviewCount DESC, avgRating DESC";
         }
     }
+
+    public List<String> searchKeywords(String keyword, int limit) {
+        List<String> keywords = new ArrayList<>();
+        String pattern = "%" + keyword.toLowerCase() + "%";
+
+        // Câu lệnh SQL: Tìm tên Thương hiệu hoặc Danh mục khớp với từ khóa
+        String query = "SELECT name FROM Brand WHERE LOWER(name) LIKE ? " +
+                "UNION " +
+                "SELECT name FROM Category WHERE LOWER(name) LIKE ? " +
+                "LIMIT ?";
+
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setInt(3, limit);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                keywords.add(rs.getString("name"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return keywords;
+    }
+
+    /**
+     * Tìm kiếm sản phẩm có giới hạn số lượng (Dùng cho Gợi ý Live Search)
+     * @param keyword Từ khóa tìm kiếm
+     * @param limit Số lượng kết quả tối đa muốn lấy (ví dụ: 5)
+     */
+    public List<Product> searchProductsLimit(String keyword, int limit) {
+        List<Product> products = new ArrayList<>();
+        // SQL: Tìm theo tên HOẶC model, và dùng LIMIT để giới hạn số dòng
+        String query = "SELECT id, name, price, sale_price, thumbnail_url " +
+                "FROM Product " +
+                "WHERE LOWER(name) LIKE ? OR LOWER(model) LIKE ? " +
+                "LIMIT ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+
+            String pattern = "%" + keyword.toLowerCase() + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setInt(3, limit); // Tham số giới hạn (VD: 5)
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setName(rs.getString("name"));
+                p.setPrice(rs.getDouble("price"));
+                p.setSalePrice(rs.getDouble("sale_price"));
+                p.setThumbnailUrl(rs.getString("thumbnail_url"));
+                products.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return products;
+    }
+
+    // --- [MỚI] Hàm lấy màu chỉ của riêng sản phẩm đó ---
+    public List<Color> getColorsByProductId(int productId) {
+        List<Color> colors = new ArrayList<>();
+        // Query này chỉ lấy màu được map trực tiếp với Product ID
+        String query = "SELECT c.id, c.name, c.hex_code " +
+                "FROM Color c " +
+                "JOIN ProductColor pc ON c.id = pc.color_id " +
+                "WHERE pc.product_id = ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Color color = new Color();
+                color.setId(rs.getInt("id"));
+                color.setName(rs.getString("name"));
+                color.setHexCode(rs.getString("hex_code"));
+                colors.add(color);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return colors;
+    }
+
 }
+

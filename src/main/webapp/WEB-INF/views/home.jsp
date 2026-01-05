@@ -24,7 +24,6 @@
 
             <div class="product-grid">
                 <c:forEach var="p" items="${productsInBrand}" varStatus="loop">
-                    <c:if test="${p.status == 1}">
                         <c:if test="${loop.index < 5}">
                             <div class="product-card">
                                 <a href="<c:url value='/product-detail?id=${p.id}'/>" class="product-link">
@@ -69,7 +68,6 @@
                                 </div>
                             </div>
                         </c:if>
-                    </c:if>
                 </c:forEach>
             </div>
         </section>
