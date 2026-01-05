@@ -26,7 +26,7 @@ public class BrandDAO {
     }
 
     /**
-     * HÀM MỚI: Lấy tất cả Brand (cho Header)
+     * Lấy tất cả Brand (cho Header)
      */
     public List<Brand> getAllBrands() {
         List<Brand> brands = new ArrayList<>();
@@ -41,7 +41,6 @@ public class BrandDAO {
                 b.setName(rs.getString("name"));
                 b.setSlug(rs.getString("slug"));
                 b.setLogoUrl(rs.getString("logo_url"));
-                b.setCategoryId(rs.getInt("category_id"));
                 brands.add(b);
             }
         } catch (Exception e) {
@@ -53,7 +52,40 @@ public class BrandDAO {
     }
 
     /**
-     * HÀM MỚI: Lấy Brand bằng 'slug' (VD: "apple")
+     * Lấy danh sách Brand có sản phẩm thuộc Category cụ thể
+     * Logic: Join bảng Brand -> Product -> check category_id
+     */
+    public List<Brand> getBrandsByCategoryId(int categoryId) {
+        List<Brand> brands = new ArrayList<>();
+        // Chỉ lấy những hãng ĐANG CÓ sản phẩm thuộc danh mục này
+        String query = "SELECT DISTINCT b.* " +
+                "FROM Brand b " +
+                "JOIN Product p ON b.id = p.brand_id " +
+                "WHERE p.category_id = ? " +
+                "ORDER BY b.name ASC";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, categoryId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Brand b = new Brand();
+                b.setId(rs.getInt("id"));
+                b.setName(rs.getString("name"));
+                b.setSlug(rs.getString("slug"));
+                b.setLogoUrl(rs.getString("logo_url"));
+                brands.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+        return brands;
+    }
+
+    /**
+     * Lấy Brand bằng 'slug' (VD: "apple")
      */
     public Brand getBrandBySlug(String slug) {
         String query = "SELECT * FROM Brand WHERE slug = ?";
@@ -67,7 +99,6 @@ public class BrandDAO {
                 b.setId(rs.getInt("id"));
                 b.setName(rs.getString("name"));
                 b.setSlug(rs.getString("slug"));
-                b.setCategoryId(rs.getInt("category_id"));
                 b.setLogoUrl(rs.getString("logo_url"));
                 return b;
             }
@@ -78,7 +109,8 @@ public class BrandDAO {
         }
         return null;
     }
-    // cas ham moi cho admin
+
+    // --- CÁC HÀM CHO ADMIN ---
 
     public Brand getBrandById(int id) {
         String sql = "SELECT * FROM Brand WHERE id = ?";
@@ -93,7 +125,6 @@ public class BrandDAO {
                 b.setName(rs.getString("name"));
                 b.setSlug(rs.getString("slug"));
                 b.setLogoUrl(rs.getString("logo_url"));
-                b.setCategoryId(rs.getInt("category_id"));
                 return b;
             }
         } catch (Exception e) {
@@ -105,14 +136,13 @@ public class BrandDAO {
     }
 
     public void insertBrand(Brand b) {
-        String sql = "INSERT INTO Brand(name, slug, logo_url, category_id) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO Brand(name, slug, logo_url) VALUES(?, ?, ?)";
         try {
             conn = DBContext.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, b.getName());
             ps.setString(2, b.getSlug());
             ps.setString(3, b.getLogoUrl());
-            ps.setInt(4, b.getCategoryId());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,15 +152,15 @@ public class BrandDAO {
     }
 
     public void updateBrand(Brand b) {
-        String sql = "UPDATE Brand SET name=?, slug=?, logo_url=?, category_id=? WHERE id=?";
+        // [ĐÃ SỬA]: Xóa category_id và chỉnh lại chỉ số tham số (1, 2, 3, 4)
+        String sql = "UPDATE Brand SET name=?, slug=?, logo_url=? WHERE id=?";
         try {
             conn = DBContext.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, b.getName());
             ps.setString(2, b.getSlug());
             ps.setString(3, b.getLogoUrl());
-            ps.setInt(4, b.getCategoryId());
-            ps.setInt(5, b.getId());
+            ps.setInt(4, b.getId()); // Chỉ số là 4 (không phải 5)
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,5 +182,4 @@ public class BrandDAO {
             closeConnections();
         }
     }
-
 }

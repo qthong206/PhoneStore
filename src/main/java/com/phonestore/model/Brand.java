@@ -5,9 +5,21 @@ public class Brand {
     private String name;
     private String slug;
     private String logoUrl;
-    private int categoryId;
 
-    // Getters & Setters
+    public Brand() {
+    }
+
+    public Brand(int id) {
+        this.id = id;
+    }
+
+    public Brand(int id, String name, String slug, String logoUrl) {
+        this.id = id;
+        this.name = name;
+        this.slug = slug;
+        this.logoUrl = logoUrl;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -19,7 +31,4 @@ public class Brand {
 
     public String getLogoUrl() { return logoUrl; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
-
-    public int getCategoryId() { return categoryId; }
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
 }

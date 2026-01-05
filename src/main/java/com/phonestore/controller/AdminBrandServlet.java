@@ -1,9 +1,7 @@
 package com.phonestore.controller;
 
 import com.phonestore.dao.BrandDAO;
-import com.phonestore.dao.CategoryDAO;
 import com.phonestore.model.Brand;
-import com.phonestore.model.Category;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -22,7 +20,7 @@ import java.util.List;
 public class AdminBrandServlet extends HttpServlet {
 
     private BrandDAO brandDAO = new BrandDAO();
-    private CategoryDAO categoryDAO = new CategoryDAO();
+    // [ĐÃ XÓA]: private CategoryDAO categoryDAO... vì không dùng nữa
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -83,8 +81,7 @@ public class AdminBrandServlet extends HttpServlet {
 
     private void showAddForm(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Category> categories = categoryDAO.getAllCategories();
-        req.setAttribute("categories", categories);
+        // [ĐÃ SỬA]: Không load Categories nữa vì Brand không cần chọn Category
         req.setAttribute("pageCss","brand-form.css");
         req.setAttribute("contentPage","/WEB-INF/views/admin/brand-form.jsp");
         req.getRequestDispatcher("/WEB-INF/views/admin/layout-admin.jsp").forward(req, resp);
@@ -94,12 +91,13 @@ public class AdminBrandServlet extends HttpServlet {
             throws ServletException, IOException {
         int id = parseInt(req.getParameter("id"));
         Brand brand = brandDAO.getBrandById(id);
+
         if (brand == null) {
             resp.sendRedirect(req.getContextPath() + "/admin/brand");
             return;
         }
-        List<Category> categories = categoryDAO.getAllCategories();
-        req.setAttribute("categories", categories);
+
+        // [ĐÃ SỬA]: Chỉ gửi thông tin Brand, không gửi danh sách Categories
         req.setAttribute("brand", brand);
         req.setAttribute("pageCss","brand-form.css");
         req.setAttribute("contentPage","/WEB-INF/views/admin/brand-form.jsp");
@@ -112,7 +110,9 @@ public class AdminBrandServlet extends HttpServlet {
         b.setName(req.getParameter("name"));
         b.setSlug(req.getParameter("slug"));
         b.setLogoUrl(req.getParameter("logoUrl"));
-        b.setCategoryId(parseInt(req.getParameter("categoryId")));
+
+        // [ĐÃ SỬA]: Xóa dòng b.setCategoryId(...)
+
         brandDAO.insertBrand(b);
         resp.sendRedirect(req.getContextPath() + "/admin/brand");
     }
@@ -124,7 +124,9 @@ public class AdminBrandServlet extends HttpServlet {
         b.setName(req.getParameter("name"));
         b.setSlug(req.getParameter("slug"));
         b.setLogoUrl(req.getParameter("logoUrl"));
-        b.setCategoryId(parseInt(req.getParameter("categoryId")));
+
+        // [ĐÃ SỬA]: Xóa dòng b.setCategoryId(...)
+
         brandDAO.updateBrand(b);
         resp.sendRedirect(req.getContextPath() + "/admin/brand");
     }

@@ -1,5 +1,6 @@
 package com.phonestore.controller;
 
+import com.phonestore.dao.BrandDAO; // THÊM IMPORT
 import com.phonestore.dao.ProductSeriesDAO;
 import com.phonestore.model.ProductSeries;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import java.util.List;
 public class AdminSeriesServlet extends HttpServlet {
 
     private ProductSeriesDAO dao = new ProductSeriesDAO();
+    private BrandDAO brandDAO = new BrandDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -79,7 +81,6 @@ public class AdminSeriesServlet extends HttpServlet {
 
     private void list(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
         List<ProductSeries> list = dao.getAllSeries();
         req.setAttribute("series", list);
 
@@ -91,6 +92,9 @@ public class AdminSeriesServlet extends HttpServlet {
 
     private void showForm(HttpServletRequest req, HttpServletResponse resp, ProductSeries s)
             throws ServletException, IOException {
+
+        // --- DÒNG QUAN TRỌNG NHẤT ĐỂ HIỆN BRAND ---
+        req.setAttribute("brands", brandDAO.getAllBrands());
 
         req.setAttribute("item", s);
         req.setAttribute("pageCss","series-form.css");
@@ -104,6 +108,10 @@ public class AdminSeriesServlet extends HttpServlet {
 
         ProductSeries s = new ProductSeries();
         s.setName(req.getParameter("name"));
+        // LẤY THÊM DỮ LIỆU TỪ FORM
+        s.setBrandId(parseInt(req.getParameter("brandId")));
+        s.setReleaseYear(parseInt(req.getParameter("releaseYear")));
+
         dao.insert(s);
 
         resp.sendRedirect(req.getContextPath() + "/admin/series");
@@ -115,6 +123,9 @@ public class AdminSeriesServlet extends HttpServlet {
         ProductSeries s = new ProductSeries();
         s.setId(parseInt(req.getParameter("id")));
         s.setName(req.getParameter("name"));
+        s.setBrandId(parseInt(req.getParameter("brandId")));
+        s.setReleaseYear(parseInt(req.getParameter("releaseYear")));
+
         dao.update(s);
 
         resp.sendRedirect(req.getContextPath() + "/admin/series");
@@ -122,10 +133,8 @@ public class AdminSeriesServlet extends HttpServlet {
 
     private void delete(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-
         int id = parseInt(req.getParameter("id"));
         dao.delete(id);
-
         resp.sendRedirect(req.getContextPath() + "/admin/series");
     }
 
