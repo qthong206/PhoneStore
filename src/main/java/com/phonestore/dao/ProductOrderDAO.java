@@ -180,4 +180,24 @@ public class ProductOrderDAO {
         }
         return false;
     }
+
+    public void updateStatus(int orderId, String status) {
+        String sql = "UPDATE ProductOrder SET status = ? WHERE id = ?";
+        try {
+            conn = DBContext.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnections();
+        }
+    }
+
+    // Chỉnh lại tên hàm cho khớp với Servlet bạn đã viết ở bước trước
+    public List<ProductOrder> getByUserId(int userId) {
+        return getOrdersByUserId(userId, "all");
+    }
 }
