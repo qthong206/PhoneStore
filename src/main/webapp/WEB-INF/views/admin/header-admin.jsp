@@ -1,21 +1,26 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<header class="header">
+<header class="admin-header">
     <div class="header-left">
-        <a href="${pageContext.request.contextPath}/home" title="Về trang giao diện người dùng">
-            <img src="<c:url value='/images/logo.png'/>" alt="PhoneStore Logo" class="header-logo">
-        </a>
+        <h2 class="page-title">Quản Trị Hệ Thống</h2>
     </div>
 
     <div class="header-right">
         <c:if test="${not empty sessionScope.user}">
-            <span class="user-greeting">
-                Xin chào, <strong>${sessionScope.user.fullName}</strong>
-            </span>
-            <a href="${pageContext.request.contextPath}/logout" class="btn-logout">
-                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-            </a>
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=${sessionScope.user.fullName}&background=random"
+                     class="user-avatar" alt="Avatar">
+
+                <div class="user-details">
+                    <span class="user-name">${sessionScope.user.fullName}</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+
+                <a href="${pageContext.request.contextPath}/logout"
+                   class="btn-logout-circle"
+                   title="Đăng xuất">
+                    <i class="fa-solid fa-power-off"></i>
+                </a>
+            </div>
         </c:if>
     </div>
 </header>
