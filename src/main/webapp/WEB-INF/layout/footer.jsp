@@ -4,28 +4,29 @@
 <link rel="stylesheet" href="<c:url value='/css/footer.css'/>">
 
 <footer>
-    <%-- (Toàn bộ code footer-main, footer-nav, footer-copyright giữ nguyên) --%>
     <div class="footer-main">
         <div class="container footer-grid">
             <div class="footer-column">
                 <h4>Về chúng tôi</h4>
                 <ul>
-                    <li><a href="#">Giới thiệu về công ty</a></li>
-                    <li><a href="#">Liên hệ hợp tác kinh doanh</a></li>
-                    <li><a href="#">Danh sách cửa hàng</a></li>
-                    <li><a href="#">Tuyển dụng mới nhất</a></li>
-                    <li><a href="#">Hướng dẫn mua hàng Online</a></li>
-                    <li><a href="#">Hướng dẫn mua hàng trả góp</a></li>
+                    <%-- Cập nhật link về trang info-center --%>
+                    <li><a href="<c:url value='/about?tab=gioi-thieu'/>">Giới thiệu về công ty</a></li>
+                    <li><a href="<c:url value='/about?tab=lien-he'/>">Liên hệ hợp tác kinh doanh</a></li>
+                    <li><a href="<c:url value='/about?tab=cua-hang'/>">Danh sách cửa hàng</a></li>
+                    <li><a href="<c:url value='/about?tab=tuyen-dung'/>">Tuyển dụng mới nhất</a></li>
+                    <li><a href="<c:url value='/about?tab=huong-dan'/>">Hướng dẫn mua hàng Online</a></li>
+                    <li><a href="<c:url value='/about?tab=tra-gop'/>">Hướng dẫn mua hàng trả góp</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h4>Chính sách</h4>
                 <ul>
-                    <li><a href="#">Chính sách bảo hành</a></li>
-                    <li><a href="#">Chính sách bán hàng</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
-                    <li><a href="#">Chính sách sử dụng</a></li>
-                    <li><a href="#">Chính sách khiếu nại</a></li>
+                    <%-- Cập nhật link về trang info-center --%>
+                    <li><a href="<c:url value='/about?tab=bao-hanh'/>">Chính sách bảo hành</a></li>
+                    <li><a href="<c:url value='/about?tab=ban-hang'/>">Chính sách bán hàng</a></li>
+                    <li><a href="<c:url value='/about?tab=bao-mat'/>">Chính sách bảo mật</a></li>
+                    <li><a href="<c:url value='/about?tab=su-dung'/>">Chính sách sử dụng</a></li>
+                    <li><a href="<c:url value='/about?tab=khieu-nai'/>">Chính sách khiếu nại</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -37,34 +38,38 @@
             <div class="footer-column">
                 <h4>Kết nối với PhoneStore</h4>
                 <div class="social-icons">
-                    <a href="#" class="icon-zalo">Z</a>
-                    <a href="#" class="icon-fb">F</a>
-                    <a href="#" class="icon-ig">I</a>
-                    <a href="#" class="icon-tt">T</a>
+                    <a href="https://zalo.me" target="_blank" class="icon-zalo">Z</a>
+                    <a href="https://facebook.com" target="_blank" class="icon-fb">F</a>
+                    <a href="https://instagram.com" target="_blank" class="icon-ig">I</a>
+                    <a href="https://tiktok.com" target="_blank" class="icon-tt">T</a>
                 </div>
             </div>
         </div>
     </div>
     <div class="footer-nav">
         <div class="container">
-            <a href="#">Điện thoại iPhone</a> |
-            <a href="#">Điện thoại Samsung</a> |
-            <a href="#">Điện thoại Xiaomi</a> |
-            <a href="#">Macbook</a> |
-            <a href="#">Tai nghe Airpods</a>
+            <%-- Có thể trỏ về trang danh sách sản phẩm kèm filter nếu bạn đã có --%>
+            <a href="<c:url value='/products?category=iphone'/>">Điện thoại iPhone</a> |
+            <a href="<c:url value='/products?category=samsung'/>">Điện thoại Samsung</a> |
+            <a href="<c:url value='/products?category=xiaomi'/>">Điện thoại Xiaomi</a> |
+            <a href="<c:url value='/products?category=macbook'/>">Macbook</a> |
+            <a href="<c:url value='/products?category=airpods'/>">Tai nghe Airpods</a>
         </div>
     </div>
     <div class="footer-copyright">
         <div class="container">
-            <p>Công Ty Cổ Phần Công Nghệ PhoneStore Việt. MST: 0311937144. GPĐKKD: 8371937144 do sở KH & ĐT TP.HCM cấp.</p>
-            <p>© PhoneStore - All rights reserved. <%= new java.util.Date().getYear() + 1900 %></p>
+            <p>Đồ án môn học Lập Trình Web - Học kỳ I năm 2025-2026</p>
+
+            <p>Thực hiện bởi:
+                <strong>Trịnh Quang Thông (22130275)</strong> &
+                <strong>Nguyễn Long Vũ (22130329)</strong>
+            </p>
+            <p>© PhoneStore Project - All rights reserved. <%= new java.util.Date().getYear() + 1900 %></p>
         </div>
     </div>
 </footer>
 
-<%-- ============================================= --%>
-<%-- MODAL "CẦN ĐĂNG NHẬP" (Dùng chung) --%>
-<%-- ============================================= --%>
+<%-- Modal và Script giữ nguyên --%>
 <div id="review-login-modal" class="modal-backdrop" style="display:none;">
     <div class="modal-content custom-modal">
         <button class="modal-close" id="modal-close-login-btn">&times;</button>
@@ -79,6 +84,3 @@
 </div>
 
 <script src="<c:url value='/js/common.js'/>"></script>
-
-</body>
-</html>
