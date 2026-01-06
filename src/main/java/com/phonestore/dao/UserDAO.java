@@ -81,7 +81,11 @@ public class UserDAO {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getUsername());
             ps.setString(3, user.getPhoneNumber());
-            ps.setString(4, user.getEmail());
+            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                ps.setString(4, user.getEmail());
+            } else {
+                ps.setNull(4, java.sql.Types.VARCHAR);
+            }
             ps.setString(5, user.getPasswordHash());
             ps.setString(6, user.getRole());
             ps.setString(7, "local");
@@ -91,9 +95,9 @@ public class UserDAO {
         }
         return false;
     }
-
     // Đăng ký Social
-    public void createGoogleUser(User user) {
+    public void createGoogleUser(User
+                                         user) {
         String sql = "INSERT INTO User (username, full_name, email, password_hash, role, phone_number, auth_provider) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -166,6 +170,19 @@ public class UserDAO {
         } finally {
             // Đóng kết nối (bạn có thể dùng hàm closeConnections có sẵn)
             try { if(rs!=null) rs.close(); if(ps!=null) ps.close(); if(conn!=null) conn.close(); } catch(Exception e){}
+        }
+        return false;
+    }
+
+    public boolean updatePassword(String email, String newHashedPassword) {
+        String sql = "UPDATE User SET password_hash = ? WHERE email = ?";
+        try (Connection conn = com.phonestore.context.DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newHashedPassword);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
