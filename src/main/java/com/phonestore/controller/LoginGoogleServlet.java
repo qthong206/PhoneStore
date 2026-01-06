@@ -4,6 +4,7 @@ import com.phonestore.dao.UserDAO;
 import com.phonestore.model.GooglePojo;
 import com.phonestore.model.User;
 import com.phonestore.utils.GoogleUtils;
+import com.phonestore.service.EmailService; // Thêm import này
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -36,15 +37,24 @@ public class LoginGoogleServlet extends HttpServlet {
             GooglePojo googleUser = GoogleUtils.getUserInfo(accessToken);
             User user = userDAO.getUserByEmail(googleUser.getEmail());
 
+            // Nếu user == null tức là lần đầu đăng nhập bằng Google
             if (user == null) {
                 user = new User();
                 user.setEmail(googleUser.getEmail());
                 user.setFullName(googleUser.getName());
                 user.setUsername(googleUser.getEmail());
-                user.setAuthProvider("google"); // Set Provider
+                user.setAuthProvider("google");
 
                 userDAO.createGoogleUser(user);
                 user = userDAO.getUserByEmail(googleUser.getEmail());
+
+                // Gửi email chào mừng (chạy ngầm không làm treo web)
+                final String emailTo = googleUser.getEmail();
+                final String nameTo = googleUser.getName();
+                new Thread(() -> {
+                    EmailService emailService = new EmailService();
+                    emailService.sendWelcomeEmail(emailTo, nameTo);
+                }).start();
             }
 
             HttpSession session = request.getSession();

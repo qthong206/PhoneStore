@@ -31,7 +31,7 @@
             <button type="submit" class="btn btn-login">Đăng nhập</button>
 
             <div class="forgot-password">
-                <a href="#">Quên mật khẩu?</a>
+                <a href="<c:url value='/forgot-password'/>">Quên mật khẩu?</a>
             </div>
 
             <div class="divider">
