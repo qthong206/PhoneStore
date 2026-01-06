@@ -343,3 +343,76 @@ h2 {
     gap: 4px;
 }
 .rating span { color: var(--color-neutral-dark); }
+/* --- TỐI ƯU FORM GROUP ĐỂ TRÁNH GIÃN NỞ --- */
+.form-group {
+    margin-bottom: 24px; /* Tăng nhẹ để có chỗ cho error-msg */
+    position: relative; /* Làm gốc tọa độ cho error-msg */
+}
+
+/* Fix lỗi giãn nở: Dành sẵn không gian cho thông báo lỗi */
+.error-msg {
+    color: var(--color-danger);
+    font-size: 0.8rem;
+    position: absolute;
+    bottom: -18px; /* Đẩy xuống dưới input */
+    left: 0;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+/* Fix cho password-note không làm nhảy form */
+.password-note {
+    font-size: 0.85rem;
+    color: var(--color-neutral-dark);
+    margin-top: 4px;
+    height: 18px; /* Giữ chỗ cố định */
+    display: block;
+}
+
+/* --- CẬP NHẬT NÚT ĐĂNG KÝ THEO ĐỊNH DẠNG BASE --- */
+.btn-register {
+    /* Kế thừa từ .btn và .btn-gradient-primary trong base.css */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    white-space: nowrap;
+
+    /* Màu sắc theo base.css */
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(8, 83, 119, 0.25);
+}
+
+.btn-register:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(8, 83, 119, 0.35);
+    color: var(--color-white);
+}
+
+.btn-register:active {
+    transform: translateY(1px);
+    box-shadow: none !important;
+}
+
+/* Đảm bảo khung con mắt không bị lệch khi thêm error-msg absolute */
+.password-group .btn-toggle-password {
+    top: 31px; /* Giữ nguyên theo code cũ của bạn */
+    z-index: 5;
+}
+
+/* Điều chỉnh lại spacing cho form-grid để hài hòa với layout mới */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px 20px; /* Tăng khoảng cách hàng lên 25px */
+}
